@@ -1,0 +1,57 @@
+<ion-header [translucent]="true" *ngIf="mostrarLoginUser">
+  <ion-toolbar color = "mycolor">
+    <ion-title>RECAUDADOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" id="background-content">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Autenticar</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="login" *ngIf="mostrarLoginUser">
+    <ion-card-content>
+      <ion-item>
+        
+        <ion-select label="Empresa" interface="popover" placeholder="Seleccionar" [(ngModel)]="usuario.EMPRESA" name="accion" required (ionChange)="guardarSeleccion()" label-placement="floating">
+          <ion-select-option *ngFor="let empresa of listEmpresas" [value]="empresa.CODIGO">{{ empresa.DESCRIPCION }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        
+        <ion-select label="Punto de Pago" interface="popover" placeholder="Seleccionar" [(ngModel)]="CODIGO_PUNTO_PAGO" name="puntoPago" required [disabled]="!usuario.EMPRESA" label-placement="floating">
+          <ion-select-option *ngFor="let puntopago of listadoPuntosPago" [value]="puntopago.CODIGO">{{ puntopago.NOMBRE }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input [(ngModel)]="usuario.USUARIO" equired [disabled]="!usuario.EMPRESA" name="usuario" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input [(ngModel)]="usuario.PASSWORD" type="password" required [disabled]="!usuario.USUARIO" name="password" required (keyup.enter)="autenticarUsuario()"></ion-input>
+      </ion-item>
+    </ion-card-content>
+    <button class="btn" expand="full" (click)="autenticarUsuario()">Iniciar Sesión</button>
+    <ng-container *ngIf="resultado && resultado.COD !='400'" class="error-message">
+      <h4> {{ errorLogin.RESPUESTA }}</h4>
+    </ng-container>
+  </ion-card>
+
+  
+  
+
+  <ion-list class="Listado" *ngIf="resultado && resultado.COD=='200'; else noData" lines="full">
+    
+      <div class="centered-image-container">
+        <img src="../../assets/logo/logo_energia.png" class="centered-image" id="miImagen">
+      </div>
+    
+  </ion-list>
+  
+  <ng-template #noData>
+  </ng-template>
+  
+
+</ion-content>

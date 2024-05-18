@@ -1,0 +1,110 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Generar Asobancaria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Generar Asobancaria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <div class="container">
+      <div class="fecha">
+        <ion-datetime-button class="btn-fecha" datetime="datetime"></ion-datetime-button>
+  
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="datetime"  display-format="DD/MM/YYYY" presentation="date"
+            (ionChange)="fecha($event)"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+             
+      </div>
+  
+      <div class="div-btn">
+  
+        <button class="btn" (click)="generarAsobancaria()"> Generar </button>
+      </div>
+    </div>
+  
+    <div>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-label position="stacked">LISTADO CONVENIOS:
+              <ion-checkbox (ionChange)="seleccionarTodo($event)" [checked]="seleccionarTodos">Seleccionar Todo</ion-checkbox>
+            </ion-label>
+            <div class="tabla">
+              
+              <div *ngFor="let convenio of convenios">
+                <ion-row class="header-row">
+                  <ion-col class="data-row">
+                    {{ convenio.label }}
+                  </ion-col>
+                  <ion-col>
+                    <div *ngFor="let convenioDet of convenio.convenioDet">
+                      <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet)" [value]="convenioDet.value" [checked]="seleccionarTodos" labelPlacement="end">
+                        <p class="contenido">{{ convenioDet.label }}</p>
+                      </ion-checkbox>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </div>
+
+            </div>
+          </ion-col>
+          <ion-col>
+            <ion-label position="stacked">ASOBANCARIAS PARA ENVIO: </ion-label>
+          <ion-row class="header-row" >
+            <ion-col>FECHA</ion-col>
+            <ion-col>COD CONVENIO</ion-col>
+            <ion-col>COD CONVENIO DETALLE</ion-col>
+            <ion-col>TIPO</ion-col>
+            <ion-col>CORREO</ion-col>
+            <ion-col>EXCEL</ion-col>
+          </ion-row>
+          <div class="tabla_lista" style="overflow-y: auto; max-height: 50vh;">
+
+            <ion-row class="header-row" *ngFor="let detalle of asobancariaGenerado.LISTADO_CONVENIOS">
+                <ion-col>
+                  <p>{{asobancariaGenerado.FECHA_ASOBANCARIA}}</p>
+                </ion-col>
+                
+                <ng-container *ngFor="let detalle2 of nombre_convenios">
+                  <ng-container *ngIf="detalle2.CODIGO_CONVENIO==detalle.CODIGO_CONVENIO && detalle2.CODIGO_CONVENIO_DET==detalle.CODIGO_CONVENIO_DET">
+                    <ion-col>
+                      <p>{{detalle2.NOMBRE}}</p>
+                    </ion-col>
+                    <ion-col>
+                      <p>{{detalle2.NOMBRE_DET}}</p>
+                    </ion-col> 
+                    <ion-col>
+                      <p>{{detalle2.ASOBANCARIA}}</p>
+                    </ion-col>
+                  </ng-container>
+                </ng-container>
+           
+                <ion-col>
+                  <p>{{detalle.CORREO_ASOBANCARIA}}</p>
+                </ion-col>
+                <ion-col>
+                  <p>{{detalle.EXCEL}}</p>
+                </ion-col>
+              
+            </ion-row>
+
+          </div>
+        </ion-col>
+        </ion-row>
+        
+      </ion-grid>
+    </div> 
+      
+  </ion-card-content>
+</ion-card>

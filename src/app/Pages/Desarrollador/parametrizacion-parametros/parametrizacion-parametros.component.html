@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Facturas Barras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Facturas Barras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <div class="busqueda">
+      <ion-item class="estados">
+        <ion-label position="stacked">Información: </ion-label>
+        <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="seleccion" name="empresa" (ionChange)="ListarParametros()" required>
+          <ion-select-option  value="PARAMETROS">PARAMETROS</ion-select-option>
+          <ion-select-option  value="TABLAS">TABLAS</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item  class="estados">
+        <ion-label position="stacked">{{seleccion}}: </ion-label>
+        <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="campoSelec" name="empresa" (ionChange)="ConsultarInfo()" required>
+          <ion-select-option *ngFor="let dato of ingormacion" [value]="dato.CAMPO">{{dato.CAMPO}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Descripción: </ion-label>
+        <ng-container *ngFor="let dato of ingormacion">
+          <h2 *ngIf="dato.CAMPO==campoSelec">{{dato.DESCRIPCION}}</h2>
+        </ng-container>
+      </ion-item>
+    </div>
+    
+      
+    <ion-list class="tabla" >
+        <ion-grid >
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-label *ngIf="seleccion=='PARAMETROS'">Parametros: </ion-label>
+                <ion-label *ngIf="seleccion=='TABLAS'">Tablas: </ion-label>
+                <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+              </ion-item>
+              <ion-row class="header-row1" >
+                <ion-col *ngIf="seleccion=='PARAMETROS'">PARAMETRO</ion-col>
+                <ion-col *ngIf="seleccion=='TABLAS'">TABLAS</ion-col>
+                <ion-col>DESCRIPCION</ion-col>
+                <ion-col>VALOR DE CAMPO</ion-col>    
+              </ion-row>
+              <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+            
+                <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+                  <ion-row class="data-row" slot="fixed">
+                    <ion-col *ngIf="seleccion=='PARAMETROS'" title="{{ respuesta1.PARAMETRO}}">{{ respuesta1.PARAMETRO}}</ion-col>
+                    <ion-col *ngIf="seleccion=='TABLAS'" title="{{ respuesta1.TABLA}}">{{ respuesta1.TABLA}}</ion-col>
+                    <ion-col title="{{ respuesta1.DESCRIPCION }}">{{ respuesta1.DESCRIPCION}}</ion-col>
+                    <ion-col title="{{ respuesta1.VALOR}}">{{ respuesta1.VALOR}}</ion-col>
+                  </ion-row>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-list>
+  </ion-card-content>
+</ion-card>

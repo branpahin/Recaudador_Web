@@ -1,0 +1,213 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Facturas Barras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Facturas Barras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-item *ngIf="!crear" class="estados">
+      <ion-label position="stacked">Facturas: </ion-label>
+      <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="facturas" name="empresa" (ionChange)="ListarFacturasBarras()" required>
+        <ion-select-option  value="ACTIVAS">ACTIVAS</ion-select-option>
+        <ion-select-option  value="PENDIENTES">PENDIENTES</ion-select-option>
+      </ion-select>
+    </ion-item>
+      
+      
+      
+    <ion-list class="tabla" *ngIf="!crear">
+        <ion-grid >
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label *ngIf="facturas=='ACTIVAS'">Listado Facturas Activas: </ion-label>
+                  <ion-label *ngIf="facturas=='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                </ion-item>
+                <ion-row class="header-row1" >
+                  <ion-col class="edit small-edit-column"></ion-col>
+                  <ion-col>CONVENIO</ion-col>
+                  <ion-col>NIT</ion-col>
+                  <ion-col>CONVENIO DET</ion-col>
+                  <ion-col>CODIGO BARRAS</ion-col>
+                  <ion-col>LONGITUD BARRA</ion-col>
+                  <ion-col>IDENTIFICADOR BARRA</ion-col>
+                  <ion-col class="edit small-edit-column-fin"></ion-col>
+                  
+                </ion-row>
+                <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+              
+                  <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+                    <ion-row class="data-row" slot="fixed">
+                      <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button></ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CONVENIO}}">{{ respuesta1.NOMBRE_CONVENIO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NIT }}">{{ respuesta1.NIT}}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CONVENIO_DET}}">{{ respuesta1.NOMBRE_CONVENIO_DET}}</ion-col>
+                      <ion-col title="{{ respuesta1.CODIGO_BARRAS}}">{{ respuesta1.CODIGO_BARRAS}}</ion-col>
+                      <ion-col title="{{ respuesta1.LONGITUD_BARRA}}">{{ respuesta1.LONGITUD_BARRA}}</ion-col>
+                      <ion-col title="{{ respuesta1.IDENTIFICADOR_BARRA}}">{{ respuesta1.IDENTIFICADOR_BARRA}}</ion-col>
+                      <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+                    </ion-row>
+                    <ion-grid *ngIf="respuesta1.selected">
+                      <ion-row  class="header-row-info">
+                        <ion-col>CAMPO</ion-col>
+                        <ion-col>ORDEN</ion-col>
+                        <ion-col>POSICION INICIAL</ion-col>
+                        <ion-col>CARACTERES</ion-col>
+                        <ion-col>OBLIGATORIO</ion-col>
+                      </ion-row>
+                      <ion-row  class="data-row" *ngFor="let respuesta2 of respuesta1.CAMPOS">
+                        <ion-col title="{{ respuesta1.CAMPO}}">{{ respuesta2.CAMPO}}</ion-col>
+                        <ion-col title="{{ respuesta1.ORDEN}}">{{ respuesta2.ORDEN}}</ion-col>
+                        <ion-col title="{{ respuesta1.POSICION_INICIAL}}">{{ respuesta2.POSICION_INICIAL}}</ion-col>
+                        <ion-col title="{{ respuesta1.CARACTERES}}">{{ respuesta2.CARACTERES}}</ion-col>
+                        <ion-col title="{{ respuesta1.OBLIGATORIO}}">{{ respuesta2.OBLIGATORIO}}</ion-col>
+                      </ion-row>
+                      
+                    </ion-grid>
+                    
+                  </div>
+                  
+                </div>
+              </ion-col>
+            </ion-row>
+             
+        </ion-grid>
+      </ion-list>
+
+      <ion-list class="tabla1" *ngIf="crear" >
+        <div class="cerrar">
+          <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <div *ngFor="let detalles of FacturasBarras">
+                <h1 *ngIf="detalles.CODIGO_CONVENIO==datos.CODIGO_CONVENIO && detalles.CODIGO_CONVENIO_DET==datos.CODIGO_CONVENIO_DET ">{{detalles.NOMBRE_CONVENIO}} - {{detalles.NOMBRE_CONVENIO_DET}}</h1>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col >
+              <h2>LONGITUD: </h2>
+                <ion-item class="sub-titulo">
+                  <ion-input [(ngModel)]="datos.LONGITUD_BARRA" required></ion-input>
+                </ion-item>
+            </ion-col>
+            <ion-col>
+              <h2>IDENTIFICADOR BARRA: </h2>
+                <ion-item class="sub-titulo">
+                  <ion-input [(ngModel)]="datos.IDENTIFICADOR_BARRA" required></ion-input>
+                </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <h2>CAMPO</h2>
+            </ion-col>
+            <ion-col>
+              <h2>ORDEN</h2>
+            </ion-col>
+            <ion-col>
+              <h2>POSICION INICIAL</h2>
+            </ion-col>
+            <ion-col>
+              <h2>CARACTERES</h2>
+            </ion-col>
+            <ion-col>
+              <h2>OBLIGATORIO</h2>
+            </ion-col>
+          </ion-row>
+          <div class="tabla_lista" style="overflow-y: auto; max-height: 50vh;">
+            <ng-container *ngIf="mostrarModificar" >
+              <ion-row *ngFor="let parametros of listadoCamposBarras">
+                <ng-container *ngFor="let dato of datos.CAMPOS">
+                  <ng-container *ngIf="dato.CAMPO==parametros.CAMPO">
+                    <ion-col> {{parametros.CAMPO}}</ion-col>
+                    <ion-col>
+                      <ion-item class="campo">
+                        <ion-input [(ngModel)]="dato.ORDEN" required></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col >
+                      <ion-item class="campo">
+                        <ion-input [(ngModel)]="dato.POSICION_INICIAL" required></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col >
+                      <ion-item class="campo">
+                        <ion-input [(ngModel)]="dato.CARACTERES" required></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col>
+                      <ion-item class="campo">
+                        <ion-select interface="popover" placeholder="Seleccionar"  [(ngModel)]="dato.OBLIGATORIO" name="OBLIGATORIO" required>
+                          <ion-select-option value="S" >SI</ion-select-option>
+                          <ion-select-option value="N" >NO</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                  </ng-container>
+                </ng-container>
+              </ion-row>
+            </ng-container>
+            <ng-container *ngIf="!mostrarModificar">
+              <ion-row *ngFor="let detalle of datos.CAMPOS; let i = index">
+                <ion-col class="edit small-edit-column">
+                  <button class="eliminarFila" (click)="eliminarFila(detalle)"><ion-icon id="eliminarFila" name="remove-circle-outline" ></ion-icon></button>
+                </ion-col> 
+                <ion-col> 
+                  <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.CAMPO"name="OBLIGATORIO" required>
+
+                    <ion-select-option *ngFor="let parametros of listadoCamposBarras" [value]="parametros.CAMPO" [disabled]="campoRepetido(parametros.CAMPO)" >{{parametros.CAMPO}}</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.ORDEN" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col >
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.POSICION_INICIAL" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col >
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.CARACTERES" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="campo">
+                    <ion-select interface="popover" placeholder="Seleccionar"  [(ngModel)]="detalle.OBLIGATORIO" name="OBLIGATORIO" required>
+                      <ion-select-option value="S" >SI</ion-select-option>
+                      <ion-select-option value="N" >NO</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row >
+              <button class="btn-base" type="button" (click)="agregarCampo()">Agregar Campo</button>
+            </ng-container>
+          </div>
+
+        </ion-grid>
+        <div class="div-btn">
+          <div class="div-btn">
+            <button *ngIf="mostrarModificar" class="btn" expand="full" (click)="ModificarFacturaBarras()"> Modificar</button>
+            <button *ngIf="!mostrarModificar" class="btn" expand="full" (click)="CrearFacturaBarras()"> Crear</button>
+          </div>
+        </div>
+      </ion-list>
+  </ion-card-content>
+</ion-card>

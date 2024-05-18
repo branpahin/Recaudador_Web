@@ -1,0 +1,10 @@
+
+.data-row ion-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

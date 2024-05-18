@@ -1,0 +1,179 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 100%; 
+    margin: 0 auto; 
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+ion-row, ion-col{
+    border: 1px solid black;
+}
+.login{
+    box-shadow: 0 12px 2000px rgba(0, 0, 0, 10);  
+    max-height: 750px;
+}
+ion-card-content{
+    width: 100%;
+}
+
+.overlay-content {
+ 
+    width: 900px;
+    height: 800px;
+}
+.barras{
+    width: 50%;
+    margin-left: 10%;
+}
+
+.error{
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;  
+    height: 100%;  
+    color: red;
+}
+
+.formulario{
+    max-width: 50%;
+    margin: 0 auto;
+   
+}
+.Listado {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 9999;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 20px;
+    background-color: #fff; 
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+.tabla {
+    float: left;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    z-index: 9999; 
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; 
+    border-radius: 5px;
+    color:black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+.tabla2 {
+   
+    float: right;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    z-index: 9999; 
+    margin: 0 auto; 
+    padding: 20px;
+    background-color: #fff; 
+    border-radius: 5px;
+    color:black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.tabla_lista::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    margin-right: 0px; 
+}
+
+
+
+
+.cerrar-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+.contenido{
+    white-space: normal; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
+.data-row ion-col {
+    white-space: nowrap;
+    text-overflow: ellipsis; 
+    overflow: hidden;   
+}
+
+.header-row ion-col{
+    font-weight: bold;
+    height: 50px;
+    background-color: #e48f0f;
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.nombres{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tabla-content{
+    position: relative;
+    width: 100%;
+}
+
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+
+.btn_R{
+    display: inline-block;
+}
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-left: 5px;
+    display: inline-block;
+    color:white;
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+.referencia{
+    width: 70%;
+}
+
+.btn_m{
+    background-color: #fff;
+    width: 20%;
+}
+.eliminar{
+    color:red;
+}
+
+.id{
+    max-width: 100px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

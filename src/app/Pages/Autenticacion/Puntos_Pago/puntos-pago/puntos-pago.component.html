@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Puntos de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Puntos de Pago</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card class="buscar_empresa">
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Ingrese el número de empresa</ion-label>
+        <ion-input type="number" [(ngModel)]="empresa"></ion-input>
+      </ion-item>
+      <button class="btn" expand="full" (click)="obtenerPuntosPago()">Obtener Puntos de Pago</button>
+    </ion-card-content>
+  </ion-card>
+  
+  
+
+  <ion-list class="Listado" *ngIf="listadoPuntosPago">
+    <ion-item *ngFor="let puntoPago of listadoPuntosPago">
+      <ion-label>{{ puntoPago.EMPRESA }}</ion-label>
+      <ion-label>{{ puntoPago.CODIGO }}</ion-label>
+      <ion-label>{{ puntoPago.NOMBRE }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

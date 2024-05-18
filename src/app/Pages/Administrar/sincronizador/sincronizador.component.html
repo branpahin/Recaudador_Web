@@ -1,0 +1,67 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >SINCRONIZADOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">SINCRONIZADOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <div class="div-btn">
+      <button *ngIf="estadoSincro=='INACTIVO'" class="btn1" expand="full" (click)=" ModificarEstadoSincro('ACTIVO')" > Iniciar Sincro </button>
+      <button *ngIf="estadoSincro=='ACTIVO'" class="btn2" expand="full" (click)=" ModificarEstadoSincro('INACTIVO')" > Terminar Sincro </button>
+    </div>
+    <div class="div-convenios">
+      <ion-label class="titulo-convenios">CONVENIOS</ion-label>
+      <ion-item *ngFor="let convenio of listadoConveniosSincro" class="custom-radio-item">
+        <ion-checkbox (ionChange)="updateSelectedClientes($event, convenio)" [value]="convenio.CODIGO_CONVENIO" [disabled]="estadoSincro=='ACTIVO'" [checked]="ConvenioSincronizado(convenio.CODIGO_CONVENIO)">{{ convenio.NOMBRE_CODIGO_CONVENIO }}</ion-checkbox>
+      </ion-item>
+    </div>
+
+    <ion-list class="tabla_lista" style="overflow-y: auto; height: 70vh;">
+      <ion-grid *ngFor="let convenios of listadoConveniosSincro" class="tabla1">
+        <ion-row class="header-row">
+          <ion-col>
+            {{convenios.NOMBRE_CODIGO_CONVENIO}}
+          </ion-col>
+        </ion-row>
+        <ion-row class="header-row">
+          <ion-col class="small-edit-column2">CONVENIO</ion-col>
+          <ion-col class="small-edit-column">PENDIENTES</ion-col>
+          <ion-col>NOVEDADES</ion-col>
+        </ion-row>
+        <ion-row class="data-row">
+          <ion-col class="small-edit-column2"> 
+            <ion-row *ngFor="let convenio of pagosAgrupados">
+              <div class="contenido" *ngIf="convenio.CODIGO_CONVENIO==convenios.CODIGO_CONVENIO">
+                {{convenio.NOMBRE_CONVENIO_DET}}
+              </div>
+            </ion-row>
+          </ion-col>
+          <ion-col class="small-edit-column">
+            <ion-row *ngFor="let convenio of pagosAgrupados">
+              <div class="contenido" *ngIf="convenio.CODIGO_CONVENIO==convenios.CODIGO_CONVENIO">
+                {{convenio.CANTIDAD_FACTURAS}}
+              </div>
+            </ion-row>
+          </ion-col>
+          <ion-col >
+            <ion-row>
+              <ng-container>
+             
+              </ng-container>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+    
+  </ion-card-content>
+</ion-card>

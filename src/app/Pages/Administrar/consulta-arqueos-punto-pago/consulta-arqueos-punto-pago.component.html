@@ -1,0 +1,455 @@
+<ion-header *ngIf="seleccion" [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Consultar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-header class="arqueos" *ngIf="tablas" [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Arqueos Punto de Pago</ion-title>
+    <div class="cerrar">
+      <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Consultar</ion-title>
+    <ion-title size="large">Arqueos Punto de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card class="principal" *ngIf="seleccion">
+  <ion-card-content>
+    <ion-list class="principal-content">
+      <div class="btn-i">
+        <button class="btn" expand="full" (click)="ConsultarArq()">Consultar Arqueo</button>
+      </div>
+      <div class="btn-i">
+        <button class="btn" expand="full" (click)="ConsultarCuadres()">Consultar Cuadres</button>
+      </div>
+      <div class="btn-i">
+        <button class="btn" expand="full" (click)="ConsultarEntregas()">Consultar Entregas</button>
+      </div>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<ion-card *ngIf="principal" class="login">
+  <ion-card-content>
+    <div style="display: grid; grid-template-columns: 40% 25% 35%;" *ngIf="tablas">
+      <ion-item class="barras">
+        <ion-label position="stacked">Punto de Pago: </ion-label>
+        <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="codigo_punto_pago" name="moneda" required >
+          <ion-select-option *ngFor="let opcion of listadoPuntos" [value]="opcion.CODIGO">
+            {{opcion.NOMBRE}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item class="fecha">
+        <ion-label>Fecha:</ion-label>
+        <div >
+
+          <ion-datetime-button datetime="datetime"></ion-datetime-button>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="datetime"  display-format="DD/MM/YYYY" presentation="date"
+              (ionChange)="fechaIni($event)"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+
+        </div>
+        <p> - </p>
+
+        <div>
+
+          <ion-datetime-button datetime="datetime1"></ion-datetime-button>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="datetime1"  display-format="DD/MM/YYYY" presentation="date"
+              (ionChange)="fechafin($event)"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </div>
+      </ion-item>
+      <div class="div-btn">
+        <button class="btn" expand="full" (click)="ListarArqueosPunto()"> Consultar </button>
+      </div> 
+      
+    </div>
+      
+      
+    <ion-list *ngIf="tablas" class="tabla">
+        <ion-item>
+          <ion-label>Arqueos: </ion-label>
+        </ion-item>
+
+        <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
+        <ion-row class="filtros" *ngIf="habilitarfiltrado">
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Caja:</ion-label>
+              <ion-input placeholder="Empresa" [(ngModel)]="filtroNombreCaja"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Arqueo:</ion-label>
+              <ion-input placeholder="Empresa" [(ngModel)]="filtroNumeroArqueo"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Usuario:</ion-label>
+              <ion-input placeholder="Empresa" [(ngModel)]="filtroUsuario"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Fecha</ion-label>
+              <div class="fecha">
+                <ion-datetime-button datetime="datetime3"></ion-datetime-button>
+    
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="datetime3"  display-format="DD/MM/YYYY" presentation="date"
+                    (ionChange)="filtroFechaGen($event)"></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+                        
+              </div>
+            </ion-item>
+            
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Estado:</ion-label>
+              <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="filtroEstado">
+                <ion-select-option value='Pendiente'>Pendiente</ion-select-option>
+                <ion-select-option value='Cerrado'>Cerrado</ion-select-option>
+                <ion-select-option value='Vigente'>Vigente</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">N° Movimientos:</ion-label>
+              <ion-input placeholder="N° Movimientos" [(ngModel)]="filtroNumeroMovimientos"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Movimientos Det:</ion-label>
+              <ion-input placeholder="N° Movimientos-Det" [(ngModel)]="filtroNumeroMovimientosDet"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Valor:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroValorMovimientos"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-grid >
+            <ion-row class="header-row">
+              <ion-col>EMPRESA</ion-col>
+              <ion-col>PUNTO DE PAGO</ion-col>
+              <ion-col>CAJA</ion-col>
+              <ion-col>N° ARQUEO</ion-col>
+              <ion-col>USUARIO</ion-col>
+              <ion-col>FECHA ARQUEO</ion-col>
+              <ion-col>ESTADO</ion-col>
+              <ion-col>N° MOVIMIENTOS</ion-col>
+              <ion-col>N° MOVIMIENTOS DET</ion-col>
+              <ion-col>VALOR MOVIMIENTOS</ion-col>
+            </ion-row>
+            <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          
+            <div class="tabla-content" *ngFor="let respuesta1 of listadoArqueos | filterByColumn: filtroNombreEmpresa: 'NOMBRE_EMPRESA' | filterByColumn: filtroNombrePuntoPago:'NOMBRE_PUNTO_PAGO' | filterByColumn: filtroNombreCaja:'NOMBRE_CAJA' | filterByColumn: filtroNumeroArqueo:'NUMERO_ARQUEO' | filterByColumn: filtroUsuario:'USUARIO' | filterByColumn: filtroFechaArqueo:'FECHA_ARQUEO' | filterByColumn: filtroEstado:'ESTADO' | filterByColumn: filtroNumeroMovimientos:'NUMERO_MOVIMIENTOS' | filterByColumn: filtroNumeroMovimientosDet:'NUMERO_MOVIMIENTOS_DET' | filterByColumn: filtroValorMovimientos:'VALOR_MOVIMIENTOS_DET'">
+              <ion-row class="data-row" >
+                <ion-col >{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                <ion-col >{{ respuesta1.NOMBRE_PUNTO_PAGO}}</ion-col>
+                <ion-col >{{ respuesta1.NOMBRE_CAJA }}</ion-col>
+                <ion-col >{{ respuesta1.NUMERO_ARQUEO }}<span class="link-text" (click)="mostrarDetalles(respuesta1.NUMERO_ARQUEO,respuesta1.CODIGO_PUNTO_PAGO)">detalles...</span></ion-col>
+                <ion-col >{{ respuesta1.USUARIO}}</ion-col>
+                <ion-col >{{ respuesta1.FECHA_ARQUEO }}</ion-col>
+                <ion-col >{{ respuesta1.ESTADO}}</ion-col>
+                <ion-col >{{ respuesta1.NUMERO_MOVIMIENTOS }}</ion-col>
+                <ion-col >{{ respuesta1.NUMERO_MOVIMIENTOS_DET}}</ion-col>
+                <ion-col >{{ respuesta1.VALOR_MOVIMIENTOS_DET | number}}</ion-col>
+              </ion-row>
+            </div>
+          </div> 
+        </ion-grid>
+      </ion-list>  
+      <ion-list *ngIf="detalles" class="tabla1">
+          <ion-content class="listaDet">
+            <ion-item>
+    
+              <div class="cerrar">
+                <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+                  <ion-icon name="close"></ion-icon>
+                </ion-button>
+              </div>
+              
+              <ion-label>Recaudos: </ion-label>
+            </ion-item>
+            <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
+            <ion-row class="filtros" *ngIf="habilitarfiltrado">
+              <ion-col class="filtros">
+                <ion-item >
+                  <ion-label position="stacked">N° Movimiento:</ion-label>
+                  <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroNumeroMovimiento"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">Fecha u Hora</ion-label>
+                  <div class="fecha">
+                    <ion-datetime-button datetime="datetime"></ion-datetime-button>
+        
+                    <ion-modal [keepContentsMounted]="true">
+                      <ng-template>
+                        <ion-datetime id="datetime"  display-format="DD/MM/YYYY" presentation="date"
+                        (ionChange)="filtro($event)"></ion-datetime>
+                      </ng-template>
+                    </ion-modal>
+                           
+                  </div>
+                </ion-item>
+                
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">Tipo de pago:</ion-label>
+                  <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="filtroTipoPago">
+                    <ion-select-option *ngFor="let opcion of pago" [value]="opcion.DESCRIPCION">
+                      {{opcion.DESCRIPCION}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">Valor recibido:</ion-label>
+                  <ion-input placeholder="N° Movimiento" [(ngModel)]="filtrovalorRecibido"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">Valor movimiento:</ion-label>
+                  <ion-input placeholder="N° Movimiento" [(ngModel)]="filtrovalorMovimiento"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">Valor cambio:</ion-label>
+                  <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroValorCambio"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col class="filtros">
+                <ion-item>
+                  <ion-label position="stacked">N° cupones:</ion-label>
+                  <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroNumeroCupones"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            
+            
+            <ion-grid >
+              <ion-row class="header-row">
+                <ion-col>N° Movimiento</ion-col>
+                <ion-col>Fecha</ion-col>
+                <ion-col>Tipo de Pago</ion-col>
+                <ion-col>Valor recibido</ion-col>
+                <ion-col>Valor Movimiento</ion-col>
+                <ion-col>Valor Cambio</ion-col>
+                <ion-col>Numero Cupones</ion-col>
+              </ion-row>
+    
+              <ion-row class="filter-row">
+              </ion-row>
+
+              <ion-row class="data-row" *ngFor="let recaudo of recaudos | filterByColumn: filtroNumeroMovimiento: 'NUMERO_MOVIMIENTO' | filterByColumn: filtroFecha:'FECHA_MOVIMIENTO' | filterByColumn: filtroTipoPago:'NOMBRE_TIPO_PAGO' | filterByColumn: filtrovalorRecibido:'VALOR_RECIBIDO' | filterByColumn: filtrovalorMovimiento:'VALOR_MOVIMIENTO' | filterByColumn: filtroValorCambio:'VALOR_CAMBIO' | filterByColumn: filtroNumeroCupones:'NUMERO_CUPONES_MOVIMIENTO'" class="data-row" >
+                <ion-col title="{{ recaudo.NUMERO_MOVIMIENTO }}">{{ recaudo.NUMERO_MOVIMIENTO }}<span class="link-text" (click)="mostrarDetalles2(recaudo.NUMERO_MOVIMIENTO)">detalles...</span></ion-col>
+                <ion-col title="{{ recaudo.FECHA_MOVIMIENTO }}">{{ recaudo.FECHA_MOVIMIENTO }}</ion-col>
+                <ion-col title="{{ recaudo.NOMBRE_TIPO_PAGO }}">{{ recaudo.NOMBRE_TIPO_PAGO }}</ion-col>
+                <ion-col title="{{ recaudo.VALOR_RECIBIDO }}">{{ recaudo.VALOR_RECIBIDO | number}}</ion-col>
+                <ion-col title="{{ recaudo.VALOR_MOVIMIENTO }}">{{ recaudo.VALOR_MOVIMIENTO | number}}</ion-col>
+                <ion-col title="{{ recaudo.VALOR_CAMBIO }}">{{ recaudo.VALOR_CAMBIO | number}}</ion-col>
+                <ion-col title="{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}">{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}</ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-content>
+        
+      </ion-list>
+
+      <ion-list *ngIf="detallesFac" class="tabla1">
+        <ion-content class="listaDet">
+          <ion-item>
+            <ion-button class="cerrar-btn" (click)="cerrarTablaFac()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+            <ion-label>Informacion Facturas: </ion-label>
+          </ion-item>
+
+          <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
+        <ion-row class="filtros" *ngIf="habilitarfiltrado">
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Movimiento:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroNumeroMovimientoDet"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Convenio:</ion-label>
+              <ion-input placeholder="Convenio" [(ngModel)]="filtroNombreConvenio"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">Factura:</ion-label>
+              <ion-input placeholder="Factura" [(ngModel)]="filtroFacturaConvenio"></ion-input>
+            </ion-item>
+          </ion-col>
+          
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Cliente:</ion-label>
+              <ion-input placeholder="N° Cliente" [(ngModel)]="filtroCodigoCliente"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Referencia:</ion-label>
+              <ion-input placeholder="N° Referenciat" [(ngModel)]="filtroCodigoReferencia"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Fecha</ion-label>
+              <div class="fecha">
+                <ion-datetime-button datetime="datetime3"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="datetime3"  display-format="DD/MM/YYYY" presentation="date"
+                    (ionChange)="filtroFechaVen($event)"></ion-datetime>
+                  </ng-template>
+                </ion-modal>        
+              </div>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Valor:</ion-label>
+              <ion-input placeholder="Valor Factura" [(ngModel)]="filtroValorMovimientoDet"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Tipo de pago:</ion-label>
+              <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="filtroFormaPago">
+                <ion-select-option *ngFor="let opcion of pago" [value]="opcion.DESCRIPCION">
+                  {{opcion.DESCRIPCION}}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Estado:</ion-label>
+              <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="filtroMigrado">
+                <ion-select-option value='No migrado'>No migrado</ion-select-option>
+                <ion-select-option value='Migrado'>Migrado</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        
+          <ion-grid>
+            <ion-row class="header-row">
+              <ion-col *ngIf="rol=='R_ADMINISTRADOR'" class="edit small-edit-column"></ion-col>
+              <ion-col>N° Movimiento factura</ion-col>
+              <ion-col>Nombre Convenio</ion-col>
+              <ion-col>Factura Convenio</ion-col>
+              <ion-col>Codigo Cliente</ion-col>
+              <ion-col>Condigo Referencia</ion-col>
+              <ion-col>Fecha Vencimiento</ion-col>
+              <ion-col>Valor Movimiento</ion-col>
+              <ion-col>Forma de Pago</ion-col>
+              <ion-col>Migrado</ion-col>
+            </ion-row>
+      
+            <div *ngFor="let informacion of informacionF" >
+              <div  *ngIf="detalleSeleccionado === informacion.NUMERO_MOVIMIENTO">
+              <ion-row class="data-row" class="data-row" *ngFor="let informacio of informacion.INFORMACION_FACTURA | filterByColumn: filtroNumeroMovimientoDet: 'NUMERO_MOVIMIENTO_DET' | filterByColumn: filtroNombreConvenio: 'NOMBRE_CONVENIO' | filterByColumn: filtroFacturaConvenio: 'FACTURA_CONVENIO' | filterByColumn: filtroCodigoCliente: 'CODIGO_CLIENTE' | filterByColumn: filtroCodigoReferencia: 'CODIGO_REFERENCIA' | filterByColumn: filtroFechaVencimiento: 'FECHA_VENCIMIENTO' | filterByColumn: filtroValorMovimientoDet: 'VALOR_MOVIMIENTO_DET' | filterByColumn: filtroFormaPago: 'FORMA_PAGO' | filterByColumn: filtroMigrado: 'MIGRADO'">
+                <ion-col *ngIf="rol=='R_ADMINISTRADOR'" class="edit small-edit-column"><button title="Anular" class="anular-btn" (click)="Anulacion(informacio)"><ion-icon class="anular" name="trash-bin-outline"></ion-icon></button></ion-col>
+                <ion-col title="{{ informacio.NUMERO_MOVIMIENTO_DET }}">{{ informacio.NUMERO_MOVIMIENTO_DET }}</ion-col>
+                <ion-col title="{{ informacio.NOMBRE_CONVENIO }}">{{ informacio.NOMBRE_CONVENIO }}</ion-col>
+                <ion-col title="{{ informacio.FACTURA_CONVENIO }}">{{ informacio.FACTURA_CONVENIO }}</ion-col>
+                <ion-col title="{{ informacio.CODIGO_CLIENTE }}">{{ informacio.CODIGO_CLIENTE }}</ion-col>
+                <ion-col title="{{ informacio.CODIGO_REFERENCIA }}">{{ informacio.CODIGO_REFERENCIA }}</ion-col>
+                <ion-col title="{{ informacio.FECHA_VENCIMIENTO }}">{{ informacio.FECHA_VENCIMIENTO }}</ion-col>
+                <ion-col title="{{ informacio.VALOR_MOVIMIENTO_DET }}">{{ informacio.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+                <ion-col title="{{ informacio.VALOR_MOVIMIENTO_DET }}">{{ informacio.FORMA_PAGO}}</ion-col>
+                <ion-col title="{{ informacio.MIGRADO }}">{{ informacio.MIGRADO }}</ion-col>
+              </ion-row>
+              </div>
+            </div>
+      
+          </ion-grid>
+        </ion-content>
+      </ion-list>
+
+      
+  </ion-card-content>
+
+</ion-card>
+<div *ngIf="Entregas" class="Cuadres">
+  <div class="overlay"></div>
+  <div class="overlay-content">
+    <div class="cerrar">
+      <ion-button class="cerrar-btn-1" (click)="cerrarTabla()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+    <app-listado-entrgas-punto-pago></app-listado-entrgas-punto-pago>
+  </div>
+</div>
+<div *ngIf="Cuadres" class="Cuadres">
+  <div class="overlay"></div>
+  <div class="overlay-content">
+    <div class="cerrar">
+      <ion-button class="cerrar-btn-1" (click)="cerrarTabla()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+    <app-listado-cuadres-punto-pago></app-listado-cuadres-punto-pago>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="comentarioAnulacion"></div>
+      <div class="alerta" *ngIf="comentarioAnulacion">
+        <div class="cerrar">
+          <ion-button class="cerrar-btn-1" (click)="cerrarAlerta()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>   
+        <h1>Anular movimiento detalle: {{datosAnulacion.NUMERO_MOVIMIENTO_DET}} </h1>
+        <ion-item>
+          <ion-label position="stacked">OBSERVACION: </ion-label>
+          <ion-input [(ngModel)]="datosAnulacion.COMENTARIO" (keyup.enter)="CrearAnulacion()"></ion-input>
+        </ion-item>
+        <br>
+          <div class="div-btn">
+            <button class="btn" expand="full" (click)="CrearAnulacion()"> ANULAR </button>
+          </div>
+      </div>

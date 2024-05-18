@@ -1,0 +1,163 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Anulación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Anulación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card *ngIf="!crear && !editar" class="login">
+  <ion-card-content>
+    <ion-grid >
+      <ion-row>
+        <ion-col>
+          <ion-item  class="estados">
+            <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="puntoPago" name="empresa" (ionChange)="ListarAnulaciones()" required>
+              <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn">
+            <button *ngIf="!crear" class="btn" expand="full" (click)="Crear()"> Crear </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+      
+      
+    <ion-list class="tabla" *ngIf="!crear">
+        <ion-grid >
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label>Anulaciones: </ion-label>
+                </ion-item>
+                <ion-row class="header-row" >
+                  <ion-col class="edit small-edit-column"></ion-col>
+                  <ion-col>EMPRESA</ion-col>
+                  <ion-col>PUNTO DE PAGO</ion-col>
+                  <ion-col>N° ARQUEO</ion-col>
+                  <ion-col>ESTADO ARQUEO</ion-col>
+                  <ion-col>N° MOVIMIENTO</ion-col>
+                  <ion-col>FECHA MOVIMIENTO</ion-col>
+                  <ion-col>TIPO PAGO</ion-col>
+                  <ion-col>ID TRANSACCION</ion-col>
+                  <ion-col>CONVENIO</ion-col>
+                  <ion-col>COD. CLIENTE</ion-col>
+                  <ion-col>VALOR MOVIMEINTO DET</ion-col>
+                  <ion-col>FECHA ANULACIÓN</ion-col>
+                  <ion-col class="edit small-edit-column-fin"></ion-col>
+                </ion-row>
+                <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+              
+                  <div class="tabla-content" *ngFor="let respuesta1 of listadoAnulaciones">
+                    <ion-row class="data-row" slot="fixed">
+                      <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="ban-outline"></ion-icon></button></ion-col>
+                      <ion-col title="{{ respuesta1.EMPRESA }}">{{ respuesta1.EMPRESA }}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CODIGO_PUNTO_PAGO}}">{{ respuesta1.NOMBRE_CODIGO_PUNTO_PAGO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NUMERO_ARQUEO }}">{{ respuesta1.NUMERO_ARQUEO }}</ion-col>
+                      <ion-col title="{{ respuesta1.ESTADO_ARQUEO}}">{{ respuesta1.ESTADO_ARQUEO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO}}">{{ respuesta1.NUMERO_MOVIMIENTO}}</ion-col>
+                      <ion-col title="{{ respuesta1.FECHA_MOVIMIENTO}}">{{ respuesta1.FECHA_MOVIMIENTO}}</ion-col>
+                      <ion-col title="{{ respuesta1.TIPO_PAGO}}">{{ respuesta1.TIPO_PAGO}}</ion-col>
+                      <ion-col title="{{ respuesta1.ID_TRANSACCION_DATAFONO}}">{{ respuesta1.ID_TRANSACCION_DATAFONO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CODIGO_CONVENIO}}">{{ respuesta1.NOMBRE_CODIGO_CONVENIO}}</ion-col>
+                      <ion-col title="{{ respuesta1.CODIGO_CLIENTE}}">{{ respuesta1.CODIGO_CLIENTE}}</ion-col>
+                      <ion-col title="{{ respuesta1.VALOR_MOVIMIENTO_DET}}">{{ respuesta1.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+                      <ion-col title="{{ respuesta1.FECHA_ANULACION}}">{{ respuesta1.FECHA_ANULACION}}</ion-col>
+                      <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+                    </ion-row>
+                    <ion-grid *ngIf="respuesta1.selected">
+                      <ion-row  class="header-row-info">
+                        <ion-col>NUMERO MOVIMIENTO DET</ion-col>
+                        <ion-col>CONVENIO DET</ion-col>
+                        <ion-col>NUMERO DOCUMENTO</ion-col>
+                        <ion-col>COD. REFERENCIA</ion-col>
+                        <ion-col>MIGRADO</ion-col>
+                        <ion-col>USUARIO ANULA</ion-col>
+                        <ion-col>COMENTARIO</ion-col>
+                      </ion-row>
+                      <ion-row  class="data-row">
+                        <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO_DET}}">{{ respuesta1.NUMERO_MOVIMIENTO_DET}}</ion-col>
+                        <ion-col title="{{ respuesta1.NOMBRE_CONVENIO_DET}}">{{ respuesta1.NOMBRE_CONVENIO_DET}}</ion-col>
+                        <ion-col title="{{ respuesta1.NUMERO_DOCUMENTO}}">{{ respuesta1.NUMERO_DOCUMENTO}}</ion-col>
+                        <ion-col title="{{ respuesta1.CODIGO_REFERENCIA}}">{{ respuesta1.CODIGO_REFERENCIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.NOMBRE_MIGRADO}}">{{ respuesta1.NOMBRE_MIGRADO}}</ion-col>
+                        <ion-col title="{{ respuesta1.USUARIO_ANULA}}">{{ respuesta1.USUARIO_ANULA}}</ion-col>
+                      <ion-col title="{{ respuesta1.COMENTARIO}}">{{ respuesta1.COMENTARIO}}</ion-col>
+                      </ion-row>
+                      
+                    </ion-grid>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>  
+        </ion-grid>
+      </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<ion-card *ngIf="crear" class="Tabla-crear">
+  <ion-card-content>
+    <ion-list class="tabla1" >
+      <div class="cerrar">
+        <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item class="barras">
+              <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
+              <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" (ionChange)="ListarAnulaciones()" required>
+                <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item class="barras">
+              <ion-label position="stacked">NUMERO ARQUEO: </ion-label>
+              <ion-input [(ngModel)]="datos.NUMERO_ARQUEO" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item class="barras">
+              <ion-label position="stacked">MOVIMIENTO: </ion-label>
+              <ion-input [(ngModel)]="datos.NUMERO_MOVIMIENTO" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item class="barras">
+              <ion-label position="stacked">NUMERO MOVIMIENTO DET: </ion-label>
+              <ion-input [(ngModel)]="datos.NUMERO_MOVIMIENTO_DET" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item class="barras">
+              <ion-label position="stacked">COMENTARIO: </ion-label>
+              <ion-input [(ngModel)]="datos.COMENTARIO" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <div class="div-btn">
+        <button *ngIf="crear && !editar" class="btn" expand="full" (click)="CrearAnulacion()"> Crear </button>
+      </div>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+

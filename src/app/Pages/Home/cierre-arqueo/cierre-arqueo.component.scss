@@ -1,0 +1,106 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.error{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    color: red;
+}
+.Listado {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.tabla{
+    width: 80%;
+    display: inline-block;
+
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.base{
+    width: 15%;
+    margin-top: 5%;
+    float: right;
+    color:red;
+    font-size: 20px;
+}
+
+.btn-base{
+    background-color: var(--ion-color-mycolor);
+    padding: 5px;
+    border-radius: 0px 20px 20px 0px;
+    font-size: 15px;
+}
+.btn-base:hover{
+    background-color: #e48f0f;
+}
+
+h1{
+    font-size: 30px;
+}
+.col-descripcion{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    color: rgb(0, 231, 31);
+}
+.contenido{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+
+.contenido{
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 10);
+}
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-left: 45%;
+
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+
+.eliminarFila{
+    background-color: transparent;
+    font-size: 20px;
+    margin-left: 5%;
+}
+  
+#eliminarFila{
+    color:red;
+}
+
+.small-edit-column {
+    max-width: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

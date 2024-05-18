@@ -1,0 +1,217 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >REPORTEADOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">REPORTEADOR</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list *ngIf="!parametros" class="tabla">
+      <ion-item>
+        <ion-label>Reportes Activos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col class="id">ID</ion-col>
+          <ion-col>REPORTE</ion-col>
+          <ion-col class="edit small-edit-column-fin"></ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;" >
+  
+        
+          <div *ngFor="let respuesta1 of listadoReportesActivos">
+
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit accion">
+                  <button title="PARAMETROS" class="btn_m" (click)="Parametros(respuesta1)"><ion-icon class="editar" name="options-outline"></ion-icon></button>
+                  <button title="DESACTIVAR" class="btn_m" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="close-circle-outline" ></ion-icon></button>
+                </ion-col>
+                <ion-col class="id" title="{{ respuesta1.ID_REPORTE }}">{{ respuesta1.ID_REPORTE}}</ion-col>
+                <ion-col title="{{ respuesta1.REPORTE }}">{{respuesta1.REPORTE}}</ion-col>
+                <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>      
+              </ion-row>
+              <ion-grid *ngIf="respuesta1.selected">
+                <ion-row  class="header-row-info">
+                  <ion-col>COMENTARIO</ion-col>
+                </ion-row>
+                <ion-row  class="data-row">
+                  <ion-col title="{{ respuesta1.COMENTARIO }}">{{respuesta1.COMENTARIO}}</ion-col>
+                </ion-row>
+              </ion-grid>
+          </div>
+        </div>
+        
+      </ion-grid>
+
+    
+    </ion-list>
+
+
+    <ion-list *ngIf="!parametros" class="tabla2">
+      <ion-item>
+        <ion-label>Reportes Inactivos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col class="id">ID</ion-col>
+          <ion-col>REPORTE</ion-col>
+          <ion-col class="edit small-edit-column-fin"></ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;" >
+  
+        
+          <div *ngFor="let respuesta1 of listadoReportesInactivos">
+
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit accion">
+                  <button title="PARAMETROS" class="btn_m" (click)="Parametros(respuesta1)"><ion-icon class="editar" name="options-outline"></ion-icon></button>
+                  <button title="ACTIVAR" class="btn_m" (click)="Activar(respuesta1)"><ion-icon class="aprobar" name="checkmark-circle-outline"></ion-icon></button>
+                </ion-col>
+                <ion-col class="id" title="{{ respuesta1.ID_REPORTE }}">{{ respuesta1.ID_REPORTE}}</ion-col>
+                <ion-col title="{{ respuesta1.REPORTE }}">{{respuesta1.REPORTE}}</ion-col>
+                <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>      
+              </ion-row>
+              <ion-grid *ngIf="respuesta1.selected">
+                <ion-row  class="header-row-info">
+                  <ion-col>COMENTARIO</ion-col>
+                </ion-row>
+                <ion-row  class="data-row">
+                  <ion-col title="{{ respuesta1.COMENTARIO }}">{{respuesta1.COMENTARIO}}</ion-col>
+                </ion-row>
+              </ion-grid>
+          </div>
+        </div>
+      </ion-grid>
+    </ion-list>
+    <ion-list *ngIf="parametros" class="tabla1">
+      <div class="cerrar">
+        <ion-button class="cerrar-btn" (click)="cerrarParam()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-item>
+        <ion-label>Parametros: {{nombreReporteSeleccionado}}</ion-label>
+      </ion-item>
+      <ion-grid >
+        <ion-row class="header-row">
+          <ion-col>PARAMETRO</ion-col>
+          <ion-col>VALOR</ion-col>
+        </ion-row>
+
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;" >
+        
+          <div *ngFor="let key of parametrosKeys">
+            <ion-row *ngIf="key!='USUARIO' && key!='ID_REPORTE' && key!='TOKEN'" class="data-row" slot="fixed">
+              <ion-col title="{{ key }}">{{ key }}</ion-col>    
+              <ion-col [ngSwitch]="parametross[key]?.NOMBRE_TIPO">
+                
+                <ion-select aria-label="Empresa" *ngIf="key === 'EMPRESA'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]"required label-placement="stacked">
+                  <ion-select-option *ngFor="let empresa of listEmpresas; let i = index" [value]="empresa.CODIGO" >{{ empresa.DESCRIPCION }}</ion-select-option>
+                </ion-select>
+                <ion-select aria-label="Punto Pago" *ngIf="key === 'CODIGO_PUNTO_PAGO' && reporteSeleccionado!='1' && reporteSeleccionado!='9'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]"required label-placement="stacked">
+                  <ion-select-option *ngFor="let puntopago of listadoPuntosPago let i = index" [value]="puntopago.CODIGO" >{{ puntopago.NOMBRE }}</ion-select-option>
+                </ion-select>
+
+                <div *ngIf="key === 'CODIGO_PUNTO_PAGO' && reporteSeleccionado==='1'">
+                  <ion-item>
+                    <ion-label>Seleccionar todos</ion-label>
+                    <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
+                  </ion-item>
+
+                  <ion-item *ngFor="let puntopago of listadoPuntosPago" class="custom-radio-item">
+                    <ion-checkbox [value]="puntopago.CODIGO" [(ngModel)]="checkboxEstado[puntopago.CODIGO]"  (ionChange)="togglePuntoPago(puntopago.CODIGO, puntopago.NOMBRE, $event.detail.checked)">{{ puntopago.NOMBRE }}</ion-checkbox>
+                  </ion-item>
+                </div>
+
+                <div *ngIf="key === 'CODIGO_CONVENIO' && reporteSeleccionado==='9'">
+                  <ion-item>
+                    <ion-label>Seleccionar todos</ion-label>
+                    <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
+                  </ion-item>
+
+                  <ion-item *ngFor="let convenio of listadoConvenios" class="custom-radio-item">
+                    <ion-checkbox [value]="convenio.CODIGO_CONVENIO" [(ngModel)]="checkboxEstado[convenio.CODIGO_CONVENIO]"  (ionChange)="togglePuntoPago(convenio.CODIGO_CONVENIO, convenio.NOMBRE_CONVENIO, $event.detail.checked)">{{ convenio.NOMBRE_CONVENIO }}</ion-checkbox>
+                  </ion-item>
+                </div>
+                <div *ngIf="key === 'CODIGO_CONVENIO'">
+
+                  <ion-select aria-label="Convenio"  *ngIf="key === 'CODIGO_CONVENIO' && reporteSeleccionado!='1' && reporteSeleccionado!='9'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]" (ionChange)="guardarConvenio($event)" required label-placement="stacked">
+                    <ion-select-option *ngFor="let convenio of listadoConvenios let i = index" [value]="convenio.CODIGO_CONVENIO" >{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
+                  </ion-select>
+                </div>
+
+                <div *ngIf="key === 'CODIGO_FACTURA'">
+                  <ion-item>
+                    <ion-label>Seleccionar todos</ion-label>
+                    <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
+                  </ion-item>
+
+                  <ion-item *ngFor="let convenio of listadoFacturasConvenio" class="custom-radio-item">
+                    <ion-checkbox [value]="convenio.CODIGO_CONVENIO_DET" [(ngModel)]="checkboxEstado[convenio.CODIGO_CONVENIO_DET]"  (ionChange)="togglePuntoPago(convenio.CODIGO_CONVENIO_DET, convenio.NOMBRE_CONVENIO_DET, $event.detail.checked)">{{ convenio.NOMBRE_CONVENIO_DET }}</ion-checkbox>
+                  </ion-item>
+                </div>
+
+                <div *ngIf="key === 'SUB_PUNTO_PAGO'">
+                  <ion-item>
+                    <ion-label>Seleccionar todos</ion-label>
+                    <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
+                  </ion-item>
+
+                  <ion-item *ngFor="let subpunto of listadoSubPuntos" class="custom-radio-item">
+                    <ion-checkbox [value]="subpunto.VALOR" [(ngModel)]="checkboxEstado[subpunto.VALOR]"  (ionChange)="togglePuntoPago(subpunto.VALOR, subpunto.VALOR, $event.detail.checked)">{{ subpunto.VALOR }}</ion-checkbox>
+                  </ion-item>
+                </div>
+
+                <ion-datetime-button *ngIf="key === 'FECHA_INI'" datetime="datetime"></ion-datetime-button>
+  
+                    <ion-modal [keepContentsMounted]="true">
+                      <ng-template>
+                        <ion-datetime id="datetime"  display-format="dd/MM/YYYY" presentation="date"
+                        (ionChange)="fechaIni($event)"></ion-datetime>
+                      </ng-template>
+                    </ion-modal>
+                <ion-datetime-button *ngIf="key === 'FECHA_FIN'"  datetime="datetime1"></ion-datetime-button>
+  
+                    <ion-modal [keepContentsMounted]="true">
+                      <ng-template>
+                        <ion-datetime id="datetime1"  display-format="dd/MM/YYYY" presentation="date"
+                        (ionChange)="fechaFin($event)"></ion-datetime>
+                      </ng-template>
+                    </ion-modal>
+  
+                <ion-datetime-button *ngIf="key === 'FECHA'"  datetime="datetime2"></ion-datetime-button>
+  
+                    <ion-modal [keepContentsMounted]="true">
+                      <ng-template>
+                        <ion-datetime id="datetime2"  display-format="dd/MM/YYYY" presentation="date"
+                        (ionChange)="fecha($event)"></ion-datetime>
+                      </ng-template>
+                    </ion-modal>
+              
+                  <ion-input *ngIf="!isFieldSpecific(key)" [(ngModel)]="parametross[key]" name="{{ key }}" [type]="getTipoParametro(key)" [disabled]="deshabiltarCampo[key]"></ion-input>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-grid>
+      <div class="div-btn">
+        <button class="btn" expand="full" (click)="GenerarReporte()"> Crear Reporte</button>
+      </div>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

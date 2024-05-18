@@ -1,0 +1,13 @@
+<button class="btn_m" (click)="restablecer()">
+  <ion-icon class = "Crear" name="add-circle-sharp"></ion-icon>
+</button>
+<ion-list class="Listado" *ngIf="resultado" lines="full">
+  <ion-item *ngIf="resultado.COD=='200'">      
+    <ion-label class="col-descripcion">{{ resultado.RESPUESTA }}</ion-label>
+  </ion-item>
+
+  <div *ngIf="resultado && resultado.COD !='200'" class="error">
+    {{ resultado.RESPUESTA }}
+  </div>
+
+</ion-list>

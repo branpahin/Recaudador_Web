@@ -1,0 +1,38 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.Listado {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.contenido{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-left: 45%;
+
+}
+.btn:hover{
+    background-color: #e48f0f;
+}

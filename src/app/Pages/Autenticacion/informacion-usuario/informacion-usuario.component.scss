@@ -1,0 +1,45 @@
+.infoUsuario{
+    background: rgb(243, 243, 243);
+    padding: 10px;
+}
+.campo{
+    background: transparent;
+    height: 10%;
+}
+
+.campo2{
+    color:black;
+    font-weight: bold;
+
+}
+ion-select.custom-select {
+    width: 100%;
+  }
+  
+  ion-select.custom-select ion-select-popover ion-select-option {
+    width: 100%;
+  }
+
+.link-text {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    float: right;
+}
+
+.editar {
+    
+    margin-bottom: 7%;
+}
+
+.link-text:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+.enviar{
+    right: 0%;
+    background-color: transparent;
+}
+.enviarIcon{
+    color: green;
+}

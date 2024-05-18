@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Cierre Cajas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Cierre Cajas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item class="estados">
+            <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" (ionChange)="ListarConveniosCierre()" required>
+              <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="stacked">CONVENIO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_CONVENIO" name="empresa" [disabled]="!datos.CODIGO_PUNTO_PAGO" (ionChange)="ListarCajasConveniosCierre()" required>
+              <ion-select-option *ngFor="let punto of listadoConvenios" [value]="punto.CODIGO_CONVENIO">{{ punto.NOMBRE_CODIGO_CONVENIO }}</ion-select-option>
+            </ion-select> 
+          </ion-item>    
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="stacked">IDENTIFICADOR: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.IDENTIFICADOR_PUNTO_PAGO" name="empresa" [disabled]="!datos.CODIGO_CONVENIO" required>
+              <ion-select-option *ngFor="let punto of listadoCajasConvenios" [value]="punto.VALOR_CAJA">{{ punto.NOMBRE_CAJA }}</ion-select-option>
+            </ion-select>       
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-label position="stacked">Fecha</ion-label>
+              <div class="fecha">
+                <ion-datetime-button datetime="datetime3"></ion-datetime-button>
+    
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="datetime3"  display-format="DD/MM/YYYY" presentation="date"
+                    (ionChange)="filtroFecha($event)"></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+                        
+              </div>
+        </ion-col>
+        <ion-col class="col-btn">
+          <div class="div-btn">
+            <button class="btn" expand="full" (click)="CerrarCaja()"> Cerrar</button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-list class="tabla_lista" style="overflow-y: auto; max-height: 20vh;">
+      <ion-title class="titulo">CIERRES REALIZADOS</ion-title>
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col>PUNTO DE PAGO</ion-col>
+          <ion-col>CONVENIO</ion-col>
+          <ion-col>IDENTIFICADOR</ion-col>
+        </ion-row>
+        <ion-row class="data-row" *ngFor="let datos of listado">
+          <ion-col title="{{ datos.PUNTO_PAGO }}">{{datos.PUNTO_PAGO}}</ion-col>
+          <ion-col title="{{ datos.CONVENIO }}">{{datos.CONVENIO}}</ion-col>
+          <ion-col title="{{ datos.IDENTIFICADOR }}">{{datos.IDENTIFICADOR}}</ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+
+  </ion-card-content>
+</ion-card>

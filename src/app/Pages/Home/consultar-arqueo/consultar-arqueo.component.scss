@@ -1,0 +1,210 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 51%;
+    margin: 0 auto;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+ion-row, ion-col{
+    border: 1px solid black;
+}
+
+.filtros{
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+
+.filtros{
+    border: 0px solid rgb(255, 255, 255);
+}
+
+.error{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    color: red;
+    
+}
+
+.formulario{
+    max-width: 50%;
+    margin: 0 auto;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 10);
+   
+}
+.Listado {
+    position: absolute;
+    top: 350px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    z-index: 2000;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 12px 2000px rgba(0, 0, 0, 10);
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2500;
+  }
+.overlay-content {
+    top:10%;
+    left: 10%;
+    width: 70%;
+    height: 50%;
+    z-index: 2800;
+}
+.tabla {
+    position: fixed;
+    top: 20%;
+    left: 0;
+    width: 150%;
+    height: 150%;
+    transform: translate(-17%, -17%);
+    z-index: 2300;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 2000px rgba(0, 0, 0, 0.9);
+}
+
+.btn-filtro{
+    background-color: var(--ion-color-mycolor);
+    padding: 5px;
+    border-radius: 0px 20px 20px 0px;
+    font-size: 15px;
+}
+.btn-filtro:hover{
+    background-color: #e48f0f;
+}
+ 
+.cerrar-btn {
+    
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+.cerrar {
+    
+    float: left;
+    top: 5px;
+    right: 5px;
+    z-index: 9900;
+}
+.contenido{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.titulo{
+    font-weight: bold;
+    
+   
+}
+
+.data-row ion-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.header-row{
+    font-weight: bold;
+    background-color: #e48f0f;
+    color:#fff;
+}
+.link-text {
+    position: absolute;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    right: 0px;
+    bottom: 2px;
+}
+
+.link-text:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-left: 40%;
+    margin-top: 5%;
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+.fecha{
+    display: flex;
+    
+}
+
+.imprimir-btn{
+    background: transparent;
+    font-size: 20px;
+}
+
+.imprimir1{
+    color:blue;
+}
+.small-edit-column {
+    max-width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }
+ .overlay-Imp {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    width: 150%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2500;
+  }
+ .imprimir{
+    position: fixed;
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;
+    top: 50%;
+    left: 43%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+  }

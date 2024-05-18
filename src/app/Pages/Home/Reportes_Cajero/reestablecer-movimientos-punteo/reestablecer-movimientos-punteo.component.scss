@@ -1,0 +1,51 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.error{
+    align-items: center;  // Centrar verticalmente
+    justify-content: center;  // Centrar horizontalmente
+    text-align: center;  // Alinea el texto en el centro
+    height: 100%;  // O ajusta la altura según tus necesidades
+    color: red;
+}
+.btn_m{
+    background-color: #fff;
+    border-radius: 10px;
+    font-size: 20px;
+    color: black;
+    text-align: center;
+    margin-left: 50%;
+}
+.btn_m:hover{
+    background-color: #ddae68;
+
+}
+#facturasTitulo{
+    color: black;
+    text-align: center;
+    font-weight: bold;
+}
+.tabla {
+    width: 100%;
+    margin: 0 auto; /* Centra el formulario en la pantalla */
+    padding: 20px;
+    background-color: #fff; /* Establece el color de fondo del formulario */
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Agrega sombra al formulario */
+}
+
+.data-row, .header-row{
+    border: 1px solid black;
+}
+.Crear{
+    color: var(--ion-color-mycolor);
+    font-size: 200%;
+
+    
+}

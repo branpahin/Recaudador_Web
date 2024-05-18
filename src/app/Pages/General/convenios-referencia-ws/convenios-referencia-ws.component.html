@@ -1,0 +1,25 @@
+<ion-grid>
+  <ion-row class="data-row">
+    <ion-col>
+      <ion-label>Convenio</ion-label>
+      <ion-select interface="action-sheet" placeholder="Seleccionar" [(ngModel)]="selectedConvenio" name="moneda" required (ionChange)="seleccionado($event)">
+        <ion-select-option *ngFor="let convenio of resultado;" [value]="convenio.CODIGO_CONVENIO" >{{ convenio.NOMRE_CONVENIO }}</ion-select-option>
+      </ion-select>
+    </ion-col>
+    <ion-col>
+      
+      <ng-container *ngFor="let moneda of resultado">
+        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO">
+          <ion-label >Convenio Det</ion-label>
+          <ion-select interface="action-sheet" placeholder="Seleccionar" [(ngModel)]="selectedConvenioDet" name="moneda" required (ionChange)="seleccionadoDet($event)">
+            <ion-select-option *ngFor="let convenio of moneda.CONVENIOS_DETALLE;" [value]="convenio.CODIGO_CONVENIO_DET">{{ convenio.NOMRE_CONVENIO_DET }}</ion-select-option>
+          </ion-select>
+        </ng-container>
+      </ng-container>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<div class="alumbradoSelect" *ngIf="alumbrado" >
+  <ion-checkbox  [(ngModel)]="alumbrado2" (ionChange)="Alumbrado($event)">Sin alumbrado</ion-checkbox>
+</div>
+  

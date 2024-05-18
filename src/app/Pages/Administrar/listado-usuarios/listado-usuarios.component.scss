@@ -1,0 +1,362 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.buscador{
+    position: absolute;
+    right: 0%;
+    width: 20%;
+}
+
+
+.login{
+    box-shadow: 0 12px 2000px rgba(0, 0, 0, 10);  
+    max-height: 750px;
+}
+ion-card-content{
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+
+.overlay-content {
+ 
+    width: 900px;
+    height: 800px;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2500;
+  }
+
+  .alerta{
+    position: absolute;
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    max-height: 50%;
+    z-index: 9999;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+
+.error{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    color: red;
+}
+
+.formulario{
+    max-width: 50%;
+    margin: 0 auto;
+   
+}
+.Listado {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 9999;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.tabla {
+    float: left;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    color:black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+   
+}
+
+   
+
+.tabla_lista::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    margin-right: 0px;
+}
+
+
+
+.cerrar-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+
+
+  .cerrar-btn-1 {
+    
+    float: right;
+    top: 0%;
+    right: 0%;
+  }
+  .cerrar {
+    
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    z-index: 9900;
+  }
+
+  
+.contenido{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.data-row ion-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+   border: 1px solid black;
+   
+}
+
+.header-row ion-col{
+    font-weight: bold;
+    border: 1px solid black;
+    background-color: #e48f0f;
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+        
+}
+
+.header-row-info ion-col{
+    font-weight: bold;
+    border: 1px solid black;
+    background-color: rgb(2, 145, 21);
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+     
+}
+
+
+
+.opcion{
+    width: 25%
+}
+.col-horamax{
+    width: 80%
+}
+
+.col-formapago{
+    width: 50%
+}
+
+.link-text {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    float: right;
+}
+
+.link-text:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.tabla-content{
+    position: relative;
+    width: 100%;
+}
+
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+
+.btn_R{
+    display: inline-block;
+}
+  
+.btn{
+    right: 5px;
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    display: inline-block;
+    color:white;
+}
+
+.div-btn{
+    align-items: end;
+    justify-content: center;
+    text-align: end;
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+.referencia{
+    width: 70%;
+}
+
+.btn_m{
+    position: absolute;
+    background-color: #fff;
+    width: 20%;
+    left: 0%;
+}
+
+.btn_m1{
+    background-color: #fff;
+    width: 20%;
+    right: 0%;
+}
+
+.eliminar{
+    color:red;
+}
+
+.aprobar{
+    color:green; 
+}
+
+.rechazar{
+    color:red; 
+}
+
+.principal{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+    background-color:#fff;
+}
+
+.principal-content{
+    margin: 0 auto;
+    background-color:#fff;
+}
+
+
+.listaDet {
+    width: 100%;
+    height: 450px;
+}
+
+.col-descripcion{
+    align-items: center;  
+    justify-content: center; 
+    text-align: center;  
+    height: 100%;  
+    color: rgb(0, 170, 14);
+}
+
+.item-alerta{
+    align-items: center;  
+    justify-content: center; 
+    text-align: center;  
+}
+
+ion-radio-group {
+    ion-item {
+      ion-label {
+        font-size: 12px;
+      }
+    }
+  }
+
+.custom-radio-item{
+    height: 35px;
+    justify-content: center;
+}
+
+.estado{
+    width: 200px;
+    font-size: 20px;
+}
+
+.custom-radio {
+    margin-bottom: 100%;
+    height: 15px;
+    width: 15px;
+
+}
+
+  .horario-container {
+    display: flex;
+    align-items: center;
+  }
+.fecha{
+    width: 100%;
+    align-items: center;  
+    justify-content: center; 
+    text-align: center;  
+}
+.editar-btn{
+    background: transparent;
+}
+.editar{
+    color:blue;
+}
+.small-edit-column {
+    max-width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }
+
+.small-edit-column-fin {
+    max-width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+ .estados{
+    width: 50%;
+ }

@@ -1,0 +1,21 @@
+<ion-grid>
+  <ion-row class="data-row">
+    <ion-col>
+      <ion-label>Convenio Manual</ion-label>
+      <ion-select interface="action-sheet" placeholder="Seleccionar" [(ngModel)]="selectedConvenio" name="moneda" required (ionChange)="seleccionado($event)">
+        <ion-select-option *ngFor="let convenio of resultado;" [value]="convenio.CODIGO_CONVENIO" >{{ convenio.NOMRE_CONVENIO }}</ion-select-option>
+      </ion-select>
+    </ion-col>
+    <ion-col>    
+      <ng-container *ngFor="let moneda of resultado">
+        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO">
+          <ion-label>Detalle</ion-label>
+          <p>{{ moneda.NOMRE_CONVENIO_DET }}</p>
+        </ng-container>
+      </ng-container>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+ 
+ 

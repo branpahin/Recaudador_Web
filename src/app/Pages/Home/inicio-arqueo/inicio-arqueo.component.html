@@ -1,0 +1,263 @@
+<ion-header>
+  <ion-toolbar color = "mycolor">
+    <ion-title>RECAUDADOR WEB</ion-title>
+    <button class="btn-in" slot="end" (click)="infoUsuario()">
+      <ion-icon id="btn-in"  name="person-circle"></ion-icon>
+    </button>
+    <button class="Cerrar_Sesion"expand="full" slot="end" (click)="cerrarSesion()">Cerrar Sesión</button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" >
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">RECAUDADOR WEB</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-split-pane when="xs" contentId="main">
+    <ion-menu class="menu-principal" contentId="main">
+      <ion-header >
+        <ion-toolbar class="menu" color = "mycolor">
+          <ion-title>Menu</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="opcion">
+          
+          <button class="btn_m" (click)="inicio()">
+            <ion-icon class = "Ini" name="home" size="large" ></ion-icon><span>Inicio</span>
+          </button>
+        </div>
+
+        <div class="opcion" *ngFor="let modulo of modulos; let i = index">
+          
+          <button class="btn_m" (click)="toggleContenido(i,modulo)" *ngIf="indiceModuloSeleccionado !== i">
+            <ion-icon [class]="obtenerIcono(modulo.MODULO).iconClass" [name]="obtenerIcono(modulo.MODULO).iconName" size="large"></ion-icon><span>{{modulo.NOMBRE_MODULO}}</span>
+          </button>
+
+          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotones && modulo.MODULO=='7'">
+            <div id="lista" *ngFor="let sub_modulo of modulo.SUB_MODULOS; let j = index">
+              <button class="btn_mAdmin" (click)="toggleContenido2(i, sub_modulo)" >
+                <ion-icon [class]="obtenerIcono2(sub_modulo.SUB_MODULO).iconClass" [name]="obtenerIcono2(sub_modulo.SUB_MODULO).iconName" size="large"></ion-icon><span>{{sub_modulo.NOMBRE_SUB_MODULO}}</span>
+              </button>
+            </div>
+          </ion-list>
+
+          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotonesAdmin && modulo.MODULO=='8'">
+            <ion-list *ngFor="let sub_modulo of modulo.SUB_MODULOS; let k = index">
+              <div id="lista">
+                <button class="btn_mAdmin" (click)="toggleContenido3(k, sub_modulo)" >
+                  <ion-icon [class]="obtenerIcono3(sub_modulo.SUB_MODULO).iconClass" [name]="obtenerIcono3(sub_modulo.SUB_MODULO).iconName" size="large"></ion-icon><span>{{sub_modulo.NOMBRE_SUB_MODULO}}</span>
+                </button>
+              </div>
+            </ion-list>
+          </ion-list>
+    
+        </div>
+      </ion-content>
+    </ion-menu>
+  
+    
+    <div class="ion-page" id="main" >
+      
+      <ion-content > 
+        
+        <div id="nav">
+      
+          <h4 id="campo1">Usuario: {{usuario}} </h4>
+  
+          <h4 id="campo2">Punto de pago: {{nombrePuntoPago}}</h4>
+
+          <div *ngIf="puntoPago=='1'" id="LlamaTurno" class="contenedor">
+            <button *ngIf="turno"class="btn" expand="full" (click)="activarCajaTurno()">Llamar</button>
+            <button *ngIf="!turno"class="btn" expand="full" (click)="finalizarCajaTurno()">Finalizar</button>
+            <div class="checkbox-container">
+              <ion-checkbox (ionChange)="preferencial($event)" [disabled]="!turno" [checked]="seleccionar">Preferencial</ion-checkbox>
+            </div>
+          </div>
+          <div id="imagen_nav">
+            <img src="../../assets/logo/logo_energia.png" class="imagenNav">
+          </div>
+        
+        </div>
+        <ion-card-content>
+          <div *ngFor="let mensaje of listadoMensajesActivos; let i = index" >
+            <ion-toast 
+              [isOpen]="isToastOpen"
+              header="{{this.mensaje.TITULO}}:"
+              message="{{mensaje.MENSAJE}}"
+              [duration]="4000"
+              icon="warning"
+              position="top"
+              class="custom-toast"
+              [style.top]="calcularPosicionVertical(i)"
+              [style.left.px]="0"
+            ></ion-toast>
+          </div>
+          
+          <div *ngIf="mostrarInicio" class="centered-image-container">
+            <img src="../../assets/logo/logo_energia.png" class="centered-image">
+          </div>
+          
+
+          <div *ngIf="mostrarContenido">
+            <app-crear-arqueo></app-crear-arqueo>
+          </div>
+
+          <div *ngIf="mostrarContenido2"> 
+            <app-consultar-arqueo></app-consultar-arqueo>
+          </div>
+
+          <div *ngIf="mostrarContenido3">
+            <app-entrega-arqueo></app-entrega-arqueo>
+          </div>
+
+          <div *ngIf="mostrarContenido4">
+ 
+            <app-cierre-arqueo></app-cierre-arqueo>
+          
+          </div>
+
+          <div *ngIf="mostrarContenido5">  
+            <app-recaudar></app-recaudar>
+          </div>
+
+          <div *ngIf="mostrarContenidoAdmin">
+            <app-asignar-caja></app-asignar-caja>
+          </div>
+
+          <div *ngIf="mostrarContenidoListar">
+            <app-consulta-arqueos-punto-pago></app-consulta-arqueos-punto-pago>
+          
+          </div>
+
+          <div *ngIf="mostrarContenidoAsobancaria">
+            <app-asobancaria></app-asobancaria>
+          
+          </div>
+
+
+          <div *ngIf="mostrarContenidoPuntosPagoAdmin">
+            <app-listado-puntos-pago></app-listado-puntos-pago>
+          
+          </div>
+
+          <div *ngIf="mostrarContenidoListaUsuarios">
+            <app-listado-usuarios></app-listado-usuarios>
+          
+          </div>
+
+          <div *ngIf="mostrarContenidoAdministrarCajas">
+            <app-administrar-cajas></app-administrar-cajas>
+          
+          </div>
+
+          <div *ngIf="mostrarContenidoTrasladoFechas">
+            <app-traslado-fechas></app-traslado-fechas>
+          
+          </div>
+
+          <div *ngIf="mostrarMensaje">
+            <app-crear-mensaje></app-crear-mensaje>
+          
+          </div>
+
+          <div *ngIf="mostrarContenidoConvenios">
+            <app-convenios></app-convenios>
+          
+          </div>
+
+          <div *ngIf="mostrarVistaReporteador">
+            <app-reporteador></app-reporteador>
+          
+          </div>
+
+          <div *ngIf="mostrarVistaCierreCaja">
+            <app-cierre-caja></app-cierre-caja>
+          
+          </div>
+          <div *ngIf="informacionParametrizacion">
+            <app-parametrizacion-parametros></app-parametrizacion-parametros>
+          
+          </div>
+          <div *ngIf="mostrarAsignacionReportes">
+            <app-asignacion-reportes></app-asignacion-reportes>
+          
+          </div>
+          
+
+        </ion-card-content>
+      </ion-content>
+    </div>
+    
+    
+  </ion-split-pane>
+  <div class="infoUsuario-content" *ngIf="informacionUser">
+    <div class="overlay-info" (click)="infoUsuario()"></div>
+    <div class="infoUsuario">
+      <app-informacion-usuario></app-informacion-usuario>
+    </div>
+  </div>
+
+  <div *ngIf="Punteo==true">
+    <ion-button class="cerrar-btn" (click)="cerrarPunteo()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <div class="overlay"></div>
+    <div class="overlay-content">
+      <app-listar-movimientos-punteo></app-listar-movimientos-punteo>
+    </div>
+  </div>
+
+  
+  <div *ngIf="mostrarContenidoFacturas">
+    <ion-button class="cerrar-btn" (click)="cerrarFacturasConvenio()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <div class="overlay"></div>
+    <div class="overlay-content">
+      
+      <app-factutas-convenio></app-factutas-convenio>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarListadoAnulaciones">
+    <ion-button class="cerrar-btn" (click)="cerrarAnulaciones()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <div class="overlay"></div>
+    <div class="overlay-content">
+      
+      <app-anulacion-pagos></app-anulacion-pagos>
+    </div>
+  </div>
+
+  <div *ngIf="Sincro">
+    <ion-button class="cerrar-btn" (click)="cerrarSincro()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <div class="overlay"></div>
+    <div class="overlay-content">
+      <app-sincronizador></app-sincronizador>
+    </div>
+  </div>
+
+  <div *ngIf="parametrizacionBarras">
+    <ion-button class="cerrar-btn" (click)="cerrarParametrizacionBarras()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+    <div class="overlay"></div>
+    <div class="overlay-content">
+      <app-parametrizacion-barras></app-parametrizacion-barras>
+    </div>
+  </div>
+  
+    <br>
+    <br>
+    <br>
+
+  <ng-template #noData>
+  </ng-template>
+  
+
+</ion-content>

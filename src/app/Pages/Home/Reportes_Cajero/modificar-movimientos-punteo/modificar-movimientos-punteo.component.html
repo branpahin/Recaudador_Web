@@ -1,0 +1,20 @@
+<ion-item>
+  <ion-label position="stacked">Codigo de Barras</ion-label>
+  <ion-input label="" [(ngModel)]="datosConsulta.CODIGO_BARRAS" name="codigoBarras" type="text" (keyup.enter)="onEnterKey($event)"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-label position="stacked">REFERENCIA</ion-label>
+  <ion-input label="" [(ngModel)]="datosConsulta2.CODIGO_CLIENTE" name="codigoBarras" type="text" (keyup.enter)="onEnterKey2($event)"></ion-input>
+</ion-item>
+
+<ion-list class="Listado" *ngIf="resultado" lines="full">
+  <ion-item *ngIf="resultado.COD=='200'">      
+    <ion-label class="col-descripcion">{{ resultado.RESPUESTA }}</ion-label>
+  </ion-item>
+
+  <div *ngIf="resultado && resultado.COD !='200'" class="error">
+    {{ resultado.RESPUESTA }}
+  </div>
+
+</ion-list>

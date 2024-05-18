@@ -1,0 +1,122 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Mensajes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Mensajes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <p>CREAR MENSAJE</p>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item class="estados">
+            <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" (ionChange)="ListarMensajes()" required>
+              <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="stacked">TITULO: </ion-label>
+            <ion-input [(ngModel)]="datos.TITULO_MENSAJE" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>   
+          </ion-item>    
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="stacked">MENSAJE: </ion-label>
+            <ion-input [(ngModel)]="datos.MENSAJE" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>       
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn" *ngIf="!editar">
+            <button class="btn" expand="full" (click)="crearMensaje()"> Generar mensaje</button>
+          </div>
+          <div class="div-btn" *ngIf="editar">
+            <button class="btn" expand="full" (click)="EditarEnviar()"> Editar</button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-list class="tabla">
+      <ion-item>
+        <ion-label>Mensajes Activos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col class="id">ID MENSAJE</ion-col>
+          <ion-col>TITULO</ion-col>
+          <ion-col>MENSAJE</ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+  
+        
+          <div *ngFor="let respuesta1 of listadoMensajesActivos">
+
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit accion">
+                  <button class="btn_m" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button>
+                  <button class="btn_m" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="close-circle-outline" ></ion-icon></button>
+                </ion-col>
+                <ion-col class="id" style="text-align: end;">{{ respuesta1.ID_MENSAJE }}</ion-col>
+                <ion-col >{{ respuesta1.TITULO}}</ion-col>
+                <ion-col >{{respuesta1.MENSAJE}}</ion-col>
+              </ion-row>
+          </div>
+        </div>
+        
+      </ion-grid>
+
+    
+    </ion-list>
+
+
+    <ion-list class="tabla2">
+
+      <ion-item>
+        <ion-label>Mensajes Inactivos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col class="id">ID MENSAJE</ion-col>
+          <ion-col>TITULO</ion-col>
+          <ion-col>MENSAJE</ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          <div *ngFor="let respuesta1 of listadoMensajesInactivos">
+           
+            <ion-row class="data-row" slot="fixed">
+              <ion-col class="edit accion">
+                <button class="btn_m" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button>
+                <button class="btn_m" (click)="Activar(respuesta1)"><ion-icon class="aprobar" name="checkmark-circle-outline"></ion-icon></button>
+              </ion-col>
+              <ion-col class="id" style="text-align: end;">{{ respuesta1.ID_MENSAJE }}</ion-col>
+              <ion-col >{{ respuesta1.TITULO}}</ion-col>
+              <ion-col >{{respuesta1.MENSAJE}}</ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-grid>
+
+    
+    </ion-list>
+
+  </ion-card-content>
+</ion-card>

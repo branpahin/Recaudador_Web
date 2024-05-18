@@ -1,0 +1,206 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Entrega</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Entrega</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="contenido">
+
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label position="stacked">Accion</ion-label>
+              <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.ACCION" name="accion" (ionChange)="tipoEntregaDatafono()">
+                <ion-select-option value=1>PARCIAL</ion-select-option>
+                <ion-select-option value=2>TRANSPORTADORA</ion-select-option>
+                <ion-select-option value=3>FINAL</ion-select-option>
+              </ion-select>
+            </ion-item>
+      
+            <ion-item >
+              <ion-label position="stacked">Valor total</ion-label>
+              <ion-input label="" [(ngModel)]="datos.VALOR_TOTAL" name="valor"  placeholder="$" required appFormatoMonetario></ion-input>
+            </ion-item>
+      
+           
+      
+            <ion-item>
+              <ion-label position="stacked">Comentario</ion-label>
+              <ion-input label="" label="" [(ngModel)]="datos.COMENTARIO" name="comentario"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col *ngIf="datos.ACCION=='3'" size="7" >
+            <ion-row class="Datafonos">
+              <ion-col *ngIf="datos.ACCION=='3'" class="Datafonos">
+            
+                <ng-container *ngFor="let moneda of datafono">
+                  <ion-item *ngIf="moneda.CODIGO==21">
+                    <ion-label position="stacked">DESCUENTOS</ion-label>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.PRESTAMOS_EEP" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ion-col>
+              
+              <ion-col *ngIf="datos.ACCION=='3'" class="Datafonos">
+                
+                <ng-container *ngFor="let moneda of datafono">
+                  <ion-item *ngIf="moneda.CODIGO==22">
+                    <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.VALOR_CHEQUES" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ion-col>
+            </ion-row>
+            <ion-row class="Datafonos">
+              <ion-col class="Datafonos">
+                
+                <ng-container *ngFor="let moneda of datafono">
+                  <ion-item *ngIf="moneda.CODIGO==23">
+                    <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_EEP" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ion-col>
+              <ion-col class="Datafonos">
+                <ng-container *ngFor="let moneda of datafono">
+                  <ion-item *ngIf="moneda.CODIGO==24">
+                    <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_AGUAS" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ion-col>
+              <ion-col class="Datafonos">
+                <ng-container *ngFor="let moneda of datafono">
+                  <ion-item *ngIf="moneda.CODIGO==25">
+                    <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_MUNICIPIO" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                  </ion-item>
+                </ng-container>
+              </ion-col>
+            </ion-row>
+            
+          </ion-col>
+          
+        </ion-row>
+      </ion-grid>
+          
+        
+
+      
+
+
+      <div *ngIf="mostrartabla" class="detalle-container">
+        <ion-grid>
+          <ion-row>
+            <ion-col class="edit small-edit-column">
+            </ion-col>
+            <ion-col>
+              <ion-label position="stacked">Codigo de moneda</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label position="stacked">Tipo </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label position="stacked">Cantidad</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label position="stacked">Valor Unitario</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label position="stacked">Valor</ion-label>
+            </ion-col>
+            
+          </ion-row>
+          <ion-row *ngFor="let detalle of datos.ENTREGAS_DET; let i = index" >
+            <ion-col class="edit small-edit-column">
+              <button class="eliminarFila" (click)="eliminarFila(detalle)"><ion-icon id="eliminarFila" name="remove-circle-outline" ></ion-icon></button>
+            </ion-col>           
+            <ion-col>
+              <ion-item>
+                <ion-select  interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.CODIGO_MONEDA" name="moneda" (ionChange)="tipoEntrega($event)" required>
+                  <ng-container *ngFor="let moneda of monedas">
+                    <ion-select-option *ngIf="moneda.CODIGO!=21 && moneda.CODIGO!=22 && moneda.CODIGO!=23 && moneda.CODIGO!=24 && moneda.CODIGO!=25" [value]="moneda.CODIGO" [disabled]="campoRepetido(moneda.CODIGO)"><p >{{ moneda.DESCRIPCION }}</p>
+                    </ion-select-option>
+                  </ng-container>               
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.TIPO" name="Tipo" required [disabled]="!detalle.CODIGO_MONEDA" (ionChange)="infoMonedas($event)">
+                  <ng-container *ngFor="let moneda of monedas">
+                    <ng-container *ngIf="detalle.CODIGO_MONEDA === moneda.CODIGO">
+                      <ng-container *ngIf="datos.ACCION=='1'">
+                        <ion-select-option value="FAJO">
+                          <p>FAJO</p>
+                        </ion-select-option>
+                      </ng-container>
+                      <ng-container *ngIf="datos.ACCION!='1'">
+                        <ion-select-option [value]="tipoObj.TIPO" *ngFor="let tipoObj of moneda.TIPO">
+                          {{ tipoObj.TIPO }}
+                        </ion-select-option>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-input label="" [(ngModel)]="detalle.CANTIDAD" name="cantidad" (ionChange)="infoMonedas($event)"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item >
+                $ {{detalle.VALOR_UNITARIO | number}}
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                $ {{detalle.VALOR | number}}
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      
+    </ion-card-content>
+    <button class="btn-base" type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+    <br>
+    <button class="btn" expand="full" [disabled]="!enviar" (click)="limpiarYEnviar()">Enviar</button>
+    <br>
+    
+    
+    <ion-list class="Listado" *ngIf="resultado && resultado =='200'; else noData" lines="full">
+      <ion-item>      
+        <div class="col-codigo">
+          <ion-label class="ion-text-end" style="flex: 1;">{{ resultado.ESTADO }}</ion-label>
+        </div>
+        <ion-label class="col-descripcion">{{ resultado.RESPUESTA }}</ion-label>
+        <ion-note class="col-nit" slot="end">{{ resultado.NUMERO_ARQUEO }}</ion-note>
+      </ion-item>
+      
+
+    </ion-list>
+        
+      <div *ngIf="resultado && resultado.COD !='200'" class="error">
+        {{ resultado.RESPUESTA }}
+      </div>
+ 
+  </ion-card>
+  
+  <ng-template #noData>
+  </ng-template>
+  
+  <br>
+  <br>
+  <br>
+  <br>

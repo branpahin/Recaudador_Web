@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Crear Arqueo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Crear Arqueo</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="login">
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Empresa</ion-label>
+        <ion-input label="" [(ngModel)]="crear_arqueo.EMPRESA" name="empresa" type="text" value="{{empresa}}" placeholder="{{nombreEmpresa}}" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Numero de caja</ion-label>
+        <ion-input label="" [(ngModel)]="crear_arqueo.CODIGO_CAJA" name="puntoPago" type="text" value="{{caja}}" placeholder="{{caja}}" readonly></ion-input>
+        
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Punto de Pago</ion-label>
+        <ion-input label="" [(ngModel)]="crear_arqueo.CODIGO_PUNTO_PAGO" name="puntoPago" type="text" value="{{puntoPago}}" placeholder="{{nombrePuntoPago}}" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input label="" [(ngModel)]="crear_arqueo.USUARIO" name="usuario" type="text" placeholder="{{usuario}}" readonly></ion-input>
+      </ion-item>
+  
+    </ion-card-content>
+    <button class="btn_m" (click)="crearArqueo()">
+      <ion-icon class = "Crear" name="add-circle-sharp"></ion-icon>
+    </button>
+
+  </ion-card>
+  
+
+  
+  
+
+  <ion-list class="Listado" *ngIf="resultado" lines="full">
+    <ion-item >
+      <ion-label *ngIf="resultado.COD=='200'"class="col-descripcion">N° ARQUEO: {{ resultado.NUMERO_ARQUEO }}</ion-label>
+    </ion-item>
+
+
+  </ion-list>
+

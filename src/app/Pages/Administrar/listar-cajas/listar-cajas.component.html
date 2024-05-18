@@ -1,0 +1,6 @@
+<ion-item>
+  <ion-label position="stacked">Numero de caja</ion-label>
+  <ion-select interface="popover" placeholder="Seleccionar" name="empresa" required>
+    <ion-select-option *ngFor="let caja of puntoPago_0" [value]="caja.CODIGO_CAJA">{{ caja.NOMBRE_CAJA }}</ion-select-option>
+  </ion-select>
+</ion-item>

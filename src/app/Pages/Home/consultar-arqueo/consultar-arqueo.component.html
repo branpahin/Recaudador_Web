@@ -1,0 +1,298 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Consultar Arqueo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Consultar Arqueo</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="formulario">
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Accion</ion-label>
+        <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="consultar_arqueo.ACCION" name="accion">
+          <ion-select-option value='1'>Por Usuario</ion-select-option>
+          <ion-select-option value='2'>Por Parametro</ion-select-option>
+        </ion-select>   
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '1'">
+        <ion-label position="stacked">Empresa</ion-label>
+        <ion-input placeholder="{{nombreEmpresa}}" name="usuario" required readonly></ion-input>
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '1'">
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input placeholder="{{usuario}}" name="usuario" required [readonly]="verificarRol()"></ion-input>
+      </ion-item>
+
+
+
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Empresa</ion-label>
+        <ion-input placeholder="{{nombreEmpresa}}" name="usuario" required readonly></ion-input>
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input placeholder="{{usuario}}" name="usuario" required readonly></ion-input>
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Numero de Arqueo</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.NUMERO_ARQUEO" name="numeroArqueo"></ion-input>
+      </ion-item>
+      
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Numero de Movimiento</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.NUMERO_MOVIMIENTO" name="numeroMovimiento"></ion-input>
+      </ion-item>
+      
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Valor de Movimiento</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.VALOR_MOVIMIENTO" name="valorMovimiento"></ion-input>
+      </ion-item>
+      
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Fecha de Movimiento</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.FECHA_MOVIMIENTO" name="fechaMovimiento"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Referencia</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.REFERENCIA" name="referencia"></ion-input>
+      </ion-item>
+      <button class="btn" expand="full" (click)="consultarArqueo()">Consultar</button>
+    <br>
+    </ion-card-content>
+    
+  </ion-card>
+
+  
+  <ion-list class="Listado" *ngIf="listado && resultado && resultado.COD=='200'" lines="full">
+    
+    <ion-item>
+      <ion-button class="cerrar-btn" (click)="cerrarlistado()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-label class="titulo">Nombre de Empresa: </ion-label>
+      <ion-label>{{ resultado.NOMBRE_EMPRESA }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">Nombre Punto de Pago: </ion-label>
+      <ion-label>{{ resultado.NOMBRE_PUNTO_PAGO }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">Nombre de Caja: </ion-label>
+      <ion-label>{{ resultado.NOMBRE_CAJA }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">N° Arqueo: </ion-label>
+    <ion-label>{{ resultado.NUMERO_ARQUEO }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">Fecha Arqueo: </ion-label>
+      <ion-label>{{ resultado.FECHA_ARQUEO }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">Estado: </ion-label>
+      <ion-label>{{ resultado.ESTADO }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">N° Movimientos: </ion-label>
+      <ion-label>{{ resultado.NUMERO_MOVIMIENTOS }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">N° Movimientos Detalle: </ion-label>
+      <ion-label>{{ resultado.NUMERO_MOVIMIENTOS_DET }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label class="titulo">N° Movimientos Anulados: </ion-label>
+      <ion-label>{{ resultado.NUMERO_MOVIMIENTOS_ANULADOS }}</ion-label>
+    </ion-item>
+    <ion-item *ngIf="rol!='R_CAJERO'">
+      <ion-label class="titulo">Valor movimientos detalle: </ion-label>
+      <ion-label>$ {{ resultado.VALOR_MOVIMIENTOS_DET | number }}</ion-label>
+    </ion-item>
+    <button class="btn" expand="full" (click)="detallerecaudos()"> Detalles Recaudos</button>
+    
+  </ion-list>
+
+ 
+  <div *ngIf="resultado && resultado.COD !='200'" class="error">
+    {{ resultado.RESPUESTA }}
+  </div>
+
+  <ion-list *ngIf="detalles && resultado && resultado.COD=='200'" class="tabla">
+    <div class="overlay"></div>
+      
+      <ion-content class="overlay-content">
+        <ion-item>
+
+          <div class="cerrar">
+            <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </div>
+          
+          <ion-label>Recaudos: </ion-label>
+        </ion-item>
+        <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
+        <ion-row class="filtros" *ngIf="habilitarfiltrado">
+          <ion-col class="filtros">
+            <ion-item >
+              <ion-label position="stacked">N° Movimiento:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroNumeroMovimiento"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Fecha u Hora</ion-label>
+              <div class="fecha">
+                <ion-datetime-button datetime="datetime"></ion-datetime-button>
+    
+                <ion-datetime-button datetime="time" class="time"></ion-datetime-button>
+    
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="datetime"  display-format="DD/MM/YYYY" presentation="date"
+                    (ionChange)="filtro($event)"></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+    
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="time" presentation="time"
+                    (ionChange)="Hora($event)" ></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+              </div>
+            </ion-item>
+            
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Tipo de pago:</ion-label>
+              <ion-input placeholder="Tipo de Pago" [(ngModel)]="filtroTipoPago"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Valor recibido:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtrovalorRecibido"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Valor movimiento:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtrovalorMovimiento"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">Valor cambio:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroValorCambio"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col class="filtros">
+            <ion-item>
+              <ion-label position="stacked">N° cupones:</ion-label>
+              <ion-input placeholder="N° Movimiento" [(ngModel)]="filtroNumeroCupones"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        
+        
+        <ion-grid >
+          
+          <ion-row class="header-row">
+            <ion-col class="edit small-edit-column"></ion-col>
+            <ion-col>N° Movimiento</ion-col>
+            <ion-col>Fecha</ion-col>
+            <ion-col>Tipo de Pago</ion-col>
+            <ion-col>Valor recibido</ion-col>
+            <ion-col>Valor Movimiento</ion-col>
+            <ion-col>Valor Cambio</ion-col>
+            <ion-col>Numero Cupones</ion-col>
+      
+          </ion-row>
+
+          <ion-row class="filter-row">
+           
+          </ion-row>
+  
+          <ion-row class="data-row" *ngFor="let recaudo of recaudos | filterByColumn: filtroNumeroMovimiento: 'NUMERO_MOVIMIENTO' | filterByColumn: filtroFecha:'FECHA_MOVIMIENTO' | filterByColumn: filtroTipoPago:'NOMBRE_TIPO_PAGO' | filterByColumn: filtrovalorRecibido:'VALOR_RECIBIDO' | filterByColumn: filtrovalorMovimiento:'VALOR_MOVIMIENTO' | filterByColumn: filtroValorCambio:'VALOR_CAMBIO' | filterByColumn: filtroNumeroCupones:'NUMERO_CUPONES_MOVIMIENTO'" class="data-row" >
+            <ion-col class="edit small-edit-column"><button class="imprimir-btn" (click)="vistaImpresion(recaudo)"><ion-icon class="imprimir1" name="print-outline" size="lage"></ion-icon></button></ion-col>
+            <ion-col title="{{ recaudo.NUMERO_MOVIMIENTO }}">{{ recaudo.NUMERO_MOVIMIENTO }}<span class="link-text" (click)="mostrarDetalles(recaudo.NUMERO_MOVIMIENTO)">detalles...</span></ion-col>
+            <ion-col title="{{ recaudo.FECHA_MOVIMIENTO }}">{{ recaudo.FECHA_MOVIMIENTO }}</ion-col>
+            <ion-col title="{{ recaudo.NOMBRE_TIPO_PAGO }}">{{ recaudo.NOMBRE_TIPO_PAGO }}</ion-col>
+            <ion-col title="{{ recaudo.VALOR_RECIBIDO }}">{{ recaudo.VALOR_RECIBIDO | number}}</ion-col>
+            <ion-col title="{{ recaudo.VALOR_MOVIMIENTO }}">{{ recaudo.VALOR_MOVIMIENTO | number}}</ion-col>
+            <ion-col title="{{ recaudo.VALOR_CAMBIO }}">{{ recaudo.VALOR_CAMBIO | number}}</ion-col>
+            <ion-col title="{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}">{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}</ion-col>
+            
+          </ion-row>
+  
+  
+        </ion-grid>
+      </ion-content>
+    
+  </ion-list>
+
+  <ion-list *ngIf="detalleSeleccionado && detallesFac && resultado && resultado.COD=='200'" class="tabla">
+    <div class="overlay"></div>
+    <ion-content class="overlay-content">
+      <ion-item>
+        <ion-button class="cerrar-btn" (click)="cerrarTablaFac()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+        <ion-label>Informacion Facturas: </ion-label>
+      </ion-item>
+    
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col class="edit small-edit-column"><button class="imprimir-btn" (click)="vistaImpresionDes()"><ion-icon class="imprimir1" name="print-outline" size="lage"></ion-icon></button></ion-col>
+          <ion-col>N° Movimiento factura</ion-col>
+          <ion-col>Nombre Convenio</ion-col>
+          <ion-col>Factura Convenio</ion-col>
+          <ion-col>Codigo Cliente</ion-col>
+          <ion-col>Condigo Referencia</ion-col>
+          <ion-col>Fecha Vencimiento</ion-col>
+          <ion-col>Valor Movimiento</ion-col>
+          <ion-col>Forma de Pago</ion-col>
+          <ion-col>Migrado</ion-col>
+    
+        </ion-row>
+  
+        <div *ngFor="let informacion of informacionF" >
+          <div  *ngIf="detalleSeleccionado === informacion.NUMERO_MOVIMIENTO">
+          <ion-row class="data-row" class="data-row" *ngFor="let informacio of informacion.INFORMACION_FACTURA">
+            <ion-col class="edit small-edit-column">
+              <ion-checkbox (ionChange)="updateSelectedClientes($event, informacio)"></ion-checkbox>
+            </ion-col>
+            <ion-col title="{{ informacio.NUMERO_MOVIMIENTO_DET }}">{{ informacio.NUMERO_MOVIMIENTO_DET }}</ion-col>
+            <ion-col title="{{ informacio.NOMBRE_CONVENIO }}">{{ informacio.NOMBRE_CONVENIO }}</ion-col>
+            <ion-col title="{{ informacio.FACTURA_CONVENIO }}">{{ informacio.FACTURA_CONVENIO }}</ion-col>
+            <ion-col title="{{ informacio.CODIGO_CLIENTE }}">{{ informacio.CODIGO_CLIENTE }}</ion-col>
+            <ion-col title="{{ informacio.CODIGO_REFERENCIA }}">{{ informacio.CODIGO_REFERENCIA }}</ion-col>
+            <ion-col title="{{ informacio.FECHA_VENCIMIENTO }}">{{ informacio.FECHA_VENCIMIENTO }}</ion-col>
+            <ion-col title="{{ informacio.VALOR_MOVIMIENTO_DET }}">{{ informacio.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+            <ion-col title="{{ informacio.VALOR_MOVIMIENTO_DET }}">{{ informacio.FORMA_PAGO}}</ion-col>
+            <ion-col title="{{ informacio.MIGRADO }}">{{ informacio.MIGRADO }}</ion-col>
+          </ion-row>
+          </div>
+        </div>
+  
+  
+      </ion-grid>
+    </ion-content>
+  </ion-list>
+  
+  
+  
+  <ng-template #noData>
+  </ng-template>
+  <div class="overlay-Imp" *ngIf="imprimir" (click)="cerrarImp()"></div>
+
+  <div class="imprimir"  id="iframe-container"></div>
+  
+

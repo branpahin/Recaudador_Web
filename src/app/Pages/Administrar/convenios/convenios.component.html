@@ -1,0 +1,131 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Convenios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Convenios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <p *ngIf="mostrarCampos">CREAR CONVENIO</p>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngIf="mostrarCampos">
+          <ion-item>
+            <ion-label position="stacked">NOMBRE: </ion-label>
+            <ion-input [(ngModel)]="datos.NOMBRE" type="text" required name="nombre" required></ion-input>   
+          </ion-item>    
+        </ion-col>
+        <ion-col *ngIf="mostrarCampos">
+          <ion-item>
+            <ion-label position="stacked">NIT: </ion-label>
+            <ion-input [(ngModel)]="datos.NIT" type="text" required name="nombre" required></ion-input>       
+          </ion-item>
+        </ion-col>
+        <ion-col *ngIf="mostrarCampos">
+          <ion-item>
+            <ion-label position="stacked">CIERRE: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CIERRE_CAJAS" name="empresa" required>
+              <ion-select-option value="S">SI</ion-select-option>
+              <ion-select-option value="N">NO</ion-select-option>
+            </ion-select>      
+          </ion-item>
+        </ion-col>
+        <ion-col>
+
+          <div class="div-btn" *ngIf="!editar && !mostrarCampos">
+            <button class="btn" expand="full" (click)="MostrarCampoCrear()"> Crear Convenio</button>
+          </div>
+          <div class="div-btn" *ngIf="!editar && mostrarCampos">
+            <button class="btn" expand="full" (click)="crearConvenio()"> Crear </button>
+          </div>
+          <div class="div-btn" *ngIf="editar">
+            <button class="btn" expand="full" (click)="EditarEnviar()"> Editar</button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-list class="tabla">
+      <ion-item>
+        <ion-label>Convenios Activos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col>EMPRESA</ion-col>
+          <ion-col>CONVENIO</ion-col>
+          <ion-col>NIT</ion-col>
+          <ion-col class="id">ESTADO</ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+  
+        
+          <div *ngFor="let respuesta1 of listadoConveniosActivos">
+
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit accion">
+                  <button class="btn_m" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button>
+                  <button class="btn_m" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="close-circle-outline" ></ion-icon></button>
+                </ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}" style="text-align: end;">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_CONVENIO}}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{respuesta1.NIT_CONVENIO}}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}" class="id" >{{respuesta1.NOMBRE_ESTADO_CONVENIO}}</ion-col>
+              </ion-row>
+          </div>
+        </div>
+        
+      </ion-grid>
+
+    
+    </ion-list>
+
+
+    <ion-list class="tabla2">
+
+      <ion-item>
+        <ion-label>Convenios Inactivos: </ion-label>
+      </ion-item>
+      <ion-grid >
+        <ion-row class="header-row">
+          <ion-col class="edit accion">ACCION</ion-col>
+          <ion-col>EMPRESA</ion-col>
+          <ion-col>CONVENIO</ion-col>
+          <ion-col>NIT</ion-col>
+          <ion-col class="id">ESTADO</ion-col>
+    
+  
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          <div *ngFor="let respuesta1 of listadoConveniosInactivos">
+           
+            <ion-row class="data-row" slot="fixed">
+              <ion-col class="edit accion">
+                <button class="btn_m" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button>
+                <button class="btn_m" (click)="Activar(respuesta1)"><ion-icon class="aprobar" name="checkmark-circle-outline"></ion-icon></button>
+              </ion-col>
+              <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}" style="text-align: end;">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+              <ion-col title="{{ respuesta1.NOMBRE_CONVENIO }}">{{ respuesta1.NOMBRE_CONVENIO}}</ion-col>
+              <ion-col title="{{ respuesta1.NIT_CONVENIO }}">{{respuesta1.NIT_CONVENIO}}</ion-col>
+              <ion-col title="{{ respuesta1.NOMBRE_ESTADO_CONVENIO }}" class="id" >{{respuesta1.NOMBRE_ESTADO_CONVENIO}}</ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-grid>
+
+    
+    </ion-list>
+
+  </ion-card-content>
+</ion-card>

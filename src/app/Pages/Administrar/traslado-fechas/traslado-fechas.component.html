@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Traslado de Fechas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Traslado de Fechas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item class="estados">
+            <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" required>
+              <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="fecha">
+            <ion-label position="stacked">FECHA ACTUAL: </ion-label>
+            <ion-datetime-button class="btn-fecha" datetime="datetime"></ion-datetime-button>
+      
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="datetime"  display-format="DD/MM/YYYY" presentation="date"
+                (ionChange)="fecha($event)"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+                 
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="fecha">
+            <ion-label position="stacked">TRASLADAR A: </ion-label>
+            <ion-datetime-button class="btn-fecha" datetime="datetime1"></ion-datetime-button>
+      
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="datetime1"  display-format="DD/MM/YYYY" presentation="date"
+                (ionChange)="fechaTraslado($event)"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn">
+            <button class="btn" expand="full" (click)="TrasladarFecha()"> Trasladar Fecha </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

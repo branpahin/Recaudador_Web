@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Recaudo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Recaudo</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="login">
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Empresa</ion-label>
+        <ion-input label="" [(ngModel)]="datos.EMPRESA" name="empresa" type="text" value="{{datos.EMPRESA}}" placeholder="{{datos.EMPRESA}}" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Numero de Arqueo</ion-label>
+        <ion-input label="" [(ngModel)]="datos.NUMERO_ARQUEO" name="Arqueo" type="text" value="{{datos.NUMERO_ARQUEO}}" placeholder="{{datos.NUMERO_ARQUEO}}" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input label="" [(ngModel)]="datos.USUARIO" name="Usuario" type="text" value="{{datos.USUARIO}}" placeholder="{{datos.USUARIO}}" readonly></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Codigo de Barras</ion-label>
+        <ion-input label="" [(ngModel)]="datos.CODIGO_BARRAS" name="codigoBarras" type="text"></ion-input>
+      </ion-item>
+    </ion-card-content>
+
+    <button class="btn_m" (click)="consultarRecaudoBarras()">
+      <ion-icon class = "Crear" name="add-circle-sharp"></ion-icon>
+    </button>
+
+  </ion-card>
+  
+
+  
+  
+
+  <ion-list class="Listado" *ngIf="resultado" lines="full">
+    <ion-item *ngIf="resultado.COD=='200'">      
+      <ion-label class="col-descripcion">{{ resultado.RESPUESTA }}</ion-label>
+    </ion-item>
+
+    <div *ngIf="resultado && resultado.COD !='200'" class="error">
+      {{ resultado.RESPUESTA }}
+    </div>
+
+  </ion-list>
+

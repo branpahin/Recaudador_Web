@@ -1,0 +1,411 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Facturas Convenio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Facturas Convenio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item *ngIf="!crear" class="estados">
+            <ion-label position="stacked">Facturas: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="facturas" name="empresa" (ionChange)="ListarFacturasConvenio()" required>
+              <ion-select-option  value="ACTIVAS">ACTIVAS</ion-select-option>
+              <ion-select-option  value="INACTIVAS">INACTIVAS</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn">
+            <button *ngIf="!crear" class="btn" expand="full" (click)="Crear()"> Crear Factura</button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+      
+      
+      
+    <ion-list class="tabla" *ngIf="!crear">
+        <ion-grid >
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label *ngIf="facturas=='ACTIVAS'">Listado Facturas Activas: </ion-label>
+                  <ion-label *ngIf="facturas=='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                </ion-item>
+                <ion-row class="header-row1" >
+                  <ion-col class="edit small-edit-column"></ion-col>
+                  <ion-col>EMPRESA</ion-col>
+                  <ion-col>CONVENIO</ion-col>
+                  <ion-col>NIT</ion-col>
+                  <ion-col>CONVENIO DET</ion-col>
+                  <ion-col>CODIGO BARRAS</ion-col>
+                  <ion-col>RECAUDO EFECTIVO</ion-col>
+                  <ion-col>RECAUDO CHEQUE</ion-col>
+                  <ion-col>RECAUDO DATAFONO</ion-col>
+                  <ion-col>RECAUDO DATAFONO EXITO</ion-col>
+                  <ion-col>RECAUDO MIXTO</ion-col>
+                  <ion-col class="edit small-edit-column-fin"></ion-col>
+                  
+                </ion-row>
+                <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+              
+                  <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+                    <ion-row class="data-row" slot="fixed">
+                      <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button></ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CONVENIO}}">{{ respuesta1.NOMBRE_CONVENIO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NIT_CONVENIO }}">{{ respuesta1.NIT_CONVENIO }}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_CONVENIO_DET}}">{{ respuesta1.NOMBRE_CONVENIO_DET}}</ion-col>
+                      <ion-col title="{{ respuesta1.CODIGO_BARRAS}}">{{ respuesta1.CODIGO_BARRAS}}</ion-col>
+                      <ion-col title="{{ respuesta1.RECAUDO_EFECTIVO}}">{{ respuesta1.RECAUDO_EFECTIVO}}</ion-col>
+                      <ion-col title="{{ respuesta1.RECAUDO_CHEQUE}}">{{ respuesta1.RECAUDO_CHEQUE}}</ion-col>
+                      <ion-col title="{{ respuesta1.RECAUDO_DATAFONO}}">{{ respuesta1.RECAUDO_DATAFONO}}</ion-col>
+                      <ion-col title="{{ respuesta1.RECAUDO_DATAFONO_EXITO}}">{{ respuesta1.RECAUDO_DATAFONO_EXITO}}</ion-col>
+                      <ion-col title="{{ respuesta1.RECAUDO_MIXTO}}">{{ respuesta1.RECAUDO_MIXTO}}</ion-col>
+                      <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+                    </ion-row>
+                    <ion-grid *ngIf="respuesta1.selected">
+                      <ion-row  class="header-row-info">
+                        <ion-col>TIPO VENCIMIENTO</ion-col>
+                        <ion-col>RECAUDO MANUAL</ion-col>
+                        <ion-col>RECAUDO WS</ion-col>
+                        <ion-col>BUSQUEDA REFERENCIA</ion-col>
+                        <ion-col>ASOBANCARIA</ion-col>
+                        <ion-col>TIPO ASOBANCARIA</ion-col>
+                        <ion-col>CORREO</ion-col>
+                        <ion-col>EXCEL</ion-col>
+                      </ion-row>
+                      <ion-row  class="data-row">
+                        <ion-col title="{{ respuesta1.NOMBRE_TIPO_VENCIMIENTO}}">{{ respuesta1.NOMBRE_TIPO_VENCIMIENTO}}</ion-col>
+                        <ion-col title="{{ respuesta1.TIPO_RECAUDO_MANUAL}}">{{ respuesta1.TIPO_RECAUDO_MANUAL}}</ion-col>
+                        <ion-col title="{{ respuesta1.TIPO_RECAUDO_WS}}">{{ respuesta1.TIPO_RECAUDO_WS}}</ion-col>
+                        <ion-col title="{{ respuesta1.BUSQUEDA_REFERENCIA}}">{{ respuesta1.BUSQUEDA_REFERENCIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.ASOBANCARIA}}">{{ respuesta1.ASOBANCARIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.NOMBRE_TIPO_ASOBANCARIA}}">{{ respuesta1.NOMBRE_TIPO_ASOBANCARIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.CORREO_ASOBANCARIA}}">{{ respuesta1.CORREO_ASOBANCARIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.EXCEL}}">{{ respuesta1.EXCEL}}</ion-col>
+                      </ion-row>
+                      
+                    </ion-grid>
+                    
+                  </div>
+                  
+                </div>
+              </ion-col>
+            </ion-row>
+             
+        </ion-grid>
+      </ion-list>
+
+      <ion-list class="tabla1" *ngIf="crear">
+        <div class="cerrar">
+          <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item class="barras">
+                <ion-label position="stacked">Convenio: </ion-label>
+                <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_CONVENIO" name="empresa" required>
+                  <ion-select-option *ngFor="let convenio of listadoConveniosActivos" [value]="convenio.CODIGO_CONVENIO">{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-row>
+                <ion-col>
+                  <ion-row class="header-row">
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Codigo de Barras: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.CODIGO_BARRAS">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Manual: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.MANUAL">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Pago Linea: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.PAGO_LINEA">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="header-row">
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Efectivo: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.EFECTIVO">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Cheque: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.CHEQUE">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Tarjeta: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.TARJETA">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="header-row">
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Exito: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.TARJETA_EXITO">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Mixto: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.MIXTO">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Por Referencia: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.BUSQUEDA_REFERENCIA">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Tipo de vencimiento: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_VENCIMIENTO" name="empresa" required>
+                      <ion-select-option *ngFor="let tipo of TipoVencimiento" [value]="tipo.CODIGO">{{ tipo.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                  <ion-row>
+                    <ion-col>
+                      <ion-item>
+                        <ion-label position="stacked">Días vencimiento</ion-label>
+                        <ion-input [(ngModel)]="datos.DIAS_VENCIMIENTO" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <ion-label position="stacked">Fecha Finalización</ion-label>
+                        <div class="fecha" *ngIf="!editar">
+                          <ion-datetime-button datetime="datetime"></ion-datetime-button>
+              
+                          <ion-modal [keepContentsMounted]="true">
+                            <ng-template>
+                              <ion-datetime id="datetime" presentation="date"
+                              (ionChange)="filtro($event)"></ion-datetime>
+                            </ng-template>
+                          </ion-modal>
+                                 
+                        </div>
+
+                        <div class="fecha" *ngIf="editar">
+          
+                          <ion-datetime-button [ngModel]="fecha" datetime="datetime"></ion-datetime-button>
+              
+                          <ion-modal [keepContentsMounted]="true">
+                            <ng-template>
+                              <ion-datetime [ngModel]="fecha" id="datetime" presentation="date"
+                              (ionChange)="filtro($event)" ></ion-datetime>
+                            </ng-template>
+                          </ion-modal>
+                        </div>
+
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row class="header-row">
+                    <ion-col>
+                      <div>
+                        <ion-label position="stacked">Excel: </ion-label>
+                        <ion-radio-group [(ngModel)]="datos.EXCEL">
+                          <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                            <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                            <span>|</span>
+                            <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                          </ion-item>
+                        </ion-radio-group>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <ion-label position="stacked">Estado: </ion-label>
+                        <ion-radio-group [(ngModel)]="datos.ESTADO">
+                          <ion-item *ngFor="let estados of seleccionarEstado" class="custom-radio-item">
+                            <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                            <span>|</span>
+                            <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                          </ion-item>
+                        </ion-radio-group>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-item class="barras">
+                <ion-label position="stacked">Nombre Factura: </ion-label>
+                <ion-input [(ngModel)]="datos.NOMBRE_FACTURA" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-row>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Asobancaria: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.ASOBANCARIA" name="empresa" required>
+                      <ion-select-option *ngFor="let seleccion of seleccionar" [value]="seleccion.CODIGO">{{ seleccion.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label position="stacked">Tipo Asobancaria: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_ASOBANCARIA" name="empresa" required>
+                      <ion-select-option *ngFor="let seleccion of TipoAsobancaria" [value]="seleccion.CODIGO">{{ seleccion.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row> 
+              <ion-row>
+                <ion-col>
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label position="stacked">Correo: </ion-label>
+                    <ion-input [(ngModel)]="datos.CORREO_ASOBANCARIA" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label for="seleccionador" position="stacked">Bancos: </ion-label>
+                    <select id="seleccionador"class="seleccionador"[(ngModel)]="datos.BANCO" name="empresa" required>
+                      <option value="" disabled selected>Seleccionar</option>
+                      <option *ngFor="let seleccion of BancosAsobancaria" [value]="seleccion.CODIGO">{{ seleccion.DESCRIPCION }}</option>
+                    </select>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label for="seleccionador" position="stacked">Tipo de Cuenta: </ion-label>
+                    <select id="seleccionador" class="seleccionador" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_CUENTA" name="empresa" required>
+                      <option value="" disabled selected>Seleccionar</option>
+                      <option *ngFor="let seleccion of TipoCuentaAsobancaria" [value]="seleccion.CODIGO">{{ seleccion.DESCRIPCION }}</option>
+                    </select>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label for="seleccionador" position="stacked">N° Cuenta: </ion-label>
+                    <ion-input [(ngModel)]="datos.NUMERO_CUENTA" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label for="seleccionador" position="stacked">Banco recaudador: </ion-label>
+                    <select id="seleccionador" class="seleccionador " [(ngModel)]="datos.BANCO_RECAUDADOR" name="empresa" required>
+                      <option value="" disabled selected>Seleccionar</option>
+                      <option *ngFor="let seleccion of BancosAsobancaria" [value]="seleccion.CODIGO" >{{ seleccion.DESCRIPCION }} </option>
+                    </select>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="div-btn">
+          <button *ngIf="crear && !editar" class="btn" expand="full" (click)="CrearFacturaConvenio()"> Crear </button>
+          <button *ngIf="crear && editar" class="btn" expand="full" (click)="ModificarFacturaConvenio()"> Editar </button>
+        </div>
+      </ion-list>
+  </ion-card-content>
+</ion-card>

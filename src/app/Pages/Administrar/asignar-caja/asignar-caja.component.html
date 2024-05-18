@@ -1,0 +1,104 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Asignar Caja</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Asignar Caja</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card class="login">
+  <ion-card-content>
+      <div style="display: grid; grid-template-columns: 70% 30%;">
+        <ion-item class="barras">
+          <ion-label position="stacked">Punto de Pago: </ion-label>
+          <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="empresa_Asignada" name="moneda" required (ionChange)="actualizarCajasSinAsignar()">
+            <ion-select-option *ngFor="let opcion of puntosPago" [value]="opcion.value">
+              {{ opcion.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div>
+          <button class="btn" expand="full" (click)="ModificarCaja()"> Guardar </button>
+          <button class="btn" expand="full" *ngIf="empresa_Asignada!='7' && empresa_Asignada!='8'" (click)="Reestablecer()"> Reestablecer </button>
+        </div> 
+        
+      </div>
+      
+      
+    <ion-list class="tabla">
+        <ion-item>
+          <ion-label>Asignación de caja disponible: </ion-label>
+        </ion-item>
+        <ion-grid >
+          
+            <ion-row class="header-row">
+              <ion-col class="id">Cod. Caja</ion-col>
+              <ion-col>Caja</ion-col>
+              <ion-col>Usuario</ion-col>
+              <ion-col>Nombre</ion-col>
+     
+            </ion-row>
+            <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+
+          
+            <div class="tabla-content" *ngFor="let respuesta1 of cajasSinAsignar">
+              <ion-row class="data-row" >
+                <ion-col class="id">{{ respuesta1.CODIGO_CAJA }}</ion-col>
+                <ion-col >{{ respuesta1.NOMBRE_CAJA}}</ion-col>
+                <ion-col >
+                  <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.USUARIO_ASIGNADO" name="moneda" required (ionChange)="agregarDetalle($event, respuesta1.CODIGO_CAJA)">
+                    <ion-select-option *ngFor="let usuario of usuarios; let i = index" [value]="usuario.USUARIO" [disabled]="campoRepetido(usuario.USUARIO)">{{ usuario.USUARIO }}</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col title="{{obtenerNombreUsuarioAsignado(respuesta1.CODIGO_CAJA)}}">
+                  {{ obtenerNombreUsuarioAsignado(respuesta1.CODIGO_CAJA) }}
+                </ion-col>
+              </ion-row>
+            </div>
+          </div>
+          
+        </ion-grid>
+
+      
+      </ion-list>
+      <ion-list class="tabla2">
+
+        <ion-item>
+          <ion-label>Cajas asignadas: </ion-label>
+        </ion-item>
+        <ion-grid >
+
+          <ion-row class="header-row">
+            <ion-col>Cod. Caja</ion-col>
+            <ion-col>Caja</ion-col>
+            <ion-col>Usuario</ion-col>
+            <ion-col>Nombre</ion-col>
+          </ion-row>
+
+          <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+            <div *ngFor="let respuesta1 of cajasAsignadas">
+                <ion-row class="data-row" >
+                  <ion-col >
+                    <button class="btn_m" (click)="Eliminar(respuesta1.CODIGO_CAJA)"><ion-icon class="eliminar" name="person-remove" ></ion-icon></button>
+                    {{ respuesta1.CODIGO_CAJA }}
+                  </ion-col>
+                  <ion-col >{{ respuesta1.NOMBRE_CAJA}}</ion-col>
+                  <ion-col >{{respuesta1.USUARIO}}</ion-col>
+                  <ion-col>
+                    <div *ngFor="let respuesta2 of listadoUsuarios">
+                      <div class="nombres" *ngIf="respuesta1.USUARIO==respuesta2.USUARIO" title="{{respuesta2.NOMBRE}}">{{respuesta2.NOMBRE }}</div>
+                    </div>
+                  </ion-col>
+
+                </ion-row>
+            </div>
+          </div>
+        </ion-grid> 
+      </ion-list>
+  </ion-card-content>
+</ion-card>

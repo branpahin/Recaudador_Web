@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Asignación Reportes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Asignación Reportes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list class="tabla">
+        <ion-grid >
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label>Listado Reportes: </ion-label>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                </ion-item>
+                <ion-row class="header-row1" >
+                  <ion-col class="edit small-edit-column"></ion-col>
+                  <ion-col>REPORTE</ion-col>
+                  <ion-col>COMENTARIO</ion-col>
+                  <ion-col>ESTADO</ion-col>
+                  <ion-col>ASIGNADOS</ion-col>
+                </ion-row>
+                <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+              
+                  <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+                    <ion-row class="data-row" slot="fixed">
+                      <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button></ion-col>
+                      <ion-col title="{{ respuesta1.REPORTE}}">{{ respuesta1.REPORTE}}</ion-col>
+                      <ion-col title="{{ respuesta1.COMENTARIO }}">{{ respuesta1.COMENTARIO}}</ion-col>
+                      <ion-col title="{{ respuesta1.NOMBRE_ESTADO}}">{{ respuesta1.NOMBRE_ESTADO}}</ion-col>
+                      <ion-col title="{{ respuesta1.ROLES_ASIGNADOS}}">{{ respuesta1.ROLES_ASIGNADOS}}</ion-col>
+                    </ion-row>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+        </ion-grid>
+      </ion-list>
+      <div class="infoUsuario-content" *ngIf="seleccionar">
+        <div class="overlay-info" (click)="MostrarSeleccionador()"></div>
+        <div class="Listado">
+          <ion-item *ngFor="let rol of listadoRoles" class="custom-radio-item">
+            <ion-checkbox [value]="rol.ROL" (ionChange)="togglePuntoPago(rol, $event)" [checked]="isConvenioSelected(rol.ROL)">{{ rol.ROL }}</ion-checkbox>
+          </ion-item>
+        </div>
+      </div>
+  </ion-card-content>
+</ion-card>

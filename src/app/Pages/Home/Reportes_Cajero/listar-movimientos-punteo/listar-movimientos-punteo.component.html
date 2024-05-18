@@ -1,0 +1,147 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Punteo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Punteo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card class="login">
+  <ion-card-content>
+      <div style="display: grid; grid-template-columns: 70% 30%;">
+        <ion-item class="barras">
+          <ion-label position="stacked">Codigo de Barras</ion-label>
+          <ion-input [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" ></ion-input>
+        </ion-item>
+        <div>
+          <button class="btn" expand="full" (click)="onEnterKey($event)"> Actualizar </button>
+          <button class="btn" expand="full" (click)="restablecer()"> Reestablecer </button>
+        </div> 
+        
+      </div>
+      
+      <div>
+        <button class="btn_R" expand="full" (click)="buscarReferencia()"> Buscar Referencia</button>
+        
+        <ion-item *ngIf="visual==true" class="referencia">
+          <ion-item>
+            <ion-label position="stacked">REFERENCIA</ion-label>
+            <ion-input label="" [(ngModel)]="datosConsulta2.CODIGO_CLIENTE" name="codigoBarras" type="text" ></ion-input>
+          </ion-item>
+        </ion-item>
+      </div>
+      
+    <ion-list *ngIf="resultado" class="tabla">
+
+        <ion-item>
+          <ion-label>Facturas pendientes: </ion-label>
+          <!--<ion-label *ngFor="let recaudo of recaudos">{{ recaudo.CODIGO_REFERENCIA }}</ion-label>-->
+        </ion-item>
+        <ion-grid >
+          <!-- Encabezado de la tabla -->
+          <ion-row class="header-row">
+            <ion-col>N° Movimiento detalle</ion-col>
+            <ion-col>Nombre Convenio</ion-col>
+            <ion-col>Factura Convenio</ion-col>
+            <ion-col>Codigo Cliente</ion-col>
+            <ion-col>Fecha Vencimiento</ion-col>
+            <ion-col>Valor Movimiento Detalle</ion-col>
+            <ion-col class="edit small-edit-column-fin"></ion-col>
+    
+            <!-- Agrega más columnas según sea necesario -->
+          </ion-row>
+    
+          <!-- Datos de la tabla -->
+          <div class="tabla_lista" style="overflow-y: auto; max-height: 30vh;">
+            <div *ngFor="let respuesta1 of resultado" >
+              <ion-row class="data-row" >
+                <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO_DET }}">{{ respuesta1.NUMERO_MOVIMIENTO_DET }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_CONVENIO }}">{{ respuesta1.NOMBRE_CONVENIO }}</ion-col>
+                <ion-col title="{{ respuesta1.FACTURA_CONVENIO }}">{{ respuesta1.FACTURA_CONVENIO }}</ion-col>
+                <ion-col title="{{ respuesta1.CODIGO_CLIENTE }}">{{ respuesta1.CODIGO_CLIENTE }}</ion-col>
+                <ion-col title="{{ respuesta1.FECHA_VENCIMIENTO }}">{{ respuesta1.FECHA_VENCIMIENTO }}</ion-col>
+                <ion-col title="{{ respuesta1.VALOR_MOVIMIENTO_DET }}">{{ respuesta1.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+                <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+              </ion-row>
+              <ion-grid *ngIf="respuesta1.selected">
+                <ion-row  class="header-row-info">
+                  <ion-col>Codigo Referencia</ion-col>
+                  <ion-col>Tipo de recaudo</ion-col>
+                  <ion-col>Migrado</ion-col>
+                </ion-row >
+                  
+                <ion-row class="data-row">
+                  <ion-col title="{{ respuesta1.CODIGO_REFERENCIA }}">{{ respuesta1.CODIGO_REFERENCIA }}</ion-col>
+                  <ion-col title="{{ respuesta1.TIPO_RECAUDO }}">{{respuesta1.TIPO_RECAUDO}}</ion-col>
+                  <ion-col title="{{ respuesta1.MIGRADO }}">{{ respuesta1.MIGRADO }}</ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </div>
+        </ion-grid>
+
+      
+      </ion-list>
+      <ion-list *ngIf="resultado" class="tabla2">
+
+          <ion-item>
+            <ion-label>Facturas validadas: </ion-label>
+            <!--<ion-label *ngFor="let recaudo of recaudos">{{ recaudo.CODIGO_REFERENCIA }}</ion-label>-->
+          </ion-item>
+          <ion-grid>
+            <ion-row class="header-row">
+              <ion-col>N° Movimiento detalle</ion-col>
+              <ion-col>Nombre Convenio</ion-col>
+              <ion-col>Factura Convenio</ion-col>
+              <ion-col>Codigo Cliente</ion-col>
+              <ion-col>Fecha Vencimiento</ion-col>
+              <ion-col>Valor Movimiento Detalle</ion-col>
+              <ion-col class="edit small-edit-column-fin"></ion-col>
+      
+              <!-- Agrega más columnas según sea necesario -->
+            </ion-row>
+      
+            <!-- Datos de la tabla -->
+            <div class="tabla_lista" style="overflow-y: auto; max-height: 30vh;">
+              <div class="tabla-content" *ngFor="let respuesta1 of resultado2" >
+                <ion-row class="data-row" >
+                  <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO_DET }}">{{ respuesta1.NUMERO_MOVIMIENTO_DET }}</ion-col>
+                  <ion-col title="{{ respuesta1.NOMBRE_CONVENIO }}">{{ respuesta1.NOMBRE_CONVENIO }}</ion-col>
+                  <ion-col title="{{ respuesta1.FACTURA_CONVENIO }}">{{ respuesta1.FACTURA_CONVENIO }}</ion-col>
+                  <ion-col title="{{ respuesta1.CODIGO_CLIENTE }}">{{ respuesta1.CODIGO_CLIENTE }}</ion-col>
+                  <ion-col title="{{ respuesta1.FECHA_VENCIMIENTO }}">{{ respuesta1.FECHA_VENCIMIENTO }}</ion-col>
+                  <ion-col title="{{ respuesta1.VALOR_MOVIMIENTO_DET }}">{{ respuesta1.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+                  <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+                </ion-row>
+                <ion-grid *ngIf="respuesta1.selected">
+                  <ion-row  class="header-row-info">
+                    <ion-col>Codigo Referencia</ion-col>
+                    <ion-col>Tipo de recaudo</ion-col>
+                    <ion-col>Migrado</ion-col>
+                  </ion-row >
+                    
+                  <ion-row class="data-row">
+                    <ion-col title="{{ respuesta1.CODIGO_REFERENCIA }}">{{ respuesta1.CODIGO_REFERENCIA }}</ion-col>
+                    <ion-col title="{{ respuesta1.TIPO_RECAUDO }}">{{respuesta1.TIPO_RECAUDO}}</ion-col>
+                    <ion-col title="{{ respuesta1.MIGRADO }}">{{ respuesta1.MIGRADO }}</ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+            </div>
+    
+          <!-- Repite este patrón para cada fila de datos -->
+    
+          </ion-grid>
+
+        
+      </ion-list>
+    
+
+    
+  </ion-card-content>
+</ion-card>

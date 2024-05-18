@@ -1,0 +1,145 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 100%;
+    margin: 0 auto; 
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.login{
+    box-shadow: 0 12px 2000px rgba(0, 0, 0, 10);  
+    max-height: 750px;
+}
+ion-card-content{
+    width: 100%;
+    align-items: center;  
+    text-align: center;
+}
+
+
+.error{
+    align-items: center; 
+    justify-content: center; 
+    text-align: center;  
+    height: 100%;  
+    color: red;
+}
+
+.formulario{
+    max-width: 50%;
+    margin: 0 auto;
+   
+}
+
+.tabla_lista::-webkit-scrollbar {
+    width: 0px; 
+}
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    margin-right: 0px;
+}
+
+.cerrar-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+
+
+  .cerrar-btn-1 {
+    
+    float: right;
+    top: 0%;
+    right: 0%;
+  }
+  .cerrar {
+    
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    z-index: 9900;
+  }
+
+
+.data-row ion-col {
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   align-items: center; 
+   justify-content: center;  
+   text-align: center;
+   border: 1px solid black;
+   
+}
+
+.header-row ion-col{
+    font-weight: bold;
+    border: 1px solid black;
+    background-color: #e48f0f;
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;  
+    text-align: center;
+
+}
+
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    color:white;
+}
+
+.col-btn{
+    max-width: 100px;
+}
+
+.titulo{
+    color: red;
+    font-weight: bold; 
+}
+
+.div-btn{
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+
+.item-alerta{
+    align-items: center;  
+    justify-content: center; 
+    text-align: center;  
+}
+
+.fecha{
+    align-items: center;  
+    justify-content: flex-end; 
+    text-align: flex-end;  
+}
+
+.btn-fecha{
+    height: 10px;
+}
+
+.container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.fecha,
+.div-btn {
+    margin-right: 0px; 
+}

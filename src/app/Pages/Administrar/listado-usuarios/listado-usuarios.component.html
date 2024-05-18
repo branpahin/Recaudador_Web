@@ -1,0 +1,197 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item *ngIf="!crear && !editar" class="estados">
+            <ion-label position="stacked">USUARIOS EN ESTADO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="estado" name="empresa" (ionChange)="ListarUsuarios()" required>
+              <ion-select-option value="1">Activos</ion-select-option>
+              <ion-select-option value="2">Inactivos</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn">
+            <button *ngIf="!crear" class="btn" expand="full" (click)="Crear()"> Crear </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+      
+      
+      
+    <ion-list class="tabla" *ngIf="!crear">
+        <ion-item>
+          <ion-label>Usuarios: </ion-label>
+          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+        </ion-item>
+        <ion-grid >
+          
+            <ion-row class="header-row" >
+              <ion-col class="edit small-edit-column"></ion-col>
+              <ion-col>EMPRESA</ion-col>
+              <ion-col>USUARIO</ion-col>
+              
+              <ion-col>NOMBRE</ion-col>
+              <ion-col>ESTADO</ion-col>
+              <ion-col>PUNTO DE PAGO</ion-col>
+              
+              <ion-col>FECHA CREACIÓN</ion-col>
+              <ion-col>ROL</ion-col>
+              <ion-col class="edit small-edit-column-fin"></ion-col>
+            </ion-row>
+            <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          
+            <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button></ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                <ion-col title="{{ respuesta1.USUARIO}}">{{ respuesta1.USUARIO}}</ion-col>
+                
+                <ion-col title="{{ respuesta1.NOMBRE }}">{{ respuesta1.NOMBRE }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_ESTADO }}">{{ respuesta1.NOMBRE_ESTADO }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRES_CODIGO_PUNTO_PAGO }}">{{ respuesta1.NOMBRES_CODIGO_PUNTO_PAGO }}</ion-col>
+                
+                <ion-col title="{{ respuesta1.FECHA_CREACION}}">{{ respuesta1.FECHA_CREACION}}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_ROL}}">{{ respuesta1.NOMBRE_ROL}}</ion-col>
+                <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+              </ion-row>
+              <ion-grid *ngIf="respuesta1.selected">
+                <ion-row  class="header-row-info">
+                  <ion-col>TIPO DOCUMENTO</ion-col>
+                  <ion-col>DOCUMENTO</ion-col>
+                  <ion-col>DIRECCIÓN</ion-col>
+                  <ion-col>TELEFONO</ion-col>
+                  <ion-col>CONTRASEÑA</ion-col>
+                </ion-row>
+                <ion-row  class="data-row">
+                  <ion-col title="{{ respuesta1.NOMBRE_DOCUMENTO }}">{{ respuesta1.NOMBRE_DOCUMENTO }}</ion-col>
+                  <ion-col title="{{ respuesta1.DOCUMENTO}}">{{ respuesta1.DOCUMENTO}}</ion-col>
+                  <ion-col title="{{ respuesta1.DIRECCION}}">{{ respuesta1.DIRECCION}}</ion-col>
+                  <ion-col title="{{ respuesta1.TELEFONO}}">{{ respuesta1.TELEFONO}}</ion-col>
+                  <ion-col title="{{ respuesta1.CONTRASENA_ENCIPTADA}}">{{ respuesta1.CONTRASENA_ENCIPTADA}}</ion-col>
+                </ion-row>
+                
+              </ion-grid>
+            </div>
+          </div> 
+        </ion-grid>
+      </ion-list>
+
+      <ion-list *ngIf="crear">
+        <div class="cerrar">
+          <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item class="barras">
+                <ion-label position="stacked">Empresa: </ion-label>
+                <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.EMPRESA" name="empresa" required>
+                  <ion-select-option *ngFor="let empresa of listEmpresas" [value]="empresa.CODIGO">{{ empresa.DESCRIPCION }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Usuario: </ion-label>
+                <ion-input [(ngModel)]="datos.USUARIO" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-row>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Tipo Documento: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_DOCUMENTO" name="empresa" required>
+                      <ion-select-option *ngFor="let documentos of documento" [value]="documentos.CODIGO">{{ documentos.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">N° Documento: </ion-label>
+                    <ion-input [(ngModel)]="datos.DOCUMENTO" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <div class="estado">
+                    <ion-label position="stacked">Estado: </ion-label>
+                    <div>
+                      <ion-radio-group [(ngModel)]="datos.ESTADO">
+                        <ion-item *ngFor="let estados of listadoEstadoUsuario" class="custom-radio-item">
+                          <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                          <span>|</span>
+                          <ion-label class="custom-label" style="font-size: 20px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                        </ion-item>
+                      </ion-radio-group>
+                    </div>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Rol: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.ROL" name="empresa" required>
+                      <ion-select-option *ngFor="let rol of listadoRoles" [value]="rol.ROLE">{{ rol.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Punto Pago: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" required>
+                      <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                  <ion-item *ngIf="datos.CODIGO_PUNTO_PAGO=='7'" class="barras">
+                    <ion-label position="stacked">Sub punto: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.SUB_PUNTO_PAGO" name="empresa" required>
+                      <ion-select-option *ngFor="let Subpunto of listadoSubPuntos" [value]="Subpunto.VALOR">{{ Subpunto.VALOR }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-item class="barras">
+                <ion-label position="stacked">Nombre: </ion-label>
+                <ion-input [(ngModel)]="datos.NOMBRE" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Dirección: </ion-label>
+                <ion-input [(ngModel)]="datos.DIRECCION" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Telefono: </ion-label>
+                <ion-input [(ngModel)]="datos.TELEFONO" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Contraseña: </ion-label>
+                <ion-input [(ngModel)]="datos.PASSWORD" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="div-btn">
+          <button *ngIf="crear && !editar" class="btn" expand="full" (click)="CrearUsuario()"> Crear </button>
+          <button *ngIf="crear && editar" class="btn" expand="full" (click)="ModificarUsuario()"> Editar </button>
+        </div>
+      </ion-list>
+  </ion-card-content>
+</ion-card>

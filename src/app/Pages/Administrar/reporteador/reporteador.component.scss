@@ -1,0 +1,249 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+.login{
+    box-shadow: 0 12px 2000px rgba(0, 0, 0, 10);  
+    max-height: 750px;
+}
+ion-card-content{
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+
+
+.tabla {
+    float: left;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    z-index: 9999;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    color:black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.tabla2 {
+   
+    float: right;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    z-index: 9999;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    color:black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tabla_lista::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    margin-right: 0px;
+}
+
+
+
+.cerrar-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.cerrar {
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    z-index: 9900;
+}
+
+
+.data-row ion-col {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    border: 1px solid black;
+    
+}
+
+.header-row ion-col{
+    font-weight: bold;
+    border: 1px solid black;
+    background-color: #e48f0f;
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+     
+
+
+}
+
+.header-row-info ion-col{
+    border: 1px solid black;
+    background-color: rgb(2, 145, 21);
+    color:#fff;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.link-text {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    float: right;
+}
+
+.link-text:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.tabla-content{
+    position: relative;
+    width: 100%;
+}
+
+.col-codigo {
+    width: 5%;
+    margin-right: 8px;
+  }
+
+.btn_R{
+    display: inline-block;
+}
+  
+.btn{
+    background-color: var(--ion-color-mycolor);
+    padding: 20px 30px 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+    color:white;
+}
+
+.div-btn{
+    align-items: end;
+    justify-content: center;
+    text-align: end;
+}
+.btn:hover{
+    background-color: #e48f0f;
+}
+.referencia{
+    width: 70%;
+}
+
+.btn_m{
+    margin-left: 1%;
+    font-size: 20px;
+    background-color: #fff;
+    width: 40%;
+}
+.eliminar{
+    size:40px;
+    color:red;
+}
+
+.aprobar{
+    size:40px;
+    color:green; 
+}
+
+.rechazar{
+    size:40px;
+    color:red; 
+}
+
+
+.custom-radio-item{
+    height: 32px;
+    justify-content: center;
+}
+
+
+.custom-radio {
+    margin-bottom: 100%;
+    height: 15px;
+    width: 15px;
+
+}
+
+
+.container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.editar-btn{
+    background: transparent;
+}
+.editar{
+    color:blue;
+}
+.plantilla {
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }
+
+.accion{
+    max-width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.id{
+    max-width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+ .estados{
+    max-width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }
+
+ .accion{
+    max-width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }
+
+ .small-edit-column-fin {
+    max-width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+ }

@@ -1,0 +1,370 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Puntos de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Puntos de Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-grid *ngIf="!crear">
+      <ion-row>
+        <ion-col *ngIf="subPunto && crearSubpunto">
+          <ion-item>
+            <ion-label position="stacked">NOMBRE: </ion-label>
+            <ion-input [(ngModel)]="datosSubPuntos.NOMBRE_SUB_PUNTO_PAGO" type="text" required name="nombre" required></ion-input>   
+          </ion-item>    
+        </ion-col>
+        <ion-col *ngIf="subPunto && crearSubpunto">
+          <ion-item>
+            <ion-label position="stacked">DESCRIPCIÓN: </ion-label>
+            <ion-input [(ngModel)]="datosSubPuntos.DESCRIPCION" type="text" required name="nombre" required></ion-input>       
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <div class="div-btn">
+            <button *ngIf="!crear && !crearSubpunto" class="btn" expand="full" (click)="Crear()"> Crear </button>
+            <button *ngIf="!crear && crearSubpunto" class="btn" expand="full" (click)="crearSubPunto()"> Crear Sub Punto</button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-list class="tabla" *ngIf="!crear && !subPunto">
+        <ion-item>
+          <ion-label>Puntos de Pago: 
+            <button *ngIf="!subPunto" class="btn-sup" style="margin-left: 2px;" expand="full" (click)="Punto()"> Sub Puntos </button> 
+          </ion-label>
+          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+        </ion-item>
+        <ion-grid >
+          
+            <ion-row class="header-row" >
+              <ion-col class="edit small-edit-column"></ion-col>
+              <ion-col>EMPRESA</ion-col>
+              <ion-col>PUNTO DE PAGO</ion-col>
+              <ion-col>TIPO</ion-col>
+              <ion-col>ESTADO</ion-col>
+              <ion-col>HORA MAXIMA DE RECAUDO</ion-col>
+              <ion-col>ENCARGADO</ion-col>
+              <ion-col class="edit small-edit-column-fin"></ion-col>
+            </ion-row>
+
+            <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          
+            <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Editar(respuesta1)"><ion-icon class="editar" name="create-outline"></ion-icon></button></ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE}}">{{ respuesta1.NOMBRE}}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_TIPO }}">{{ respuesta1.NOMBRE_TIPO }}</ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_ESTADO }}">{{ respuesta1.NOMBRE_ESTADO }}</ion-col>
+                <ion-col title="{{ respuesta1.HORA_MAXIMA_RECAUDO}}">{{ respuesta1.HORA_MAXIMA_RECAUDO}}</ion-col>
+                <ion-col title="{{ respuesta1.ENCARGADO}}">{{ respuesta1.ENCARGADO}}</ion-col>
+                <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+              </ion-row>
+              <ion-grid *ngIf="respuesta1.selected">
+                <ion-row  class="header-row-info">
+                  <ion-col>DIRECCIÓN</ion-col>
+                  <ion-col>HORARIO</ion-col>
+                  <ion-col>FORMAS DE PAGO</ion-col>
+                  <ion-col>CONVENIO BLOQUEADO</ion-col>
+                </ion-row>
+                <ion-row  class="data-row">
+                  <ion-col title="{{ respuesta1.DIRECCION }}">{{ respuesta1.DIRECCION }}</ion-col>
+                  <ion-col title="{{ respuesta1.HORARIO}}">{{ respuesta1.HORARIO}}</ion-col>
+                  <ion-col title="{{ respuesta1.NOMBRES_FORMAS_PAGO }}">{{ respuesta1.NOMBRES_FORMAS_PAGO }}</ion-col>
+                  <ion-col title="{{ respuesta1.NOMBRES_CONVENIO_DET_BLOQUEADO }}">{{ respuesta1.NOMBRES_CONVENIO_DET_BLOQUEADO }}</ion-col>
+                </ion-row>
+                
+              </ion-grid>
+            </div>
+          </div> 
+        </ion-grid>
+      </ion-list>
+
+      <ion-list class="tabla" *ngIf="!crear && subPunto">
+        <ion-item>
+          <ion-label>Sub Puntos: 
+            <button *ngIf="subPunto" class="btn-sup" style="margin-left: 2px;" expand="full" (click)="Punto()"> Puntos de pago</button> 
+          </ion-label>
+          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+        </ion-item>
+        <ion-grid >
+          
+            <ion-row class="header-row" >
+              <ion-col class="edit small-edit-column"></ion-col>
+              <ion-col>EMPRESA</ion-col>
+              <ion-col>SUB PUNTO</ion-col>
+              <ion-col>DESCRIPCION</ion-col>
+              <ion-col>USUARIOS</ion-col>
+            </ion-row>
+
+            <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+          
+            <div class="tabla-content" *ngFor="let respuesta1 of listadoSubPuntosPago">
+              <ion-row class="data-row" slot="fixed">
+                <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="close-circle-outline" ></ion-icon></button></ion-col>
+                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+                <ion-col title="{{ respuesta1.VALOR}}">{{ respuesta1.VALOR}}</ion-col>
+                <ion-col title="{{ respuesta1.DESCRIPCION }}">{{ respuesta1.DESCRIPCION }}</ion-col>
+                <ion-col title="{{ respuesta1.USUARIOS_ASIGNADOS }}">{{ respuesta1.USUARIOS_ASIGNADOS }}</ion-col>
+              </ion-row>
+            </div>
+          </div> 
+        </ion-grid>
+      </ion-list>
+
+      <ion-list *ngIf="crear">
+        <div class="cerrar">
+          <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item class="barras">
+                <ion-label position="stacked">Empresa: </ion-label>
+                <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.EMPRESA" name="empresa" required>
+                  <ion-select-option *ngFor="let empresa of listEmpresas" [value]="empresa.CODIGO">{{ empresa.DESCRIPCION }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Nombre: </ion-label>
+                <ion-input [(ngModel)]="datos.NOMBRE" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+              <ion-item class="barras">
+                <ion-label position="stacked">Direccion: </ion-label>
+                <ion-input [(ngModel)]="datos.DIRECCION" type="text" required [disabled]="!datos.EMPRESA" name="nombre" required></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <div class="fechas">
+                <ion-label position="stacked">Horario: </ion-label>
+                <ion-row class="data-row">
+                  <ion-col>
+                    <div>
+                      <ion-label position="stacked"> De: </ion-label>
+                      <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="inicio" name="accion">
+                        <ion-select-option value='Lunes'>Lunes</ion-select-option>
+                        <ion-select-option value='Martes'>Martes</ion-select-option>
+                        <ion-select-option value='Miercoles'>Miercoles</ion-select-option>
+                        <ion-select-option value='Jueves'>Jueves</ion-select-option>
+                        <ion-select-option value='Viernes'>Viernes</ion-select-option>
+                        <ion-select-option value='Sabado'>Sabado</ion-select-option>
+                        <ion-select-option value='Domingo'>Domingo</ion-select-option>
+                      </ion-select>
+                    </div>
+                  </ion-col>
+                  <ion-col>
+                    <div>
+                      <ion-label position="stacked"> A: </ion-label>
+                      <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="fin" name="accion">
+                        <ion-select-option value='Lunes'>Lunes</ion-select-option>
+                        <ion-select-option value='Martes'>Martes</ion-select-option>
+                        <ion-select-option value='Miercoles'>Miercoles</ion-select-option>
+                        <ion-select-option value='Jueves'>Jueves</ion-select-option>
+                        <ion-select-option value='Viernes'>Viernes</ion-select-option>
+                        <ion-select-option value='Sabado'>Sabado</ion-select-option>
+                        <ion-select-option value='Domingo'>Domingo</ion-select-option>
+                      </ion-select>
+                    </div>
+                  </ion-col>
+                  <ion-col>
+                    <div class="fecha" *ngIf="!editar">
+                      <ion-label position="stacked"> De: </ion-label>
+      
+                      <ion-datetime-button locale="en-GB" hourCycle="h12" datetime="time1" class="time"></ion-datetime-button>
+
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime id="time1" presentation="time" locale="en-GB" hourCycle="h12" 
+                            (ionChange)="HoraIni($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+                    <div class="fecha" *ngIf="editar">
+                      <ion-label position="stacked"> De: </ion-label>
+      
+                      <ion-datetime-button [ngModel]="horaInicio" locale="en-GB" hourCycle="h12" datetime="time1" class="time"></ion-datetime-button>
+
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime id="time1" presentation="time" [ngModel]="horaInicio" locale="en-GB" hourCycle="h12" 
+                            (ionChange)="HoraIni($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+                  </ion-col>
+                  <ion-col>
+                    <div class="fecha" *ngIf="!editar">
+                      <ion-label position="stacked"> A: </ion-label>
+      
+                      <ion-datetime-button datetime="time2" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+          
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime id="time2" presentation="time" locale="en-GB" hourCycle="h12"
+                          (ionChange)="HoraFin($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+                    <div class="fecha" *ngIf="editar">
+                      <ion-label position="stacked"> A: </ion-label>
+      
+                      <ion-datetime-button [ngModel]="HoraFin" datetime="time2" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+          
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime id="time2" [ngModel]="horaFin" presentation="time" locale="en-GB" hourCycle="h12"
+                          (ionChange)="HoraFin($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+                  </ion-col>
+                  
+                </ion-row>
+               
+              </div>
+              <ion-row>
+                <ion-col>
+                  <div class="horaMax">
+                    <ion-label >Hora Maxima de Recaudo:</ion-label>
+                    <div class="fecha" *ngIf="!editar">
+          
+                      <ion-datetime-button datetime="time3" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+          
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime id="time3" presentation="time" locale="en-GB" hourCycle="h12"
+                          (ionChange)="Hora($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+
+                    <div class="fecha" *ngIf="editar">
+          
+                      <ion-datetime-button [ngModel]="datos.HORA_MAXIMA_RECAUDO" datetime="time3" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+          
+                      <ion-modal [keepContentsMounted]="true">
+                        <ng-template>
+                          <ion-datetime [ngModel]="datos.HORA_MAXIMA_RECAUDO" id="time3" presentation="time" locale="en-GB" hourCycle="h12"
+                          (ionChange)="Hora($event)" ></ion-datetime>
+                        </ng-template>
+                      </ion-modal>
+                    </div>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="barras">
+                    <ion-label position="stacked">Encargado: </ion-label>
+                    <ion-select aria-label="Encargado" interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.ENCARGADO" name="empresa" required>
+                      <ion-select-option *ngFor="let usuario of UsuariosEncargado" [value]="usuario.USUARIO">{{ usuario.NOMBRE_USUARIO }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-row>
+                <ion-col>
+                  <div *ngIf="!editar">
+                    <ion-label position="stacked">Forma Pago: </ion-label>
+                    <ion-item *ngFor="let pagos of pago" class="custom-radio-item">
+                      <ion-checkbox (ionChange)="updateSelectedClientes($event, pagos)" [value]="pagos.CODIGO" [disabled]="!datos.EMPRESA">{{ pagos.DESCRIPCION }}</ion-checkbox>
+                    </ion-item>
+                  </div>
+                  <div *ngIf="editar">
+                    <ion-label position="stacked">Forma Pago: </ion-label>
+                    <ion-item *ngFor="let pagos of pago" class="custom-radio-item">
+                      <ion-checkbox (ionChange)="updateSelectedClientes($event, pagos)" [value]="pagos.CODIGO"  [checked]="arrayFormaPago.includes(pagos.CODIGO)" [disabled]="!datos.EMPRESA">{{ pagos.DESCRIPCION }}</ion-checkbox>
+                    </ion-item>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <div *ngIf="!editar">
+                    <ion-label position="stacked">Conevios Bloqueados: </ion-label>
+                    <ion-select aria-label="Convenio" interface="popover" placeholder="Seleccionar" [(ngModel)]="convenioSelec" name="empresa" required [disabled]="!datos.EMPRESA" label-placement="stacked">
+                      <ion-select-option *ngFor="let convenio of listadoConveniosActivos" [value]="convenio.CODIGO_CONVENIO">{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
+                    </ion-select>
+                    <ng-container *ngFor="let convenioDet of listadoConvenios">
+                      <ion-item *ngIf="convenioDet.CODIGO_CONVENIO == convenioSelec" class="custom-radio-item">
+                        <ion-checkbox (ionChange)="updateSelectedConvenio($event, convenioDet)" [value]="convenioDet.CODIGO_CONVENIO_DET" [checked]="isConvenioSelected(convenioDet.CODIGO_CONVENIO_DET)">
+                          {{ convenioDet.NOMBRE_CONVENIO_DET }}
+                        </ion-checkbox>
+                      </ion-item>
+                    </ng-container>
+                  </div>
+                  <div *ngIf="editar">
+                    <ion-label position="stacked">Conevios Bloqueados2: </ion-label>
+                    <ion-select aria-label="Convenios2" interface="popover" placeholder="Seleccionar" [(ngModel)]="convenioSelec" name="empresa" required [disabled]="!datos.EMPRESA" label-placement="stacked">
+                      <ion-select-option *ngFor="let convenio of listadoConveniosActivos" [value]="convenio.CODIGO_CONVENIO">{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
+                    </ion-select>
+                    <ng-container *ngFor="let convenioDet of listadoConvenios">
+                      <ion-item *ngIf="convenioDet.CODIGO_CONVENIO == convenioSelec" class="custom-radio-item">
+                        <ion-checkbox (ionChange)="updateSelectedConvenio($event, convenioDet)" [value]="convenioDet.CODIGO_CONVENIO_DET"  [checked]="isConvenioSelected(convenioDet.CODIGO_CONVENIO_DET)">
+                          {{ convenioDet.NOMBRE_CONVENIO_DET }}
+                        </ion-checkbox>
+                      </ion-item>
+                    </ng-container>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <div class="col-horamax">
+                <ion-row>
+                  <ion-col >
+                    <ion-row>
+                      <ion-col>
+                        <div>
+                          <ion-label position="stacked" style="color:red;">Estado: </ion-label>
+                          <div>
+                            <ion-radio-group [(ngModel)]="datos.ESTADO" [disabled]="!datos.EMPRESA">
+                              <ion-item *ngFor="let estados of listadoEstadoPuntos" class="custom-radio-item">
+                                <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                                <ion-label class="custom-label" style="font-size: 20px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                              </ion-item>
+                            </ion-radio-group>
+                          </div>
+                        </div>
+                      </ion-col>
+                      <ion-col>
+                        <div>
+                          <ion-label position="stacked" style="color:red;">Tipo de Punto: </ion-label>
+                          <div>
+                            <ion-radio-group [(ngModel)]="datos.TIPO" [disabled]="!datos.EMPRESA">
+                              <ion-item *ngFor="let tipo of listadoTipoPuntosPago" class="custom-radio-item">
+                                <ion-radio class="custom-radio" [value]="tipo.CODIGO"></ion-radio>
+                                <ion-label class="custom-label" style="font-size: 20px;  margin-bottom: 100%;">{{ tipo.DESCRIPCION }}</ion-label>
+                              </ion-item>
+                            </ion-radio-group>
+                          </div>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="div-btn">
+          <button *ngIf="crear && !editar" class="btn" expand="full" (click)="CrearPuntoPago()"> Crear </button>
+          <button *ngIf="crear && editar" class="btn" expand="full" (click)="ModificarPuntoPago()"> Editar </button>
+        </div>
+      </ion-list>
+  </ion-card-content>
+</ion-card>

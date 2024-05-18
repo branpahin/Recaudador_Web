@@ -1,0 +1,328 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-title{
+  font-weight: bold;
+}
+
+.nav{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.ion-padding{
+  height: 200px;
+  border-radius: 10px;
+}
+
+.facturasTitulo{
+  background-color: var(--ion-color-mycolor);
+  color:white;
+}
+
+.small-edit-column {
+  max-width: 100px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.contenido{
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 10);
+}
+
+.error{
+    align-items: center;  
+    justify-content: center;  
+    text-align: center; 
+    height: 100%;  
+    color: red;
+}
+
+.col-descripcion{
+    align-items: center;  
+    justify-content: center; 
+    text-align: center;  
+    height: 100%;  
+    color: rgb(0, 170, 14);
+}
+#valorMovimiento{
+  text-align: end;
+}
+.valorMovimiento{
+  color:red;
+  font-size: 30px;
+}
+.btn_m{
+    background-color: #fff;
+    border-radius: 10px;
+    font-size: 20px;
+    color: black;
+    text-align: center;
+    margin-left: 50%;
+
+}
+.btn_m:hover{
+  background-color: #ddae68;
+
+}
+.btn_mi{
+    background-color: var(--ion-color-mycolor);
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 10px;
+    color: black;
+    text-align: center;
+    left: 100px;
+}
+
+.btn_A{
+  background-color: red;
+  border-radius: 10px;
+  font-size: 20px;
+  padding: 10px;
+  color: black;
+  text-align: center;
+  left: 100px;
+}
+.buttons-nav{
+  width: 100%;
+  text-align: center;
+  border-radius: 0px 0px 50px 50px;
+ 
+}
+.btn-nav{
+  background-color: var(--ion-color-mycolor);
+  padding: 10px 30px 10px 30px;
+  border-radius: 10px;
+  font-size: 20px;
+  border: 2px solid #ffffff;
+  color: rgb(255, 255, 255);
+  text-align: center;
+}
+
+.btn-nav:hover{
+  background-color: #ddae68;
+}
+
+#btn-nav1{
+  margin-right: 2%;
+}
+
+#btn-nav2{
+  margin-left: 2%;
+}
+
+.cerrar-btn {
+  float: right;
+  top: 0%;
+  right: 0%;
+}
+
+.cerrar {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  z-index: 9900;
+}
+
+.tabla_lista::-webkit-scrollbar {
+  width: 0px;
+}
+
+.tabla_lista::-webkit-scrollbar-thumb {
+  margin-right: 0px;
+}
+
+.btn_mi:hover{
+  background-color: #ddae68;
+
+}
+#facturasTitulo{
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.tabla {
+    padding: 20px;
+    margin-right: 180px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tabla1 {
+  width: 100%;
+  display: inline-block;
+}
+.tabla2 {
+  min-width: 200px;
+  float: right;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  height: auto;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.barras{
+  width: 100%;
+}
+.data-row, .header-row{
+    border: 1px solid black;
+    text-align: center;
+}
+.data-row ion-col {
+
+ white-space: nowrap;
+ text-overflow: ellipsis; 
+ overflow: hidden;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ border: 1px solid black;
+}
+
+.data-row1 ion-col {
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  border: 1px solid black;
+ 
+}
+
+.header-row ion-col{
+ font-weight: bold;
+ border: 1px solid black;
+ background-color: #e48f0f;
+ color:#fff;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ align-items: center; 
+ justify-content: center; 
+ text-align: center;
+
+}
+
+.header-row1 ion-col{
+  font-weight: bold;
+  border: 1px solid black;
+  background-color: rgb(2, 145, 21);
+  color:#fff;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  align-items: center; 
+  justify-content: center;  
+  text-align: center;
+ }
+
+.Crear{
+    color: var(--ion-color-mycolor);
+    font-size: 200%;   
+}
+.eliminarFila{
+  background-color: transparent;
+  font-size: 20px;
+  margin-left: 5%;
+}
+
+#eliminarFila{
+  color:red;
+}
+
+ion-radio-group {
+    ion-item {
+      ion-label {
+        font-size: 12px; /* Ajusta el tamaño de la fuente según tus necesidades */
+      }
+    }
+  }
+
+  .custom-radio-item{
+    height: 32px;
+    justify-content: center;
+  }
+
+  .custom-radio {
+    margin-bottom: 100%;
+    height: 15px; /* Altura deseada para el ion-radio */
+    width: 15px;
+  }
+
+.alerta{
+  position: absolute;
+  align-items: center;  
+  justify-content: center;  
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-height: 50%;
+  z-index: 9999;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff; 
+  border-radius: 5px;
+}
+
+.alerta1{
+  width: 70%;
+}
+.checkBarra{
+  width: 85px;
+}
+
+.overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 2500;
+}
+
+.limpiar{
+  background-color: light;
+  padding: 10px 30px 10px 30px;
+  border-radius: 10px;
+  font-size: 20px;
+  margin-right: 1%;
+  background-color: #5f5f5f;
+  color:#fff;
+
+}
+
+.limpiar:hover{
+    background-color: #e41d0f;
+}
+
+.imprimir{
+  position: fixed;
+  align-items: center;  
+  justify-content: center;  
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999; 
+  margin: 0 auto;
+  padding: 20px;
+
+  border-radius: 5px;
+}

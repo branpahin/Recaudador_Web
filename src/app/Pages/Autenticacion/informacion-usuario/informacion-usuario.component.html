@@ -1,0 +1,93 @@
+<div class="infoUsuario" *ngIf="!modificar">
+  <ion-list class="infoUsuario">
+    <div class="campo">
+      <span class="campo2">Empresa:</span> {{resultado?.NOMBRE_EMPRESA}}
+    </div>
+    <div class="campo">
+      <span class="campo2">Usuario:</span> {{resultado?.USUARIO}}
+    </div>
+    <div *ngIf="!modificarInfo" class="campo">
+      <span class="campo2">Tipo documento:</span> {{resultado?.NOMBRE_DOCUMENTO}}
+    </div>
+    <div *ngIf="modificarInfo" class="campo">
+      <span class="campo2">Tipo documento:</span>
+      <ion-item>
+        <ion-select class="custom-select" interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_DOCUMENTO" name="empresa" required>
+          <ion-select-option class="custom-option"  *ngFor="let doc of documento" [value]="doc.CODIGO">{{ doc.DESCRIPCION }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      
+    </div>
+    <div *ngIf="!modificarInfo" class="campo">
+      <span class="campo2">N° Documento:</span> {{resultado?.NUMERO_DOCUMENTO}}
+    </div>
+    <div *ngIf="modificarInfo" class="campo">
+      <span class="campo2">N° Documento:</span>
+      <ion-item>
+        <ion-input [(ngModel)]="datos.DOCUMENTO" (keyup.enter)="modificarUsuario()"></ion-input>
+      </ion-item>
+    </div>
+    <div *ngIf="!modificarInfo" class="campo">
+      <span class="campo2">Nombre:</span> {{resultado?.NOMBRE}}
+    </div>
+    <div *ngIf="modificarInfo" class="campo">
+      <span class="campo2">Nombre:</span>
+      <ion-item>
+        <ion-input [(ngModel)]="datos.NOMBRE" (keyup.enter)="modificarUsuario()"></ion-input>
+      </ion-item>
+
+    </div>
+    <div *ngIf="!modificarInfo" class="campo">
+      <span class="campo2">Dirección:</span> {{resultado?.DIRECCION}}
+    </div>
+    <div *ngIf="modificarInfo" class="campo">
+      <span class="campo2">Dirección:</span>
+      <ion-item>
+        <ion-input [(ngModel)]="datos.DIRECCION" (keyup.enter)="modificarUsuario()"></ion-input>
+      </ion-item>
+
+    </div>
+    <div *ngIf="!modificarInfo"class="campo">
+      <span class="campo2">Telefono:</span> {{resultado?.TELEFONO}}
+    </div>
+    <div *ngIf="modificarInfo" class="campo">
+      <span class="campo2">Telefono:</span>
+      <ion-item>
+        <ion-input [(ngModel)]="datos.TELEFONO" (keyup.enter)="modificarUsuario()"></ion-input>
+      </ion-item>
+
+    </div>
+    <div class="campo">
+      <span class="campo2">Estado:</span> {{resultado?.ESTADO}}
+    </div>
+    <div class="campo">
+      <span class="campo2">Punto de Pago:</span> {{resultado?.NOMBRE_PUNTO_PAGO}}
+    </div>
+    <div class="editar">
+      <span class="link-text" (click)="Modificar()">Editar Información...</span>
+    </div>
+    <div>
+      <span class="link-text" (click)="cambiarClave()">Cambio de Clave...</span>
+    </div>
+    
+  </ion-list>
+</div>
+
+<div class="infoUsuario" *ngIf="modificar">
+  <ion-list class="infoUsuario">
+    <h2>Cambio de clave</h2>
+    <ion-item>
+      <ion-label position="stacked">Clave actual:</ion-label>
+      <ion-input [(ngModel)]="claveAnterior" (keyup.enter)="modificarClave()" type="PASSWORD"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Nueva Clave:</ion-label>
+      <ion-input [(ngModel)]="clave" (keyup.enter)="modificarClave()" type="PASSWORD"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Confirmar Clave:</ion-label>
+      <ion-input [(ngModel)]="confirmacionClave" (keyup.enter)="modificarClave()" type="PASSWORD"></ion-input>
+    </ion-item>
+    <button class="enviar" (click)="modificarClave()"><ion-icon class="enviarIcon" size="large"name="send"></ion-icon></button>
+  </ion-list>
+</div>

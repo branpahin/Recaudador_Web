@@ -1,0 +1,66 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title>Estado de Arqueo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Estado de Arqueo</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="login">
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="stacked">Empresa</ion-label>
+        <ion-select label="" interface="popover" placeholder="Seleccionar" [(ngModel)]="estado_arqueo.EMPRESA" name="empresa" required>
+          <ion-select-option value="1">ENERGIA DE PEREIRA</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Numero de Arqueo</ion-label>
+        <ion-input label="" [(ngModel)]="estado_arqueo.NUMERO_ARQUEO" name="numeroArqueo"></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked">Punto de Pago</ion-label>
+        <ion-select label="" [(ngModel)]="estado_arqueo.CODIGO_PUNTO_PAGO" interface="popover" placeholder="Seleccionar"name="puntoPago" required>
+          <ion-select-option value="1">Torre Central</ion-select-option>
+          <ion-select-option value="2">Torre Central Horario Adicional</ion-select-option>
+          <ion-select-option value="3">Cuba</ion-select-option>
+          <ion-select-option value="4">Circunvalar</ion-select-option>
+          <ion-select-option value="5">Cartago</ion-select-option>
+          <ion-select-option value="6">Movil</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <button class="btn" expand="full" (click)="estadoArqueo()">Consultar</button>
+      <br>
+    </ion-card-content>
+    
+    <ng-container *ngIf="resultado && resultado.COD!='200'" class="error-message">
+      <h4>{{ resultado.RESPUESTA }}</h4>
+    </ng-container>
+  </ion-card>
+
+  
+  
+
+  <ion-list class="Listado" *ngIf="resultado && resultado.COD=='200'; else noData" lines="full">
+    <ion-item>
+      <ion-label>Estado: </ion-label>
+      <ion-label>{{ resultado.ESTADO }}</ion-label>
+    </ion-item>
+    <br>
+    <br>
+    <br>
+  </ion-list>
+  
+  
+  
+  
+  <ng-template #noData>
+  </ng-template>
+  
+
