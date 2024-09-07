@@ -30,7 +30,6 @@ export class EntregaArqueoComponent  implements OnInit {
 
  
   valorfajo = 0;
-  valorentrega="";
   cantidad:string|undefined;
 
   detalle={
@@ -76,6 +75,8 @@ export class EntregaArqueoComponent  implements OnInit {
     DATAFONO_EEP:"",
     DATAFONO_AGUAS:"",
     DATAFONO_MUNICIPIO:"",
+    CORRESPONSAL_1:"",
+    CORRESPONSAL_2:"",
     COMENTARIO: "",
     ENTREGAS_DET: [] as Detalle[],
     TOKEN: this.token
@@ -86,6 +87,8 @@ export class EntregaArqueoComponent  implements OnInit {
   mostrartabla:boolean=false;
   enviar:boolean=true;
   suma_facturas: number = 0 ;
+  totalDetalles=0
+  totalDetallesFal=0;
  
   monedas: any[] = [];
   datafono: any[] = [];
@@ -95,7 +98,7 @@ export class EntregaArqueoComponent  implements OnInit {
   @HostListener('window:keyup', ['$event'])
   handleKeyUp(event: KeyboardEvent) {
   if (event.key === 'Enter') {
-    this.entregaArqueo();
+      this.limpiarYEnviar();
     }
   }
 
@@ -128,10 +131,32 @@ export class EntregaArqueoComponent  implements OnInit {
   eliminarFila(detalle:{ CODIGO_MONEDA: any; TIPO: string; CANTIDAD:string; VALOR_UNITARIO:string; VALOR:string}){
     const codigoMoneda = detalle.CODIGO_MONEDA;
     this.datos.ENTREGAS_DET = this.datos.ENTREGAS_DET.filter(detalle => detalle.CODIGO_MONEDA !== codigoMoneda);
+    console.log("valorrr:",detalle.VALOR)
+    this.totalDetallesFal=this.totalDetallesFal+Number(detalle.VALOR);
+    
   }
 
   campoRepetido(campo: string): boolean {
-    return this.datos.ENTREGAS_DET.some(item => item.CODIGO_MONEDA === campo);
+    let deshabilitar;
+    if(this.datos.ACCION=='1'){
+      deshabilitar= this.datos.ENTREGAS_DET.some(item => item.CODIGO_MONEDA === campo);
+    }else{
+      let contador: { [key: string]: number } = {};
+      deshabilitar=false;
+      for(let moneda of this.datos.ENTREGAS_DET){
+        if (contador[moneda.CODIGO_MONEDA]) {
+          contador[moneda.CODIGO_MONEDA]++;
+          if(contador[moneda.CODIGO_MONEDA] === 2){
+            deshabilitar=  this.datos.ENTREGAS_DET.some(item => item.CODIGO_MONEDA === campo);
+          }else{
+            deshabilitar=false;
+          }
+        } else {
+          contador[moneda.CODIGO_MONEDA] = 1;
+        }
+      }
+    }
+   return deshabilitar
   }
 
   calcular(){
@@ -179,8 +204,8 @@ export class EntregaArqueoComponent  implements OnInit {
         (data: any) => {
           this.monedas = data.MONEDAS;
   
-          const detalleEspecifico = this.datos.ENTREGAS_DET.find(detalle => detalle.CODIGO_MONEDA === this.otraVariable);
-  
+          const detalleEspecifico = this.datos.ENTREGAS_DET.find(detalle => detalle.CODIGO_MONEDA === this.otraVariable && detalle.TIPO==="");
+          const detalleEspecifico2 = this.datos.ENTREGAS_DET.find(detalle => detalle.CODIGO_MONEDA === this.otraVariable && detalle.TIPO!="");
           if (detalleEspecifico) {
   
             if (data.MONEDAS && data.MONEDAS.length > 0) {
@@ -190,8 +215,12 @@ export class EntregaArqueoComponent  implements OnInit {
                 detalleEspecifico.VALOR_UNITARIO = String(monedaSeleccionada.VALOR_UNITARIO);
                 if(Number(detalleEspecifico.CODIGO_MONEDA)<=5 || detalleEspecifico.TIPO=="REMANENTE"){
                   detalleEspecifico.VALOR=String(Number(detalleEspecifico.VALOR_UNITARIO)*Number(detalleEspecifico.CANTIDAD))
+                  this.totalDetalles+=Number(detalleEspecifico.VALOR);
+                  this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.totalDetalles;
                 }else{
                   detalleEspecifico.VALOR=String((Number(detalleEspecifico.VALOR_UNITARIO)*100)*Number(detalleEspecifico.CANTIDAD))
+                  this.totalDetalles+=Number(detalleEspecifico.VALOR);
+                  this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.totalDetalles;
                 }
                 
               } else {
@@ -200,7 +229,32 @@ export class EntregaArqueoComponent  implements OnInit {
             } else {
               console.error('No se encontraron monedas en la respuesta.');
             }
-          } else {
+          } 
+          else if (detalleEspecifico2) {
+  
+            if (data.MONEDAS && data.MONEDAS.length > 0) {
+              const monedaSeleccionada = data.MONEDAS.find((moneda: any) => moneda.CODIGO === this.otraVariable);
+  
+              if (monedaSeleccionada) {
+                detalleEspecifico2.VALOR_UNITARIO = String(monedaSeleccionada.VALOR_UNITARIO);
+                if(Number(detalleEspecifico2.CODIGO_MONEDA)<=5 || detalleEspecifico2.TIPO=="REMANENTE"){
+                  detalleEspecifico2.VALOR=String(Number(detalleEspecifico2.VALOR_UNITARIO)*Number(detalleEspecifico2.CANTIDAD))
+                  this.totalDetalles+=Number(detalleEspecifico2.VALOR);
+                  this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.totalDetalles;
+                }else{
+                  detalleEspecifico2.VALOR=String((Number(detalleEspecifico2.VALOR_UNITARIO)*100)*Number(detalleEspecifico2.CANTIDAD))
+                  this.totalDetalles+=Number(detalleEspecifico2.VALOR);
+                  this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.totalDetalles;
+                }
+                
+              } else {
+                console.error(`No se encontró la moneda con el código ${this.otraVariable}`);
+              }
+            } else {
+              console.error('No se encontraron monedas en la respuesta.');
+            }
+          } 
+          else {
             console.error(`No se encontró el detalle con el código ${this.otraVariable}`);
           }
         },
@@ -214,7 +268,7 @@ export class EntregaArqueoComponent  implements OnInit {
   }
 
 
-  
+
 
   infoMonedas(event: any)
   {
@@ -228,11 +282,13 @@ export class EntregaArqueoComponent  implements OnInit {
 
         if(Number(detalleEspecifico[i].CODIGO_MONEDA)<=5 || detalleEspecifico[i].TIPO=="REMANENTE"){
           detalleEspecifico[i].VALOR=String(Number(detalleEspecifico[i].VALOR_UNITARIO)*Number(detalleEspecifico[i].CANTIDAD));
-          this.suma_facturas += Number(detalleEspecifico[i].VALOR);    
+          this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);    
+          this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
 
         }else{
           detalleEspecifico[i].VALOR=String((Number(detalleEspecifico[i].VALOR_UNITARIO)*100)*Number(detalleEspecifico[i].CANTIDAD));
-          this.suma_facturas += Number(detalleEspecifico[i].VALOR);    
+          this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);     
+          this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
 
         }                         
       }     
@@ -246,28 +302,59 @@ export class EntregaArqueoComponent  implements OnInit {
   formatoNumero() {
     
     let numeroFormateado = this.datos.VALOR_TOTAL.replace(/[^\d]/g, '');
-   
-
     numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-
     this.datos.VALOR_TOTAL= numeroFormateado;
+   
 
     
   }
+
+  formatNumberInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let inputValue = inputElement.value.trim();
+  
+    const isNegative = inputValue.startsWith('-');
+    if (isNegative) {
+      inputValue = inputValue.substring(1);
+    }
+  
+    inputValue = inputValue.replace(/\D/g, '');
+  
+    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+    if (isNegative) {
+      inputValue = '-' + inputValue;
+    }
+  
+    this.datos2.PRESTAMOS_EEP = inputValue;
+  
+  }
+
 
   
   limpiarYEnviar() {
     this.enviar=false;
     this.datos.VALOR_TOTAL=this.datos.VALOR_TOTAL.replace(/\./g, '');
+    this.datos2.DATAFONO_AGUAS=this.datos2.DATAFONO_AGUAS.replace(/\./g, '');
+    this.datos2.DATAFONO_EEP=this.datos2.DATAFONO_EEP.replace(/\./g, '');
+    this.datos2.DATAFONO_MUNICIPIO=this.datos2.DATAFONO_MUNICIPIO.replace(/\./g, '');
+    this.datos2.PRESTAMOS_EEP=this.datos2.PRESTAMOS_EEP.replace(/\./g, '');
+    this.datos2.VALOR_CHEQUES=this.datos2.VALOR_CHEQUES.replace(/\./g, '');
+    
+    
+    console.log("Cheque2: ",this.datos2.VALOR_CHEQUES)
+    
+    console.log("Enviado2: ",this.datos2)
     this.entregaArqueo();
   }
 
 
   entregaArqueo(){
+    
     if(this.datos.ACCION=="3"){
       this.datos2.VALOR_TOTAL=this.datos.VALOR_TOTAL;
       this.datos2.ENTREGAS_DET=this.datos.ENTREGAS_DET;
+      
       this.recaudoService.postEntregaArqueo(this.datos2)
       .subscribe((respuesta) => {
        
@@ -289,6 +376,8 @@ export class EntregaArqueoComponent  implements OnInit {
             DATAFONO_EEP:"",
             DATAFONO_AGUAS:"",
             DATAFONO_MUNICIPIO:"",
+            CORRESPONSAL_1:"",
+            CORRESPONSAL_2:"",
             COMENTARIO: "",
             ENTREGAS_DET: [] as Detalle[],
             TOKEN: this.token
@@ -309,8 +398,8 @@ export class EntregaArqueoComponent  implements OnInit {
           this.mostrartabla=false;
         }
         else  {
+          console.log(this.datos2);
           this.formatoNumero();
-          console.log(this.datos);
           alertify.error(this.resultado.RESPUESTA);
           this.enviar=true;
         }
@@ -353,6 +442,8 @@ export class EntregaArqueoComponent  implements OnInit {
             DATAFONO_EEP:"",
             DATAFONO_AGUAS:"",
             DATAFONO_MUNICIPIO:"",
+            CORRESPONSAL_1:"",
+            CORRESPONSAL_2:"",
             COMENTARIO: "",
             ENTREGAS_DET: [] as Detalle[],
             TOKEN: this.token

@@ -10,6 +10,14 @@ interface Detalle{
   CARACTERES: string;  
   OBLIGATORIO: string; 
 }
+
+interface Detalle2{
+  CAMPO: string;
+  ORDEN: string;
+  POSICION_INICIAL:string;
+  CARACTERES: string;  
+  OBLIGATORIO: string; 
+}
 interface CampoSelec{
  CAMPO:string
 }
@@ -47,6 +55,16 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     USUARIO: this.usuario,
     TOKEN:this.token
   }
+  datosNuevos={
+    EMPRESA: this.empresa,
+    CODIGO_CONVENIO: "",
+    CODIGO_CONVENIO_DET: "",  
+    LONGITUD_BARRA: "", 
+    IDENTIFICADOR_BARRA: "", 
+    CAMPOS: [] as Detalle2[] ,
+    USUARIO: this.usuario,
+    TOKEN:this.token
+  }
 
   detalle={
     CAMPO: "",
@@ -55,6 +73,15 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     CARACTERES: "", 
     OBLIGATORIO: "" 
   }
+  datosEliminar={
+    EMPRESA:this.empresa,
+    CODIGO_CONVENIO: "",
+    CODIGO_CONVENIO_DET: "",
+    CAMPO: "",           
+    USUARIO:this.usuario,
+    TOKEN: this.token
+  }
+
 
  
   filteredList: any[] = [];
@@ -63,6 +90,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
   editar:boolean=false;
   mostrarMas:boolean=false;
   mostrarModificar:boolean=false;
+  mostrarCamposAgregar:boolean=false;
   
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
@@ -86,6 +114,10 @@ export class ParametrizacionBarrasComponent  implements OnInit {
         || item.NOMBRE_CONVENIO_DET.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     }
+  }
+
+  clearSearch() {
+    this.filteredList = this.FacturasBarras;
   }
 
 
@@ -129,6 +161,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
   cerrarTabla(){
     this.crear=false;
     this.editar=false;
+    this.mostrarCamposAgregar=false;
     this.ListarFacturasBarras();
   }
 
@@ -138,25 +171,76 @@ export class ParametrizacionBarrasComponent  implements OnInit {
   }
 
   agregarCampo(){
-    const campo : Detalle = { ...this.detalle};
-    this.datos.CAMPOS.push(campo);
-    this.detalle={
-      CAMPO: "",
-      ORDEN: "",
-      POSICION_INICIAL:"",
-      CARACTERES: "", 
-      OBLIGATORIO: "" 
+    if(this.mostrarModificar){
+      this.mostrarCamposAgregar=true;
+      const campo : Detalle2 = { ...this.detalle};
+      this.datosNuevos.CAMPOS.push(campo);
+      this.detalle={
+        CAMPO: "",
+        ORDEN: "",
+        POSICION_INICIAL:"",
+        CARACTERES: "", 
+        OBLIGATORIO: "" 
+      }
+      
+    console.log("camposNuevos:",this.datosNuevos)
+    }else{
+      this.mostrarCamposAgregar=false;
+      const campo : Detalle = { ...this.detalle};
+      this.datos.CAMPOS.push(campo);
+      this.detalle={
+        CAMPO: "",
+        ORDEN: "",
+        POSICION_INICIAL:"",
+        CARACTERES: "", 
+        OBLIGATORIO: "" 
+      }
+      
+
+      console.log("campos:",this.datos.CAMPOS)
     }
-    console.log("campos:",this.datos.CAMPOS)
   }
 
   campoRepetido(campo: string): boolean {
     return this.datos.CAMPOS.some(item => item.CAMPO === campo);
   }
 
+  eliminar(datos:{ CODIGO_CONVENIO: any; CODIGO_CONVENIO_DET: any},parametro:{CAMPO:any}){
+    this.datosEliminar.CAMPO=parametro.CAMPO;
+    this.datosEliminar.CODIGO_CONVENIO=datos.CODIGO_CONVENIO;
+    this.datosEliminar.CODIGO_CONVENIO_DET=datos.CODIGO_CONVENIO_DET;
+
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.postEliminarFacturaBarra(this.datosEliminar).subscribe(
+        (data: any) => {
+          console.log('Respuesta del servicio:', data);
+          this.resultado= data;
+          if(this.resultado.COD=="200"){
+            alertify.success(this.resultado.RESPUESTA);
+            
+            this.datos.CAMPOS = this.datos.CAMPOS.filter(detalle => detalle.CAMPO !== parametro.CAMPO);
+            this.datosNuevos.CAMPOS = this.datosNuevos.CAMPOS.filter(detalle => detalle.CAMPO !== parametro.CAMPO);
+          }
+          else {
+            alertify.error(this.resultado.RESPUESTA);
+          }      
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+          alertify.error(error);
+        }
+      );  
+    }
+  }
+
   eliminarFila(detalle:{ CAMPO: any; ORDEN: string; POSICION_INICIAL:string; CARACTERES:string; OBLIGATORIO:string}){
     const campo = detalle.CAMPO;
-    this.datos.CAMPOS = this.datos.CAMPOS.filter(detalle => detalle.CAMPO !== campo);
+    if(this.mostrarCamposAgregar){
+
+      this.datosNuevos.CAMPOS = this.datosNuevos.CAMPOS.filter(detalle => detalle.CAMPO !== campo);
+    }else{
+      this.datos.CAMPOS = this.datos.CAMPOS.filter(detalle => detalle.CAMPO !== campo);
+    }
   }
 
 
@@ -188,46 +272,79 @@ export class ParametrizacionBarrasComponent  implements OnInit {
   }
 
   ModificarFacturaBarras(){
-    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.postModificarFacturaBarra(this.datos).subscribe(
-        (data: any) => {
-          console.log('Respuesta del servicio:', data);
-          this.resultado= data;
-          if(this.resultado.COD=="200"){
-            alertify.success(this.resultado.RESPUESTA);
-            this.cerrarTabla();
+    if(this.mostrarCamposAgregar){
+      this.datosNuevos.EMPRESA= this.empresa,
+      this.datosNuevos.CODIGO_CONVENIO=this.datos.CODIGO_CONVENIO,
+      this.datosNuevos.CODIGO_CONVENIO_DET=this.datos.CODIGO_CONVENIO_DET,  
+      this.datosNuevos.LONGITUD_BARRA=this.datos.LONGITUD_BARRA, 
+      this.datosNuevos.IDENTIFICADOR_BARRA=this.datos.IDENTIFICADOR_BARRA, 
+      this.datosNuevos.USUARIO= this.usuario,
+      this.datosNuevos.TOKEN=this.token
+
+      console.log("entro para enviar")
+      this.CrearFacturaBarras();
+    }else{
+      if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+        this.recaudoService.postModificarFacturaBarra(this.datos).subscribe(
+          (data: any) => {
+            console.log('Respuesta del servicio:', data);
+            this.resultado= data;
+            if(this.resultado.COD=="200"){
+              alertify.success(this.resultado.RESPUESTA);
+              this.cerrarTabla();
+            }
+            else {
+              alertify.error(this.resultado.RESPUESTA);
+            }      
+          },
+          (error) => {
+            console.error('Error al llamar al servicio:', error);
+            alertify.error(error);
           }
-          else {
-            alertify.error(this.resultado.RESPUESTA);
-          }      
-        },
-        (error) => {
-          console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
-        }
-      );  
+        );  
+      }
     }
   }
 
   CrearFacturaBarras(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.postCrearFacturaBarra(this.datos).subscribe(
-        (data: any) => {
-          console.log('Respuesta del servicio:', data);
-          this.resultado= data;
-          if(this.resultado.COD=="200"){
-            alertify.success(this.resultado.RESPUESTA);
-            this.cerrarTabla();
+      if(this.mostrarCamposAgregar){
+        this.recaudoService.postCrearFacturaBarra(this.datosNuevos).subscribe(
+          (data: any) => {
+            console.log('Respuesta del servicio:', data);
+            this.resultado= data;
+            if(this.resultado.COD=="200"){
+              alertify.success(this.resultado.RESPUESTA);
+              this.cerrarTabla();
+            }
+            else {
+              alertify.error(this.resultado.RESPUESTA);
+            }      
+          },
+          (error) => {
+            console.error('Error al llamar al servicio:', error);
+            alertify.error(error);
           }
-          else {
-            alertify.error(this.resultado.RESPUESTA);
-          }      
-        },
-        (error) => {
-          console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
-        }
-      );  
+        );  
+      }else{
+        this.recaudoService.postCrearFacturaBarra(this.datos).subscribe(
+          (data: any) => {
+            console.log('Respuesta del servicio:', data);
+            this.resultado= data;
+            if(this.resultado.COD=="200"){
+              alertify.success(this.resultado.RESPUESTA);
+              this.cerrarTabla();
+            }
+            else {
+              alertify.error(this.resultado.RESPUESTA);
+            }      
+          },
+          (error) => {
+            console.error('Error al llamar al servicio:', error);
+            alertify.error(error);
+          }
+        );  
+      }
     }
   }
 

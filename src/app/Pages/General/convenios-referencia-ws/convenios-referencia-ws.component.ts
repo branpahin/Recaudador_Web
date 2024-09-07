@@ -106,7 +106,13 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
     
 
     this.selectedConvenioDet=event.detail.value;
-    localStorage.setItem('CODconvenioDet',this.selectedConvenioDet);
+    this.recaudoService.setCodigoConvenioDet(this.selectedConvenioDet)
+    if(this.selectedConvenioDet=="28"){
+      this.recaudoService.enviarConConvenioDet(true);
+    }else{
+      console.log("entro")
+      this.recaudoService.enviarConConvenioDet(false);
+    }
     const detalleEspecifico = this.resultado;
     
           

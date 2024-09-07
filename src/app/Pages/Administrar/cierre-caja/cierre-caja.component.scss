@@ -93,6 +93,8 @@ ion-card-content{
 
   
 .btn{
+    position: relative;
+    right: 10px;
     background-color: var(--ion-color-mycolor);
     padding: 20px 30px 20px 30px;
     border-radius: 10px;
@@ -100,8 +102,19 @@ ion-card-content{
     color:white;
 }
 
+.sac-btn{
+    background-color: rgb(33, 163, 44);
+    padding: 5px 5px 5px 5px;
+    border-radius: 10px;
+    margin: 2%;
+}
+
 .col-btn{
     max-width: 100px;
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;
+    align-content: center;
 }
 
 .titulo{
@@ -113,6 +126,7 @@ ion-card-content{
     align-items: center;  
     justify-content: center;  
     text-align: center;
+    align-content: center;
 }
 .btn:hover{
     background-color: #e48f0f;

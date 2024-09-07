@@ -1,9 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild,  AfterViewChecked, ChangeDetectorRef, ElementRef} from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
-import { MenuController } from '@ionic/angular';
+import { IonInput, LoadingController, MenuController, ModalController } from '@ionic/angular';
 import { formatDate } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ListadoFacturasComponent } from 'src/app/Pages/General/listado-facturas/listado-facturas.component';
 
 
 
@@ -41,6 +43,7 @@ interface DatosConsulta {
   CODIGO_CONVENIO: string;
   CODIGO_CONVENIO_DET: string;
   REFERENCIA: string;
+  VALOR_MOVIMIENTO_DET?:string;
   TOKEN: string;
 }
 
@@ -58,6 +61,7 @@ export class RecaudarComponent  implements OnInit {
   puntoPago=localStorage.getItem('puntoPago')|| '';
   nombrePuntoPago=localStorage.getItem('nombrePuntoPago')|| '';
   CODconvenio=localStorage.getItem('CODconvenio') || '';
+  CODconvenioDetConst=this.recaudoService.getCodigoConvenioDet() || '';
   CODconvenioDet=localStorage.getItem('CODconvenioDet') || '';
   NITConvenio=localStorage.getItem('NITConvenio') || '';
   token=localStorage.getItem('token')|| '';
@@ -91,7 +95,9 @@ export class RecaudarComponent  implements OnInit {
   
   nombres_convenio= [] as Detalle2[];
   facturasInvertidas:any[]=[];
+  focus:boolean=false;
 
+  valorReferencia="";
 
 
   datos = {
@@ -142,6 +148,19 @@ export class RecaudarComponent  implements OnInit {
     TOKEN: this.token
   };
 
+  datosTurno={
+    EMPRESA: this.empresa,
+    CODIGO_PUNTO_PAGO: this.puntoPago,
+    USUARIO: this.usuario,
+    CODIGO_CAJA: this.codigoCaja,
+    PREFERENCIAL:"0",   
+    TOKEN:this.token
+  };
+
+  turno:boolean=true;
+  turnero:any;
+  seleccionar:boolean=false;
+
   accion=1;
   codigo_barras="";
 
@@ -150,6 +169,7 @@ export class RecaudarComponent  implements OnInit {
     CODIGO_PUNTO_PAGO: this.puntoPago,
     NUMERO_ARQUEO:this.arqueo,
     USUARIO: this.usuario,
+    CODIGO_CONVENIO_DET:"",
     ACCION:"1",
     CODIGO_BARRAS:"",
     TOKEN: this.token
@@ -206,9 +226,13 @@ export class RecaudarComponent  implements OnInit {
   mostrarSoloBarra:boolean=false;
   mostrarBarra:boolean=false;
   mostrarDocumento:boolean=false;
+  mostrarValor:boolean=false;
   recaudado:boolean=false;
 
-
+  @ViewChild('myInput',{static:false}) myInput:IonInput | undefined;
+  @ViewChild('myInput2',{static:false}) myInput2:IonInput | undefined;
+  @ViewChild('myInput3',{static:false}) myInput3:IonInput | undefined;
+  @ViewChild('inputElement') inputElement: ElementRef | undefined;
 
   @HostListener('window:keyup', ['$event'])
   handleKeyUp(event: KeyboardEvent) {
@@ -218,6 +242,7 @@ export class RecaudarComponent  implements OnInit {
   else if (event.key === 'F2' && this.mostrarID==true && this.confirmar==false && this.recaudado==false) {
     this.confirmacion();
   }
+
   else if (event.key === 'F2' && this.confirmar==true && this.mostrarID==false && this.recaudado==false) {
     this.recaudarFinal();
   }
@@ -225,12 +250,25 @@ export class RecaudarComponent  implements OnInit {
   if (event.key === 'F4') {
     this.vistaImpresion();
     }
+  if (event.key === 'F9') {
+    event.preventDefault(); // Evitar la acción por defecto del navegador
+    this.setFocus2();
+  }
+
+  if (event.ctrlKey && event.key === 'B') {
+    event.preventDefault(); // Evitar la acción por defecto del navegador
+    this.setFocus2();
+  }
+
   if (event.key === 'F8') {
     this.limpiar();
-    }
-  if (event.key === 'F9') {
+  }
+  if (event.ctrlKey && event.key === 'B') {
     this.igualar();
-    }
+  }
+  if (event.ctrlKey && event.key === 'b') {
+    this.igualar();
+  }
   if(this.confirmar_Lista==true){
     if(event.key === 'Enter'){
       this.agregarDetalle();
@@ -244,7 +282,13 @@ export class RecaudarComponent  implements OnInit {
   imprimir=false;
 
 
-  constructor(private recaudoService: RecaudoService, private router: Router, private menuCtrl: MenuController) { 
+  constructor(private recaudoService: RecaudoService, private router: Router, 
+    private menuCtrl: MenuController, 
+    private cd: ChangeDetectorRef, 
+    private http: HttpClient, 
+    private modalController: ModalController,
+    private loadingController: LoadingController
+  ) { 
     this.recaudoService.enviarAlumbrado$.subscribe((barras) => {
       if(barras){
         this.mostrarCamposManuales=false;
@@ -266,6 +310,15 @@ export class RecaudarComponent  implements OnInit {
 
     });
 
+    this.recaudoService.CodConvenioDet$.subscribe((codConvenioDet) => {
+      if(codConvenioDet){
+        this.mostrarValor=true;
+      }else{
+        this.mostrarValor=false;
+      }
+
+    });
+
     this.recaudos = {
       NUMERO_ARQUEO: ''
     }
@@ -278,11 +331,31 @@ export class RecaudarComponent  implements OnInit {
   ngOnInit() {
     this.visual2=false;
     this.visual3=false;
+    this.mostrarSoloBarra=false;
+    this.mostrarCamposManuales=false;
     this.imprimir=false;
     this.datos.FORMA_PAGO="1";
+    this.setFocus();
     this.consultarArqueo();
   }
+  
 
+  setFocus(){
+    setTimeout(() => {
+      this.myInput?.setFocus();
+    }, 0);
+  }
+  setFocus2(){
+    this.myInput2?.setFocus();
+  }
+  setFocus3(){
+    this.myInput3?.setFocus();
+  }
+
+  get colorValorCambio(): string {
+    const valorCambioNumber = parseFloat(this.datos.VALOR_CAMBIO);
+    return valorCambioNumber < 0 ? 'red' : 'green'; // Cambia a 'black' si es negativo
+  }
 
   agrupar(event: { detail: { checked: any; }; }){
     if (event.detail.checked) {
@@ -347,6 +420,7 @@ export class RecaudarComponent  implements OnInit {
     this.nombres_convenio=this.nombres_convenio.filter(detalle => detalle.CODIGO_CLIENTE !==codigoCliente);
 
     this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
+    this.calcular();
   }
 
   agregarDetalle() {
@@ -354,16 +428,44 @@ export class RecaudarComponent  implements OnInit {
     this.confirmar_Lista=false;
     const nuevoDetalle: Detalle = { ...this.detalle, };
     const nuevoDetalle2: Detalle2 = { ...this.detalle2, };
-    if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="5" ){
+    if(this.datos.FORMA_PAGO=="2" || this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
       const ultimoDetalle = this.datos.FACTURAS[this.datos.FACTURAS.length - 1];
       const nuevoCodigoConvenio = nuevoDetalle.CODIGO_CONVENIO;
-
-      if (ultimoDetalle && ultimoDetalle.CODIGO_CONVENIO === nuevoCodigoConvenio) {
-
-        console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
-      } else {
+      // if(this.datos.FORMA_PAGO=="5"){
+      //   // const mockEvent = { detail: { checked: true } };
+      //   // this.redondeo(mockEvent);
+      // }
+      console.log("ultimodetalle:",ultimoDetalle)
+      if (ultimoDetalle) {
+        if(ultimoDetalle.CODIGO_CONVENIO === nuevoCodigoConvenio){
+          console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
+          console.log("datos: ", this.datos.FACTURAS)
+          this.nombres_convenio.push(nuevoDetalle2);
+          this.datos.FACTURAS.push(nuevoDetalle);
+          this.datosConsulta.CODIGO_BARRAS="";
+          this.detalle.CODIGO_CLIENTE="";
+          this.detalle.CODIGO_REFERENCIA="";
+          this.detalle.VALOR_MOVIMIENTO_DET="";
+          this.datosConsulta2.NIT = "";
+          this.documento="";
+          this.referencia =false;
+          this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
+        }else {
         alertify.error("NO SE PUEDE REALIZAR PAGOS DE CONVENIOS DIFERENTES POR ESTE MEDIO DE PAGO");
-        console.log('El nuevo CODIGO_CONVENIO es diferente al anterior.');
+        console.log('El nuevo CODIGO_CONVENIO es diferente al anterior2.');
+        } 
+      }else{
+        console.log("datos: ", this.datos.FACTURAS)
+        this.nombres_convenio.push(nuevoDetalle2);
+        this.datos.FACTURAS.push(nuevoDetalle);
+        this.datosConsulta.CODIGO_BARRAS="";
+        this.detalle.CODIGO_CLIENTE="";
+        this.detalle.CODIGO_REFERENCIA="";
+        this.detalle.VALOR_MOVIMIENTO_DET="";
+        this.datosConsulta2.NIT = "";
+        this.documento="";
+        this.referencia =false;
+        this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
       }
     }
     else if(this.datos.FORMA_PAGO=="4"){
@@ -372,23 +474,37 @@ export class RecaudarComponent  implements OnInit {
       if (nuevoCodigoConvenio == "2") {
 
         console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
+        console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
+        console.log("datos: ", this.datos.FACTURAS)
+        this.nombres_convenio.push(nuevoDetalle2);
+        this.datos.FACTURAS.push(nuevoDetalle);
+        this.datosConsulta.CODIGO_BARRAS="";
+        this.detalle.CODIGO_CLIENTE="";
+        this.detalle.CODIGO_REFERENCIA="";
+        this.detalle.VALOR_MOVIMIENTO_DET="";
+        this.datosConsulta2.NIT = "";
+        this.documento="";
+        this.referencia =false;
+        this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
       } else {
         alertify.error("SOLO SE PUEDE PAGAR ENERGIA CON ESTE METODO DE PAGO");
         console.log('El nuevo CODIGO_CONVENIO es diferente al anterior.');
       }
     }
-
-    this.nombres_convenio.push(nuevoDetalle2);
-    this.datos.FACTURAS.push(nuevoDetalle);
-    this.datosConsulta.CODIGO_BARRAS="";
-    this.detalle.CODIGO_CLIENTE="";
-    this.detalle.CODIGO_REFERENCIA="";
-    this.detalle.VALOR_MOVIMIENTO_DET="";
-    this.datosConsulta2.NIT = "";
-    this.documento="";
-    this.referencia =false;
-    this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
-
+    else{
+      console.log("datos: ", this.datos.FACTURAS)
+      this.nombres_convenio.push(nuevoDetalle2);
+      this.datos.FACTURAS.push(nuevoDetalle);
+      this.datosConsulta.CODIGO_BARRAS="";
+      this.detalle.CODIGO_CLIENTE="";
+      this.detalle.CODIGO_REFERENCIA="";
+      this.detalle.VALOR_MOVIMIENTO_DET="";
+      this.datosConsulta2.NIT = "";
+      this.documento="";
+      this.referencia =false;
+      this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
+    }
+    this.calcular();
 
   }
 
@@ -396,6 +512,7 @@ export class RecaudarComponent  implements OnInit {
   
   buscarBarras() {
     this.visual1=true;
+    this.setFocus();
     this.visual2=false;
     this.visual3=false;
     this.mostrarSoloBarra=false;
@@ -431,7 +548,7 @@ export class RecaudarComponent  implements OnInit {
   }
 
   formaPagoMixto(){
-    if(this.datos.FORMA_PAGO=="5"){
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
       this.mostrarCampos=true;
       this.datosMix = {
         EMPRESA: this.empresa,
@@ -456,13 +573,13 @@ export class RecaudarComponent  implements OnInit {
       this.mostrarCampos=false;
     }
 
-    if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="2" || this.datos.FORMA_PAGO=="4"){
+    if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="2" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="6"){
       this.mostrarCamposDoc=true;
     }
     else{
       this.mostrarCamposDoc=false;
     }
-    if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="5"){
+    if(this.datos.FORMA_PAGO=="2" || this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7" || this.datos.FORMA_PAGO=="6"){
       let codigosIguales = true;
       let codigoAnterior = null;
   
@@ -502,21 +619,74 @@ export class RecaudarComponent  implements OnInit {
         console.log('Hay CODIGO_CONVENIO diferentes en el array.');
       }
     }
+    this.setFocus();
   
   }
 
+  preferencial(event:{ detail: { checked: any; }; } ){
+    if (event.detail.checked) {
+      this.datosTurno.PREFERENCIAL="1";
+      this.seleccionar=true;
+    
+    }else {
+      this.datosTurno.PREFERENCIAL="0";
+      this.seleccionar=false;
+    }
+  }
+  activarCajaTurno(){
+    
+    this.turno=false;
+    this.recaudoService.postActivarCajero(this.datosTurno).subscribe((data) => {
+      console.log(data);
+    }, );
+
+  }
+  finalizarCajaTurno(){
+    this.seleccionar=false;
+    this.turno=true;
+    this.datosTurno.PREFERENCIAL="0";
+    this.recaudoService.postFinalizarCajero(this.datosTurno).subscribe((data) => {
+      console.log(data);
+    }, );
+
+  }
+
   confirmacion(){
-    this.confirmar=true;
-    this.IDtransaccion=true;
-    this.mostrarID=false;
-    this.pago.forEach(date => {
+    if(this.datos.FORMA_PAGO=='1'){
+      this.recaudarFinal();
+    }else{
+      this.confirmar=true;
+      this.IDtransaccion=true;
+      this.mostrarID=false;
+      this.pago.forEach(date => {
+  
+        if(date.CODIGO==this.datos.FORMA_PAGO){
+          this.desFormaPago=date.DESCRIPCION;
+        }
+        
+  
+      });
+    }
 
-      if(date.CODIGO==this.datos.FORMA_PAGO){
-        this.desFormaPago=date.DESCRIPCION;
-      }
-      
+  }
 
+  async ListarFacturas() {
+    const modal = await this.modalController.create({
+      component: ListadoFacturasComponent,
+      componentProps: {
+        datos: this.facturasInvertidas,
+        nombres_convenio:this.nombres_convenio,
+        backdropDismiss: true,
+      },
     });
+    modal.style.cssText = `
+      --height:auto;
+      max-height: 100%;
+      --width:80%;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
   }
 
   Anular(){
@@ -528,6 +698,8 @@ export class RecaudarComponent  implements OnInit {
       if(data.COD=="200"){
         alertify.success(this.resultado.RESPUESTA);
         this.mostrarID=false;
+        this.IDtransaccion=false;
+        this.Numero_Transaccion="";
         this.formatoNumero();
        
       }else {
@@ -548,8 +720,14 @@ export class RecaudarComponent  implements OnInit {
   }
 
   cerrarTabla(){
+    console.log("idtrasaccion",this.IDtransaccion)
     this.confirmar=false;
     this.formatoNumero();
+    if(this.IDtransaccion){
+      this.Anular();
+      this.IDtransaccion=false;
+      this.Numero_Transaccion="";
+    }
   }
 
   cerrarList(){
@@ -565,7 +743,7 @@ export class RecaudarComponent  implements OnInit {
     this.direccion="";
     this.detalle.BUSQUEDA_REFERENCIA="N";
     this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)-Number(this.resultado.VALOR_MOVIMIENTO_DET));
-    this.datos.NUMERO_CUPONES_MOVIMIENTO="";
+    this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)-1);
     this.detalle2.CODIGO_CONVENIO="";
     this.detalle2.CODIGO_CONVENIO_DET="";
     this.detalle2.CODIGO_CLIENTE="";
@@ -600,10 +778,12 @@ export class RecaudarComponent  implements OnInit {
     
     if(!this.redondear){
       this.datos.VALOR_CAMBIO=String(valorRedondeado);
+      this.datosMix.VALOR_CAMBIO=String(valorRedondeado);
 
     }
     else{
       this.datos.VALOR_CAMBIO=valorCambio;
+      this.datosMix.VALOR_CAMBIO=valorCambioMix;
     }
     return valorRedondeado;
     
@@ -632,12 +812,11 @@ export class RecaudarComponent  implements OnInit {
     this.datosMix.VALOR_EFECTIVO=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '')
     this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
     this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
-    if(this.datos.FORMA_PAGO=="5"){
-      ;
-
-      if(Number(this.datosMix.VALOR_EFECTIVO) > 0 && Number(this.datos.VALOR_MOVIMIENTO) > 0){
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
+      if(Number(this.datosMix.VALOR_EFECTIVO) > 0 || Number(this.datos.VALOR_MOVIMIENTO) > 0 || Number(this.datosMix.VALOR_RECIBIDO) > 0){
+       
         this.datosMix.VALOR_TARJETA=String(Number(this.datos.VALOR_MOVIMIENTO)-Number(this.datosMix.VALOR_EFECTIVO))
-        if(Number(this.datosMix.VALOR_RECIBIDO) > 0 && Number(this.datosMix.VALOR_EFECTIVO) > 0){
+        if(Number(this.datosMix.VALOR_RECIBIDO) > 0 || Number(this.datosMix.VALOR_EFECTIVO) > 0){
         this.datosMix.VALOR_CAMBIO=String(Number(this.datosMix.VALOR_RECIBIDO)-Number(this.datosMix.VALOR_EFECTIVO));
         }
         let numeroFormateado = this.datosMix.VALOR_EFECTIVO.replace(/[^\d]/g, '');
@@ -649,6 +828,8 @@ export class RecaudarComponent  implements OnInit {
         numeroFormateado = this.datosMix.VALOR_TARJETA.replace(/[^\d]/g, '');
         numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         this.datosMix.VALOR_TARJETA= numeroFormateado;
+        
+       
       }
     }
    
@@ -658,8 +839,15 @@ export class RecaudarComponent  implements OnInit {
       }
     }
     
-    const valorRedondeado = this.redondearValor(Number(this.datos.VALOR_CAMBIO));
-    const valorRedondeadoMix = this.redondearValorMix(Number(this.datosMix.VALOR_CAMBIO));
+    
+    if(!this.mostrarCampos){
+
+      const valorRedondeado = this.redondearValor(Number(this.datos.VALOR_CAMBIO));
+    }else{
+
+      const valorRedondeadoMix = this.redondearValorMix(Number(this.datosMix.VALOR_CAMBIO));
+    }
+    console.log("devueltas:",this.datosMix.VALOR_CAMBIO)
     this.formatoNumero();
   }
 
@@ -669,7 +857,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosMix.VALOR_EFECTIVO=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '')
     this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
     this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
-    if(this.datos.FORMA_PAGO=="5"){
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
       ;
 
       if(Number(this.datosMix.VALOR_TARJETA) > 0 && Number(this.datos.VALOR_MOVIMIENTO) > 0){
@@ -694,10 +882,36 @@ export class RecaudarComponent  implements OnInit {
         this.datos.VALOR_CAMBIO=String(Number(this.datos.VALOR_RECIBIDO)-Number(this.datos.VALOR_MOVIMIENTO)); 
       }
     }
-    
-    const valorRedondeado = this.redondearValor(Number(this.datos.VALOR_CAMBIO));
-    const valorRedondeadoMix = this.redondearValorMix(Number(this.datosMix.VALOR_CAMBIO));
+    if(!this.mostrarCampos){
+
+      const valorRedondeado = this.redondearValor(Number(this.datos.VALOR_CAMBIO));
+    }else{
+
+      const valorRedondeadoMix = this.redondearValorMix(Number(this.datosMix.VALOR_CAMBIO));
+    }
+
     this.formatoNumero();
+  }
+
+  verificarValor() {
+    
+    const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
+    const valorMovimiento=this.datos.VALOR_MOVIMIENTO.replace(/\./g, '');
+    if (Number(valorRecibido) < Number(valorMovimiento)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  verificarValorMix() {
+    const valorRecibido=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '');
+    const valorEfectivo=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '');
+    if (Number(valorRecibido) < Number(valorEfectivo)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   fechaManual(event: any){
@@ -707,8 +921,18 @@ export class RecaudarComponent  implements OnInit {
 
 
 
-  consultarRecaudoBarras(){
-    this.recaudoService.postConsultarRecaudo(this.datosConsulta).subscribe((data) => {
+  async consultarRecaudoBarras(){
+
+    const CODconvenioDetConst=this.recaudoService.getCodigoConvenioDet() || '';
+    if(this.mostrarSoloBarra){
+
+      this.datosConsulta.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+    }
+    else{
+      this.datosConsulta.CODIGO_CONVENIO_DET="";
+    }
+    console.log("enviado: ",this.datosConsulta)
+    this.recaudoService.postConsultarRecaudo(this.datosConsulta).subscribe(async (data) => {
       this.resultado = data;
       console.log("Respuesta: ",data)
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
@@ -731,22 +955,30 @@ export class RecaudarComponent  implements OnInit {
         this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
         this.agregarDetalle();
       }else if(data.COD!="200"){
+        this.datosConsulta.CODIGO_BARRAS="";
        alertify.error(data.RESPUESTA);
-       this.datosConsulta.CODIGO_BARRAS="";
       }else{
         this.datosConsulta.CODIGO_BARRAS="";
         alertify.error("La factura ya se encuentra en la lista ");
       }
       
       
-    }, );
+    },async (error) => {
+      console.error(error);
+    });
     
   }
 
-  consultarRecaudoReferencia(){
+  async consultarRecaudoReferencia(){
+    const loading = await this.loadingController.create({
+      message: 'Consultando Factura...',
+      spinner: 'crescent',
+    });
+
+    await loading.present();
     const alumbradosConst=localStorage.getItem('alumbrado') || '';
     const CODconvenioConst=localStorage.getItem('CODconvenio') || '';
-    const CODconvenioDetConst=localStorage.getItem('CODconvenioDet') || '';
+    const CODconvenioDetConst=this.recaudoService.getCodigoConvenioDet() || '';
     const NITConvenio=localStorage.getItem('NITConvenio') || '';
     const NombreConvenio=localStorage.getItem('NombreConvenio') || '';
     const NombreConvenioDet= localStorage.getItem('NombreConvenioDet')|| '';
@@ -755,6 +987,8 @@ export class RecaudarComponent  implements OnInit {
     this.datosConsulta2.NIT= NITConvenio;
     this.datosConsulta2.CODIGO_CONVENIO=CODconvenioConst;
     this.datosConsulta2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+    
+    console.log("enviado:",this.datosConsulta2)
     if(CODconvenioConst=="5"){
       this.datosConsulta2.REFERENCIA="0"+this.datosConsulta2.REFERENCIA;
     }
@@ -764,7 +998,14 @@ export class RecaudarComponent  implements OnInit {
       }
       else if(alumbradosConst=="2" && CODconvenioDetConst!="28"){
         this.datosConsulta2.REFERENCIA="080"+this.datosConsulta2.REFERENCIA;
+      }else if(CODconvenioDetConst=="28"){
+        
+        this.datosConsulta2.VALOR_MOVIMIENTO_DET=this.valorReferencia;
+        this.datosConsulta2.REFERENCIA="060"+this.datosConsulta2.REFERENCIA;
+        this.datosConsulta2.VALOR_MOVIMIENTO_DET= this.datosConsulta2.VALOR_MOVIMIENTO_DET.replace(/\./g, '')
+        console.log("valor: ",this.datosConsulta2.VALOR_MOVIMIENTO_DET)
       }
+      
     }
     
     else if(CODconvenioConst=="3" && CODconvenioDetConst=="10"){
@@ -772,8 +1013,8 @@ export class RecaudarComponent  implements OnInit {
     }
 
     
-    
-    this.recaudoService.postConsultarRecaudo(this.datosConsulta2).subscribe((data) => {
+    console.log("datos envio final: ",this.datosConsulta2)
+    this.recaudoService.postConsultarRecaudo(this.datosConsulta2).subscribe(async (data) => {
       this.resultado = data;
       console.log("Respuesta: ",data)
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
@@ -798,14 +1039,19 @@ export class RecaudarComponent  implements OnInit {
         this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
 
         this.confirmarList();
+        this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
       }else if(data.COD!="200"){
        alertify.error(data.RESPUESTA);
+       this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
       }else{
         alertify.error(data.RESPUESTA);
+        this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
         alertify.error("La factura ya se encuentra en la lista ");
       }
-    },(error) => {
+      await loading.dismiss();
+    },async (error) => {
       console.error(error);
+      await loading.dismiss();
     });
     this.datosConsulta2.REFERENCIA = "";
     this.detalle.CODIGO_CLIENTE="";
@@ -872,7 +1118,7 @@ export class RecaudarComponent  implements OnInit {
   onEnterKey3(event: any) {
     event.preventDefault();
     const CODconvenioConst=localStorage.getItem('CODconvenio') || '';
-    const CODconvenioDetConst=localStorage.getItem('CODconvenioDet') || '';
+    const CODconvenioDetConst=this.recaudoService.getCodigoConvenioDet() || '';
     const NombreConvenio=localStorage.getItem('NombreConvenio') || '';
     const NombreConvenioDet= localStorage.getItem('NombreConvenioDet')|| '';
     if(CODconvenioConst!=null){
@@ -880,7 +1126,7 @@ export class RecaudarComponent  implements OnInit {
       if(this.mostrarDocumento){
         this.detalle.CODIGO_REFERENCIA=this.detalle.CODIGO_REFERENCIA+"-"+this.documento;
       }
-    }else if(CODconvenioConst=="2" && CODconvenioDetConst=="42"){
+    }else if(CODconvenioConst=="2" ){
       this.mostrarSoloBarra=true;
       this.mostrarCamposManuales=false;
     }
@@ -897,27 +1143,75 @@ export class RecaudarComponent  implements OnInit {
     this.detalle.VALOR_MOVIMIENTO_DET=this.detalle.VALOR_MOVIMIENTO_DET.replace(/\./g, '')
     this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(this.detalle.VALOR_MOVIMIENTO_DET));
     this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
-   
-    this.agregarDetalle();
-    
-    this.desagrupar=true;
     this.referencia =true;
     this.visual2=false;
+
+      
+      this.agregarDetalle();
+      this.setFocus3();
+      this.desagrupar=true;
+      
+   
+   
   }
 
   limpiarYEnviar() {
+
+    // this.datos.VALOR_RECIBIDO=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
+    // this.datosMix.VALOR_EFECTIVO=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '')
+    // this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
+    // this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
+    // if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
+
+    
+    //   this.recaudar();
+    // }
+    // else{
+    //   this.confirmacion();
+    // }
+    
     this.datos.VALOR_RECIBIDO=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
     this.datosMix.VALOR_EFECTIVO=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '')
     this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
     this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
-    if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5"){
+      if(this.datos.VALOR_RECIBIDO!=''){
+        console.log("this.datos.VALOR_RECIBIDO: ", this.datos.VALOR_RECIBIDO+ " this.datos.VALOR_MOVIMIENTO: ",this.datos.VALOR_MOVIMIENTO)
+        if(Number(this.datos.VALOR_RECIBIDO)>=Number(this.datos.VALOR_MOVIMIENTO)){
+          if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
+      
+         
+            this.recaudar();
+          }
+          else{
+            this.confirmacion();
+          }
+        }else{
+          alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO")
+          this.formatoNumero();
+        }
+      }
+      else if(this.datosMix.VALOR_RECIBIDO!=''){
+        if(Number(this.datosMix.VALOR_RECIBIDO)>=Number(this.datosMix.VALOR_MOVIMIENTO)){
+          if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
+      
+         
+            this.recaudar();
+          }
+          else{
+            this.confirmacion();
+          }
+        }else{
+          alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO2")
+          this.formatoNumero();
+        }
+      }
+      else{
+        alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO3")
+        this.formatoNumero();
+      }
+    
 
-   
-      this.recaudar();
-    }
-    else{
-      this.confirmacion();
-    }
+
   }
 
   recaudar(){
@@ -925,8 +1219,7 @@ export class RecaudarComponent  implements OnInit {
     if (this.lstfacturas.lastIndexOf(',') !== -1) {
       this.lstfacturas = this.lstfacturas.slice(0, -1);
     }
-
-    if(this.datos.FORMA_PAGO=="5"){
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
       this.datosMix.FACTURAS=this.datos.FACTURAS;
       this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
       this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
@@ -934,22 +1227,33 @@ export class RecaudarComponent  implements OnInit {
         if(this.datosMix.NUMERO_DOCUMENTO==""){
           this.datosMix.NUMERO_DOCUMENTO="N/A";
         }
-        this.recaudoService.postTrasaccionDatafono(this.datosMix)
-        .subscribe((respuesta) => {
-          this.resultado=respuesta;
-          if(this.resultado.COD=='200'){
-            alertify.success(this.resultado.RESPUESTA);
-            this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+        if(this.Numero_Transaccion==""){
+          if(this.datos.FORMA_PAGO=="7"){
+            this.datos.NUMERO_TRANSACCION="0"
+            this.datosMix.NUMERO_TRANSACCION="0"
+            this.Numero_Transaccion="0"
             this.vistaIdTransaccion();
-            }
-          else  {
-            this.formatoNumero();
-            alertify.error(this.resultado.RESPUESTA);
+          }else{
+            this.recaudoService.postTrasaccionDatafono(this.datosMix)
+            .subscribe((respuesta) => {
+              this.resultado=respuesta;
+              if(this.resultado.COD=='200'){
+                alertify.success(this.resultado.RESPUESTA);
+                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+                this.vistaIdTransaccion();
+                }
+              else  {
+                this.formatoNumero();
+                alertify.error(this.resultado.RESPUESTA);
+              }
+            }, (error) => {
+              this.formatoNumero();
+              console.error(error);
+            });
           }
-        }, (error) => {
-          this.formatoNumero();
-          console.error(error);
-        });
+
+        }
+        
       }else{
         alertify.error("El valor recibido no puede estár en blanco");
       }
@@ -961,22 +1265,33 @@ export class RecaudarComponent  implements OnInit {
         if(this.datos.NUMERO_DOCUMENTO==""){
           this.datos.NUMERO_DOCUMENTO="N/A";
         }
-        this.recaudoService.postTrasaccionDatafono(this.datos)
-        .subscribe((respuesta) => {
-          this.resultado=respuesta;
-          if(this.resultado.COD=='200'){
-            alertify.success(this.resultado.RESPUESTA);
-            this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+        if(this.Numero_Transaccion==""){
+          if(this.datos.FORMA_PAGO=="6"){
+            this.datos.FORMA_PAGO="3"
+            this.datos.NUMERO_TRANSACCION="0"
+            this.datosMix.NUMERO_TRANSACCION="0"
+            this.Numero_Transaccion="0"
             this.vistaIdTransaccion();
-            }
-          else  {
-            this.formatoNumero();
-            alertify.error(this.resultado.RESPUESTA);
           }
-        }, (error) => {
-          this.formatoNumero();
-          console.error(error);
-        });
+          else{
+            this.recaudoService.postTrasaccionDatafono(this.datos)
+            .subscribe((respuesta) => {
+              this.resultado=respuesta;
+              if(this.resultado.COD=='200'){
+                alertify.success(this.resultado.RESPUESTA);
+                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+                this.vistaIdTransaccion();
+                }
+              else  {
+                this.formatoNumero();
+                alertify.error(this.resultado.RESPUESTA);
+              }
+            }, (error) => {
+              this.formatoNumero();
+              console.error(error);
+            });
+          }
+        }
       }else{
         alertify.error("El valor recibido no puede estár en blanco");
       }
@@ -999,13 +1314,14 @@ export class RecaudarComponent  implements OnInit {
       this.lstfacturas = this.lstfacturas.slice(0, -1);
     }
 
-
-    if(this.datos.FORMA_PAGO=="5"){
+    console.log("enviado:",this.datosMix)
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
       console.log("entro Mix")
       this.datosMix.FACTURAS=this.datos.FACTURAS;
       this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
       this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
       this.datosMix.NUMERO_TRANSACCION=this.Numero_Transaccion;
+      this.datosMix.FORMA_PAGO="5"
       if(this.datosMix.VALOR_EFECTIVO!="" && this.datosMix.VALOR_TARJETA!=""){
         if(this.datosMix.NUMERO_DOCUMENTO==""){
           this.datosMix.NUMERO_DOCUMENTO="N/A";
@@ -1039,6 +1355,9 @@ export class RecaudarComponent  implements OnInit {
         this.datos.VALOR_RECIBIDO=valorRecibido;
         if(this.datos.NUMERO_DOCUMENTO==""){
           this.datos.NUMERO_DOCUMENTO="N/A";
+        }
+        if(this.datos.FORMA_PAGO=="6"){
+          this.datos.FORMA_PAGO="3"
         }
         this.recaudoService.postRecaudar(this.datos)
         .subscribe((respuesta) => {
@@ -1083,50 +1402,49 @@ export class RecaudarComponent  implements OnInit {
   }
 
   imprimirTikect(){
+
     if(this.lstfacturas==""){
       this.lstfacturas="0";
     }
-    const iframeContainer = document.getElementById('iframe-container');
-
     this.recaudoService.getImpresiónTicket(this.empresa,this.puntoPago,this.arqueo,this.movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
     .subscribe(
       (response) => {
-        if (response.body !== null) {
-          console.log("Imprimir: Si")
-          this.iframeUrl='http://172.25.2.2:16000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
-          '&CODIGO_PUNTO_PAGO='+this.puntoPago+
-          '&NUMERO_ARQUEO='+this.arqueo+
-          '&NUMERO_MOVIMIENTO='+this.movimiento+
-          '&USUARIO='+this.usuario+
-          '&LSTFACTURAS='+this.lstfacturas+
-          '&AGRUPADO='+this.agrupado+
-          '&TOKEN='+this.token;
-          
-          if (iframeContainer) {
+        const url = 'http://172.25.2.2:18000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
+                '&CODIGO_PUNTO_PAGO='+this.puntoPago+
+                '&NUMERO_ARQUEO='+this.arqueo+
+                '&NUMERO_MOVIMIENTO='+this.movimiento+
+                '&USUARIO='+this.usuario+
+                '&LSTFACTURAS='+this.lstfacturas+
+                '&AGRUPADO='+this.agrupado+
+                '&TOKEN='+this.token;
+        this.http.get(url, { responseType: 'blob' }).subscribe(
+          (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
             const iframe = document.createElement('iframe');
-          iframe.src = this.iframeUrl;
-          iframe.width = '100%';
-          iframe.height = '500px';
-          iframeContainer.innerHTML = '';
-          iframeContainer.appendChild(iframe);
+            iframe.style.display = 'none';
 
-          iframe.onload = () => {
+            document.body.appendChild(iframe);
 
-            if (!this.imprimir) {
-              iframeContainer.innerHTML = ''; 
-            }
-          };
-            
+            iframe.src = url;
+
+            iframe.onload = () => {
+              iframe.contentWindow?.focus();
+              iframe.contentWindow?.print();
+
+            };
+          },
+          error => {
+            console.error('Error al imprimir el ticket:', error);
           }
-        } else {
-          console.error('La respuesta del servidor no contiene un cuerpo válido.');
-        }
-        
+        );
       },
       (error) => {
         console.error('Error al obtener el archivo PDF', error);
       }
     );
+
   }
 
   consultarArqueo(){
@@ -1237,6 +1555,7 @@ export class RecaudarComponent  implements OnInit {
       NUMERO_ARQUEO:this.arqueo,
       USUARIO: this.usuario,
       ACCION:"1",
+      CODIGO_CONVENIO_DET:"",
       CODIGO_BARRAS:"",
       TOKEN: this.token
     };
@@ -1278,7 +1597,7 @@ export class RecaudarComponent  implements OnInit {
     this.fecha='';
     this.mostrarCamposDoc=false;
     this.confirmar_Lista=false;
-    this.resultado=[];
+    this.resultado=null;
     this.mostrarCamposManuales=false;
     this.mostrarSoloBarra=false;
     this.recaudado=false;
@@ -1287,8 +1606,11 @@ export class RecaudarComponent  implements OnInit {
     this.iframeUrl= "";
   
     this.imprimir=false;
+    this.cd.detectChanges();
 
     this.ngOnInit();
+    const mockEvent = { detail: { checked: false } };
+    this.barraManual(mockEvent);
 
   }
 

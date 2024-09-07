@@ -44,7 +44,7 @@
               <ion-item>
                 <ion-label *ngIf="seleccion=='PARAMETROS'">Parametros: </ion-label>
                 <ion-label *ngIf="seleccion=='TABLAS'">Tablas: </ion-label>
-                <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
               </ion-item>
               <ion-row class="header-row1" >
                 <ion-col *ngIf="seleccion=='PARAMETROS'">PARAMETRO</ion-col>

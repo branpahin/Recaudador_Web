@@ -58,7 +58,13 @@ export class ListadoUsuariosComponent  implements OnInit {
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.obtenerEmpresas();
+    this.ListarRoles();
+    this.ListarPuntosPago();
+    this.ListarEstadoUsuario();
+    this.ListarSubPuntos();
+   }
 
   ionViewWillEnter() {
     this.ListarUsuarios();
@@ -95,6 +101,7 @@ export class ListadoUsuariosComponent  implements OnInit {
   cerrarTabla(){
     this.crear=false;
     this.editar=false;
+    this.searchTerm="";
     this.ListarUsuarios();
   }
 
@@ -110,6 +117,10 @@ export class ListadoUsuariosComponent  implements OnInit {
         || item.NOMBRE_ROL.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     }
+  }
+
+  clearSearch() {
+    this.filteredList = this.listadoUsuarios;
   }
 
   ListarPuntosPago(){
@@ -226,6 +237,22 @@ export class ListadoUsuariosComponent  implements OnInit {
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
+            this.datos={
+              EMPRESA:this.empresa,
+              USUARIO:"",
+              TIPO_DOCUMENTO:"",
+              DOCUMENTO:"",
+              NOMBRE:"",
+              DIRECCION:"",
+              TELEFONO:"",
+              ESTADO:"",
+              PASSWORD:"",
+              CODIGO_PUNTO_PAGO:"",
+              SUB_PUNTO_PAGO:"",
+              ROL:"",
+              TOKEN:this.token
+            };
+            this.cerrarTabla();
           }
           else {
             alertify.error(this.resultado.RESPUESTA);
@@ -237,21 +264,7 @@ export class ListadoUsuariosComponent  implements OnInit {
           alertify.error(error);
         }
       );
-      this.datos={
-        EMPRESA:this.empresa,
-        USUARIO:"",
-        TIPO_DOCUMENTO:"",
-        DOCUMENTO:"",
-        NOMBRE:"",
-        DIRECCION:"",
-        TELEFONO:"",
-        ESTADO:"",
-        PASSWORD:"",
-        CODIGO_PUNTO_PAGO:"",
-        SUB_PUNTO_PAGO:"",
-        ROL:"",
-        TOKEN:this.token
-      };
+      
     }
   }
   
@@ -271,6 +284,7 @@ export class ListadoUsuariosComponent  implements OnInit {
     ESTADO:any,
     CONTRASENA:any,
     CODIGO_PUNTO_PAGO:any,
+    SUB_PUNTO_PAGO:any,
     ROL:any,}){
 
       this.crear=true;
@@ -288,7 +302,7 @@ export class ListadoUsuariosComponent  implements OnInit {
         ESTADO:respuesta1.ESTADO,
         PASSWORD:respuesta1.CONTRASENA,
         CODIGO_PUNTO_PAGO:respuesta1.CODIGO_PUNTO_PAGO,
-        SUB_PUNTO_PAGO:respuesta1.CODIGO_PUNTO_PAGO,
+        SUB_PUNTO_PAGO:respuesta1.SUB_PUNTO_PAGO,
         ROL:respuesta1.ROL,
         TOKEN:this.token
       };
@@ -297,6 +311,7 @@ export class ListadoUsuariosComponent  implements OnInit {
       this.ListarPuntosPago();
       this.ListarEstadoUsuario();
       this.consultarDocumento();
+      this.ListarSubPuntos();
   }
 
   ModificarUsuario(){

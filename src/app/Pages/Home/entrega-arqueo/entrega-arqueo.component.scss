@@ -33,6 +33,11 @@ ion-title{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.detalle-container{
+    width: 80%;
+    display: inline-block;
+}
 .contenido{
     white-space: normal;
     overflow: hidden;
@@ -48,6 +53,7 @@ ion-title{
     padding: 5px;
     border-radius: 0px 20px 20px 0px;
     font-size: 15px;
+    color:#fff;
 }
 .btn-base:hover{
     background-color: #e48f0f;
@@ -63,7 +69,15 @@ ion-title{
     border-radius: 10px;
     font-size: 20px;
     margin-left: 45%;
+    color:#fff;
 
+}
+.base{
+    width: 15%;
+    //margin-top: 5%;
+    float: right;
+    color:red;
+    font-size: 20px;
 }
 .btn:hover{
     background-color: #e48f0f;

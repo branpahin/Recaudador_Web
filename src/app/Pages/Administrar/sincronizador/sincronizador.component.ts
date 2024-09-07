@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
 import { interval, takeUntil, takeWhile } from 'rxjs';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sincronizador',
@@ -43,7 +44,7 @@ export class SincronizadorComponent  implements OnInit {
   }
 
 
-  constructor(private recaudoService: RecaudoService) { 
+  constructor(private recaudoService: RecaudoService, private modalController: ModalController) { 
     this.recaudoService.sincronizacionCambio.subscribe((valor: boolean) => {
       this.valorSincronizacion = valor;
     });
@@ -65,7 +66,6 @@ export class SincronizadorComponent  implements OnInit {
 
     
   }
-
   ListarConveniosSincro(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getLisadoConveniosSincronizador(Number(this.empresa),this.usuario,this.token).subscribe(

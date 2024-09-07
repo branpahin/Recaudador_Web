@@ -2,12 +2,14 @@ ion-toolbar{
     background-color: var(--ion-color-mycolor);
     color:white;
     text-align: center;
+    justify-content: center;
 }
 
 ion-header{
     max-width: 100%;
     margin: 0 auto;
     text-align: center;
+    justify-content: center;
     
 }
 
@@ -92,10 +94,11 @@ font-weight: bold;
 
 .cerrar-btn {
     position: absolute;
+    color: rgb(172, 0, 0);
+    padding: 15px;
     top: 0px;
-    right: 0px;
+    right: 5px;
   }
-
 
   .cerrar-btn-1 {
     
@@ -112,23 +115,25 @@ font-weight: bold;
   }
 
   
-.contenido{
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
+ .contenido{
+    padding: 10px;
+    border: 1px solid #ccc;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    /* Ajusta el tamaño del texto si es necesario */
+    font-size: 12px;
+    width: 100%;
 }
 
 .data-row ion-col {
-   display: flex;
-   text-overflow: ellipsis;
-   overflow: hidden;
-   justify-content: center;
-   text-align: center;
-   border: 1px solid black;
-   height: 190px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border: 1px solid black;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 190px;
+    width: 100%;
    
 }
 
@@ -342,13 +347,20 @@ ion-radio-group {
 }
 .small-edit-column {
     max-width: 120px; /* Puedes ajustar el ancho máximo según tus necesidades */
-    
+       
  }
 
  .small-edit-column2 {
     max-width: 200px; /* Puedes ajustar el ancho máximo según tus necesidades */
+   
     
  }
+ .small-edit-column2 ion-row, .small-edit-column ion-row {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
  .estados{
     width: 50%;
  }

@@ -1,0 +1,32 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Cambio de clave</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Cambio de clave</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list class="infoUsuario">
+      <h2>Cambiar Clave</h2>
+      <ion-item>
+        <ion-label position="stacked">Nueva Clave:</ion-label>
+        <ion-input [(ngModel)]="clave" (keyup.enter)="modificarClave()" type="PASSWORD"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Confirmar Clave:</ion-label>
+        <ion-input [(ngModel)]="confirmacionClave" (keyup.enter)="modificarClave()" type="PASSWORD"></ion-input>
+      </ion-item>
+      <button class="enviar" (click)="modificarClave()"><ion-icon class="enviarIcon" size="large"name="send"></ion-icon></button>
+    </ion-list>
+
+  </ion-card-content>
+</ion-card>
+

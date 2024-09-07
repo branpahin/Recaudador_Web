@@ -61,6 +61,10 @@ export class ParametrizacionParametrosComponent  implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.filteredList = this.informacionConsulta;
+  }
+
   ListarParametros(){
     this.informacionConsulta=[];
     this.filteredList=[];
@@ -154,7 +158,5 @@ export class ParametrizacionParametrosComponent  implements OnInit {
       
     }
   }
-
-
 
 }

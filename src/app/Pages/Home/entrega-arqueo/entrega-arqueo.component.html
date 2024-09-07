@@ -44,7 +44,7 @@
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==21">
                     <ion-label position="stacked">DESCUENTOS</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.PRESTAMOS_EEP" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.PRESTAMOS_EEP" placeholder="$" name="comentario" (input)="formatNumberInput($event)"></ion-input>
                   </ion-item>
                 </ng-container>
               </ion-col>
@@ -86,6 +86,21 @@
                 </ng-container>
               </ion-col>
             </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="stacked">Banco de Bogota</ion-label>
+                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_1" name="valor" placeholder="$" appFormatoMonetario></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="stacked">Punto Red</ion-label>
+                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_2" name="valor" placeholder="$" appFormatoMonetario></ion-input>
+                </ion-item>
+              </ion-col>
+      
+            </ion-row>
             
           </ion-col>
           
@@ -97,8 +112,8 @@
       
 
 
-      <div *ngIf="mostrartabla" class="detalle-container">
-        <ion-grid>
+      <div *ngIf="mostrartabla">
+        <ion-grid class="detalle-container">
           <ion-row>
             <ion-col class="edit small-edit-column">
             </ion-col>
@@ -155,7 +170,7 @@
             </ion-col>
             <ion-col>
               <ion-item>
-                <ion-input label="" [(ngModel)]="detalle.CANTIDAD" name="cantidad" (ionChange)="infoMonedas($event)"></ion-input>
+                <ion-input label="" [(ngModel)]="detalle.CANTIDAD" name="cantidad" (input)="infoMonedas($event)"></ion-input>
               </ion-item>
             </ion-col>
             <ion-col>
@@ -169,7 +184,16 @@
               </ion-item>
             </ion-col>
           </ion-row>
+          
         </ion-grid>
+        <div class="base">
+        
+          <ion-label position="stacked">Faltante:</ion-label>
+          
+          <h1>${{totalDetallesFal | number}}</h1>
+        
+        </div>
+        
       </div>
       
     </ion-card-content>

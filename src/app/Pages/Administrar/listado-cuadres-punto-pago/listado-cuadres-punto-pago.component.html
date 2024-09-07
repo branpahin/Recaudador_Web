@@ -84,14 +84,22 @@
                 <ion-row  class="header-row-info">
                   <ion-col>N° CUPONES REPORTADOS</ion-col>
                   <ion-col>VALOR RECAUDADO REPORTADO</ion-col>
-                  <ion-col>BANCO DE BOGOTÁ</ion-col>
-                  <ion-col>PUNTO RED</ion-col>
+                  <ion-col>DIFERENCIA DE VALOR</ion-col>
+                  <ion-col>DIFERENCIA DE CUPONES</ion-col>
+                  <ion-col>DIFERENCIA DE CORRESPONSAL</ion-col>
                 </ion-row>
                 <ion-row  class="data-row">
-                  <ion-col title="{{ respuesta1.NUMERO_CUPONES_REPORTADOS }}">{{ respuesta1.NUMERO_CUPONES_REPORTADOS }}</ion-col>
-                  <ion-col title="{{ respuesta1.VALOR_RECAUDADO_REPORTADO | number }}">{{ respuesta1.VALOR_RECAUDADO_REPORTADO | number}}</ion-col>
-                  <ion-col title="{{ respuesta1.BANCO_BOGOTA }}">{{ respuesta1.BANCO_BOGOTA | number }}</ion-col>
-                  <ion-col title="{{ respuesta1.PUNTO_RED }}">{{ respuesta1.PUNTO_RED | number}}</ion-col>
+                  <ion-col [ngClass]="{ 'diferente': respuesta1.NUMERO_CUPONES_REPORTADOS !== respuesta1.NUMERO_CUPONES }"
+                  title="{{ respuesta1.NUMERO_CUPONES_REPORTADOS }}">
+                    {{ respuesta1.NUMERO_CUPONES_REPORTADOS }}
+                  </ion-col>
+                  <ion-col [ngClass]="{ 'diferente': respuesta1.VALOR_RECAUDADO_REPORTADO !== respuesta1.VALOR_RECAUDADO }"
+                            title="{{ respuesta1.VALOR_RECAUDADO_REPORTADO | number }}">
+                    {{ respuesta1.VALOR_RECAUDADO_REPORTADO | number}}
+                  </ion-col>
+                  <ion-col title="{{ respuesta1.DIFERENCIA_VALORES | number }}">{{ respuesta1.DIFERENCIA_VALORES | number}}</ion-col>
+                  <ion-col title="{{ respuesta1.DIFERENCIA_VALORES | number }}">{{ respuesta1.DIFERENCIA_CUPONES | number}}</ion-col>
+                  <ion-col title="{{ respuesta1.DIFERENCIA_CORRESPONSAL }}">{{ respuesta1.DIFERENCIA_CORRESPONSAL | number }}</ion-col>
                 </ion-row>
                 
               </ion-grid>
@@ -105,9 +113,9 @@
 <div class="overlay" *ngIf="confirmacion"></div>
       <div class="alerta" *ngIf="confirmacion">
         <div class="cerrar">
-          <ion-button class="cerrar-btn-1" (click)="cerrarAlerta()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
+          <button class="cerrar-btn-1" (click)="cerrarAlerta()">
+            <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+          </button>
         </div>   
         <h1 *ngIf="accionCuadre=='1'">Aprobar arqueo: {{arqueoSelect}} </h1>
         <h1 *ngIf="accionCuadre=='2'">Rechazar arqueo: {{arqueoSelect}} </h1>

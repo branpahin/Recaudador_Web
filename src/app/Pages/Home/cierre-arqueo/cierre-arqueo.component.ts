@@ -49,8 +49,6 @@ export class CierreArqueoComponent  implements OnInit {
     CODIGO_PUNTO_PAGO: this.puntoPago,
     NUMERO_CUPONES_REPORTADOS:"",
     VALOR_RECAUDADO_REPORTADO:"",
-    CORRESPONSAL_1:"",
-    CORRESPONSAL_2:"",
     BASE: 
     {                                
         VALOR_TOTAL:"",
@@ -126,61 +124,61 @@ export class CierreArqueoComponent  implements OnInit {
   }
 
 
-  formatNumberInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    let inputValue = inputElement.value.trim();
+  // formatNumberInput(event: Event): void {
+  //   const inputElement = event.target as HTMLInputElement;
+  //   let inputValue = inputElement.value.trim();
   
-    const isNegative = inputValue.startsWith('-');
-    if (isNegative) {
-      inputValue = inputValue.substring(1);
-    }
+  //   const isNegative = inputValue.startsWith('-');
+  //   if (isNegative) {
+  //     inputValue = inputValue.substring(1);
+  //   }
   
-    inputValue = inputValue.replace(/\D/g, '');
+  //   inputValue = inputValue.replace(/\D/g, '');
   
-    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  //   inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   
-    if (isNegative) {
-      inputValue = '-' + inputValue;
-    }
+  //   if (isNegative) {
+  //     inputValue = '-' + inputValue;
+  //   }
   
-    this.datos.CORRESPONSAL_2 = inputValue;
+  //   this.datos.CORRESPONSAL_2 = inputValue;
   
-  }
+  // }
 
-  formatNumberInput2(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    let inputValue = inputElement.value.trim();
+  // formatNumberInput2(event: Event): void {
+  //   const inputElement = event.target as HTMLInputElement;
+  //   let inputValue = inputElement.value.trim();
   
-    const isNegative = inputValue.startsWith('-');
-    if (isNegative) {
-      inputValue = inputValue.substring(1);
-    }
+  //   const isNegative = inputValue.startsWith('-');
+  //   if (isNegative) {
+  //     inputValue = inputValue.substring(1);
+  //   }
   
-    inputValue = inputValue.replace(/\D/g, '');
+  //   inputValue = inputValue.replace(/\D/g, '');
   
-    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  //   inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   
-    if (isNegative) {
-      inputValue = '-' + inputValue;
-    }
+  //   if (isNegative) {
+  //     inputValue = '-' + inputValue;
+  //   }
   
-    this.datos.CORRESPONSAL_1 = inputValue;
+  //   this.datos.CORRESPONSAL_1 = inputValue;
   
-  }
+  // }
 
   formatoNumero() {
     
     let numeroFormateado = this.datos.VALOR_RECAUDADO_REPORTADO.replace(/[^\d]/g, '');
-    let numeroFormateado2 = this.datos.CORRESPONSAL_1.replace(/[^\d]/g, '');
-    let numeroFormateado3 = this.datos.CORRESPONSAL_2.replace(/[^\d]/g, '');
+    // let numeroFormateado2 = this.datos.CORRESPONSAL_1.replace(/[^\d]/g, '');
+    // let numeroFormateado3 = this.datos.CORRESPONSAL_2.replace(/[^\d]/g, '');
    
 
     numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
 
     this.datos.VALOR_RECAUDADO_REPORTADO= numeroFormateado;
-    this.datos.CORRESPONSAL_1=numeroFormateado2;
-    this.datos.CORRESPONSAL_2=numeroFormateado3;
+    // this.datos.CORRESPONSAL_1=numeroFormateado2;
+    // this.datos.CORRESPONSAL_2=numeroFormateado3;
 
     
   }
@@ -191,8 +189,9 @@ export class CierreArqueoComponent  implements OnInit {
     this.otraVariable = event.detail.value;
   
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.getTipoEntregas(Number(this.empresa), 1, this.usuario, this.token).subscribe(
+      this.recaudoService.getTipoEntregas(Number(this.empresa), 3, this.usuario, this.token).subscribe(
         (data: any) => {
+          console.log("monedas: ",data)
           this.monedas = data.MONEDAS;
   
           const detalleEspecifico = this.datos.BASE.BASE_DET.find(detalle => detalle.CODIGO_MONEDA === this.otraVariable);
@@ -313,8 +312,8 @@ export class CierreArqueoComponent  implements OnInit {
     this.datos.VALOR_RECAUDADO_REPORTADO=this.datos.VALOR_RECAUDADO_REPORTADO.replace(/\./g, '');
     this.datos.VALOR_RECAUDADO_REPORTADO=this.datos.VALOR_RECAUDADO_REPORTADO.replace(/\,/g, '');
     this.datos.BASE.VALOR_TOTAL=this.datos.BASE.VALOR_TOTAL.replace(/\./g, '');
-    this.datos.CORRESPONSAL_1=this.datos.CORRESPONSAL_1.replace(/\./g, '');
-    this.datos.CORRESPONSAL_2=this.datos.CORRESPONSAL_2.replace(/\./g, '');
+    // this.datos.CORRESPONSAL_1=this.datos.CORRESPONSAL_1.replace(/\./g, '');
+    // this.datos.CORRESPONSAL_2=this.datos.CORRESPONSAL_2.replace(/\./g, '');
   
     this.cierreArqueo();
   }
@@ -343,8 +342,6 @@ export class CierreArqueoComponent  implements OnInit {
           CODIGO_PUNTO_PAGO: this.puntoPago,
           NUMERO_CUPONES_REPORTADOS:"",
           VALOR_RECAUDADO_REPORTADO:"",
-          CORRESPONSAL_1:"",
-          CORRESPONSAL_2:"",
           BASE: 
           {                                
               VALOR_TOTAL:"",

@@ -24,6 +24,16 @@ ion-title{
   color:white;
 }
 
+.ver:hover{
+  color: rgb(243, 99, 4);
+}
+
+.btn_ver{
+  position: fixed;
+  margin-left: 2%;
+  background-color: transparent;
+}
+
 .small-edit-column {
   max-width: 100px;
   overflow: hidden;
@@ -33,14 +43,6 @@ ion-title{
 
 .contenido{
   box-shadow: 0 12px 20px rgba(0, 0, 0, 10);
-}
-
-.error{
-    align-items: center;  
-    justify-content: center;  
-    text-align: center; 
-    height: 100%;  
-    color: red;
 }
 
 .col-descripcion{
@@ -54,28 +56,43 @@ ion-title{
   text-align: end;
 }
 .valorMovimiento{
-  color:red;
+  color:black;
   font-size: 30px;
 }
+
+.contenedor {
+  position: relative;
+  width: 8%;
+  padding: 5px;
+  margin-right: 60px;
+}
+
+.btn{
+    
+  background-color: #9e1515;
+  padding: 10px 30px 10px 30px;
+  border-radius: 10px;
+  font-size: 20px;
+  color:#fff;
+}
+
 .btn_m{
-    background-color: #fff;
-    border-radius: 10px;
-    font-size: 20px;
+    background-color: transparent;
     color: black;
     text-align: center;
     margin-left: 50%;
 
 }
-.btn_m:hover{
-  background-color: #ddae68;
+// .btn_m:hover{
+//   background-color: #ddae68;
 
-}
+// }
 .btn_mi{
     background-color: var(--ion-color-mycolor);
     border-radius: 10px;
     font-size: 20px;
     padding: 10px;
-    color: black;
+    color:#fff;
     text-align: center;
     left: 100px;
 }
@@ -85,7 +102,7 @@ ion-title{
   border-radius: 10px;
   font-size: 20px;
   padding: 10px;
-  color: black;
+  color:#fff;
   text-align: center;
   left: 100px;
 }
@@ -179,12 +196,10 @@ ion-title{
 .barras{
   width: 100%;
 }
-.data-row, .header-row{
-    border: 1px solid black;
-    text-align: center;
-}
-.data-row ion-col {
 
+.data-row ion-col {
+  font-weight: bold;
+  font-size: 15px;
  white-space: nowrap;
  text-overflow: ellipsis; 
  overflow: hidden;
@@ -203,6 +218,10 @@ ion-title{
   text-align: center; 
   border: 1px solid black;
  
+}
+
+ion-input{
+  font-size: 20px;
 }
 
 .header-row ion-col{
@@ -244,6 +263,12 @@ ion-title{
   color:red;
 }
 
+.mensaje-pequeno {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 ion-radio-group {
     ion-item {
       ion-label {
@@ -252,8 +277,18 @@ ion-radio-group {
     }
   }
 
+  ion-label{
+    font-weight: bold;
+    font-size: 20px;
+  }
+  ion-label.stacked-label {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
   .custom-radio-item{
-    height: 32px;
+    // height: auto;
+    //max-height: 50px;
     justify-content: center;
   }
 
@@ -281,11 +316,14 @@ ion-radio-group {
 }
 
 .alerta1{
-  width: 70%;
+  width: 100%;
 }
+
+
 .checkBarra{
   width: 85px;
 }
+
 
 .overlay{
   position: fixed;
@@ -314,15 +352,11 @@ ion-radio-group {
 
 .imprimir{
   position: fixed;
-  align-items: center;  
-  justify-content: center;  
-  text-align: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999; 
   margin: 0 auto;
   padding: 20px;
-
   border-radius: 5px;
 }

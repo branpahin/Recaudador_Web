@@ -51,6 +51,11 @@ import { CierreCajaComponent } from './Pages/Administrar/cierre-caja/cierre-caja
 import { ParametrizacionBarrasComponent } from './Pages/Desarrollador/parametrizacion-barras/parametrizacion-barras.component';
 import { ParametrizacionParametrosComponent } from './Pages/Desarrollador/parametrizacion-parametros/parametrizacion-parametros.component';
 import { AsignacionReportesComponent } from './Pages/Desarrollador/asignacion-reportes/asignacion-reportes.component';
+import { CargarArchivoOfflineComponent } from './Pages/Administrar/cargar-archivo-offline/cargar-archivo-offline.component';
+import { CajasSacComponent } from './Pages/Administrar/cajas-sac/cajas-sac.component';
+import { CambiarClaveComponent } from './Pages/General/cambiar-clave/cambiar-clave.component';
+import { ReabrirArqueoComponent } from './Pages/Administrar/reabrir-arqueo/reabrir-arqueo.component';
+import { ListadoFacturasComponent } from './Pages/General/listado-facturas/listado-facturas.component';
 
 
 
@@ -107,7 +112,12 @@ const routes: Routes = [
                 CierreCajaComponent,
                 ParametrizacionBarrasComponent,
                 ParametrizacionParametrosComponent,
-                AsignacionReportesComponent
+                AsignacionReportesComponent,
+                CargarArchivoOfflineComponent,
+                CajasSacComponent,
+                CambiarClaveComponent,
+                ReabrirArqueoComponent,
+                ListadoFacturasComponent
               ],
 
   imports: [BrowserModule, AgGridModule,

@@ -1,6 +1,13 @@
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
   <ion-title>Recaudo</ion-title>
+  <div *ngIf="puntoPago=='1'" id="LlamaTurno" class="contenedor" slot="end" >
+    <button *ngIf="turno"class="btn" expand="full" (click)="activarCajaTurno()">Llamar</button>
+    <button *ngIf="!turno"class="btn" expand="full" (click)="finalizarCajaTurno()">Finalizar</button>
+    <div class="checkbox-container">
+      <ion-checkbox (ionChange)="preferencial($event)" [disabled]="!turno" [checked]="seleccionar">Preferencial</ion-checkbox>
+    </div>
+  </div>  
   <button class="limpiar"expand="full" slot="end" (click)="limpiar()">Limpiar</button>
   </ion-toolbar>
 </ion-header>
@@ -13,9 +20,9 @@
 </ion-header>
 <div class="nav">
   <div class="ion-text-center ion-align-items-center buttons-nav">
-    <button class="btn-nav" id="btn-nav1" expand="full" (click)="buscarBarras()">Codigo Barras</button>
-    <button class="btn-nav" expand="full" (click)="buscarReferencia()"> Buscardor Referencia</button>
-    <button class="btn-nav" id="btn-nav2" expand="full" (click)="buscarManual()">Buscardor Manual</button>
+    <button class="btn-nav" id="btn-nav1" expand="full" (click)="buscarBarras()" [disabled]="recaudado">Codigo Barras</button>
+    <button class="btn-nav" expand="full" (click)="buscarReferencia()" [disabled]="recaudado"> Buscardor Referencia</button>
+    <button class="btn-nav" id="btn-nav2" expand="full" (click)="buscarManual()" [disabled]="recaudado">Buscardor Manual</button>
   </div>
 </div>
 <ion-card class="contenido">
@@ -25,34 +32,40 @@
         <ion-col size="4" >
           
           <ion-item>
-            <ion-label position="stacked">Empresa</ion-label>
+            <ion-label position="stacked" class="stacked-label">Empresa</ion-label>
             <ion-input  style="color:rgb(161, 161, 161)" name="empresa" type="text" value="{{nombreEmpresa}}" placeholder="{{nombreEmpresa}}" readonly></ion-input>
           </ion-item>
           <ion-item *ngIf="!mostrarCampos">
-            <ion-label position="stacked">Valor Recibido</ion-label>
-            <ion-input [(ngModel)]="datos.VALOR_RECIBIDO" name="recibido" (ionChange)="calcular()" required appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
+            <ion-label position="stacked" class="stacked-label">Valor Recibido</ion-label>
+            <ion-input [(ngModel)]="datos.VALOR_RECIBIDO" name="recibido" (input)="calcular()" required #myInput2 appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
           </ion-item>
+          <div *ngIf="verificarValor() && !mostrarCampos" class="mensaje-pequeno">
+            El valor es menor al movimiento
+          </div>
           <ion-row>
             <ion-col *ngIf="mostrarCampos">
               <ion-item>
-                <ion-label position="stacked">Valor Efectivo</ion-label>
-                <ion-input [(ngModel)]="datosMix.VALOR_EFECTIVO" name="recibido" (ionChange)="calcular()" required appFormatoMonetario [disabled]="recaudado" ><span>$</span></ion-input>
+                <ion-label position="stacked" class="stacked-label">Valor Efectivo</ion-label>
+                <ion-input [(ngModel)]="datosMix.VALOR_EFECTIVO" name="recibido" (input)="calcular()" required appFormatoMonetario [disabled]="recaudado" ><span>$</span></ion-input>
               </ion-item>
               <ion-item>
-                <ion-label position="stacked">Valor Recibido</ion-label>
-                <ion-input [(ngModel)]="datosMix.VALOR_RECIBIDO" name="recibido" (ionChange)="calcular()" required appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
+                <ion-label position="stacked" class="stacked-label">Valor Recibido</ion-label>
+                <ion-input [(ngModel)]="datosMix.VALOR_RECIBIDO" name="recibido" (input)="calcular()" required appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
               </ion-item>
+              <div *ngIf="verificarValorMix()" class="mensaje-pequeno">
+                El valor es menor al Efectivo
+              </div>
             </ion-col>
             <ion-col *ngIf="mostrarCampos">
               <ion-item>
-                <ion-label position="stacked">Valor Datafono</ion-label>
-                <ion-input  [(ngModel)]="datosMix.VALOR_TARJETA" name="recibido" (ionChange)="calcularDat()" appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
+                <ion-label position="stacked" class="stacked-label">Valor Datafono</ion-label>
+                <ion-input  [(ngModel)]="datosMix.VALOR_TARJETA" name="recibido" (input)="calcularDat()" #myInput2 appFormatoMonetario [disabled]="recaudado"><span>$</span></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
           
           <ion-item>
-            <ion-label position="stacked">Comentario</ion-label>
+            <ion-label position="stacked" class="stacked-label">Comentario</ion-label>
             <ion-input  [(ngModel)]="datos.COMENTARIO" name="comentario" [disabled]="recaudado"></ion-input>
           </ion-item>
       </ion-col>
@@ -60,19 +73,19 @@
 
   
           <ion-item>
-            <ion-label position="stacked">Numero de Arqueo</ion-label>
+            <ion-label position="stacked" class="stacked-label">Numero de Arqueo</ion-label>
             <ion-input style="color:rgb(161, 161, 161)" name="Arqueo" type="text" value="{{recaudos.NUMERO_ARQUEO}}"readonly></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">N° Cupones Movimiento</ion-label>
+            <ion-label position="stacked" class="stacked-label">N° Cupones Movimiento</ion-label>
             <ion-input style="color:rgb(161, 161, 161)" name="Cupones" type="text" [(ngModel)]="datos.NUMERO_CUPONES_MOVIMIENTO" name="Cupones" readonly></ion-input>
           </ion-item>
           <ion-item *ngIf="mostrarCampos">
-            <ion-label position="stacked">Documento</ion-label>
+            <ion-label position="stacked" class="stacked-label">Documento</ion-label>
             <ion-input name="Cupones" type="text" [(ngModel)]="datosMix.NUMERO_DOCUMENTO" name="Cupones" [disabled]="recaudado"></ion-input>
           </ion-item>
           <ion-item *ngIf="mostrarCamposDoc">
-            <ion-label position="stacked">Documento</ion-label>
+            <ion-label position="stacked" class="stacked-label">Documento</ion-label>
             <ion-input name="Cupones" type="text" [(ngModel)]="datos.NUMERO_DOCUMENTO" name="Cupones" [disabled]="recaudado"></ion-input>
           </ion-item>
           
@@ -81,16 +94,16 @@
 
           <div id="valorMovimiento">
             <ion-label position="stacked">Valor del Movimiento</ion-label>
-            <h1 class="valorMovimiento">$ {{datos.VALOR_MOVIMIENTO | number}}</h1>
+            <h1 class="valorMovimiento" >$ {{datos.VALOR_MOVIMIENTO | number}}</h1>
           </div>
           <div id="valorMovimiento" *ngIf="!mostrarCampos">
             <ion-label position="stacked">Valor del Cambio</ion-label>
-            <h1 class="valorMovimiento">$ {{datos.VALOR_CAMBIO | number}}</h1>
+            <h1 class="valorMovimiento" [style.color]="colorValorCambio">$ {{datos.VALOR_CAMBIO | number}}</h1>
             <ion-checkbox (ionChange)="redondeo($event)" [disabled]="!desagrupar" [(ngModel)]="redondear" [disabled]="recaudado">No redondear</ion-checkbox>
           </div>
           <div id="valorMovimiento" *ngIf="mostrarCampos">
             <ion-label position="stacked">Valor del Cambio</ion-label>
-            <h1 class="valorMovimiento">$ {{datosMix.VALOR_CAMBIO | number}}</h1>
+            <h1 class="valorMovimiento" [style.color]="colorValorCambio">$ {{datosMix.VALOR_CAMBIO | number}}</h1>
             <ion-checkbox (ionChange)="redondeo($event)" [disabled]="!desagrupar" [(ngModel)]="redondear" [disabled]="recaudado">No redondear</ion-checkbox>
           </div>
           <div id="valorMovimiento" *ngIf="IDtransaccion">
@@ -117,11 +130,13 @@
             <ion-content class="ion-padding">
               <div class="opcion">
                 <ion-radio-group [(ngModel)]="datos.FORMA_PAGO" (ionChange)="formaPagoMixto()">
-                  <ion-item *ngFor="let pagos of pago" class="custom-radio-item">
-                    <ion-radio class="custom-radio" [value]="pagos.CODIGO" [disabled]="recaudado"></ion-radio>
-                    <span>|</span>
-                    <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ pagos.DESCRIPCION }}</ion-label>
-                  </ion-item>
+                  <div *ngFor="let pagos of pago" class="custom-radio-item">
+                    <ion-item >
+                      <ion-radio  [value]="pagos.CODIGO" [disabled]="recaudado"></ion-radio>
+                      
+                      <ion-label >{{ pagos.DESCRIPCION }}</ion-label>
+                    </ion-item>
+                  </div>
                 </ion-radio-group>
               </div>
             </ion-content>
@@ -133,7 +148,7 @@
       <ion-checkbox class="checkBarra" (ionChange)="barraManual($event)" [(ngModel)]="mostrarBarra" [disabled]="recaudado">Editable</ion-checkbox>
       <ion-item style="flex: 1;">
         <ion-label position="stacked">Codigo de Barras</ion-label>
-        <ion-input *ngIf="!mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" (input)="onInputChange($event)" autofocus [disabled]="recaudado"></ion-input>
+        <ion-input *ngIf="!mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" (input)="onInputChange($event)" autofocus #myInput [disabled]="recaudado"></ion-input>
         <ion-input *ngIf="mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" (keyup.enter)="onInputChange($event)" [disabled]="recaudado"></ion-input>
       </ion-item> 
     </div>
@@ -149,28 +164,43 @@
         </ion-item>
         
       </ion-col>
+      <ion-col *ngIf="mostrarValor">
+        <ion-item>
+          <ion-label position="stacked">VALOR</ion-label>
+          <ion-input label="" [(ngModel)]="valorReferencia" name="codigoBarras" type="text" (keyup.enter)="onEnterKey2($event)" [disabled]="recaudado" appFormatoMonetario></ion-input>
+        </ion-item>
+        
+      </ion-col>
     </ion-row>
     <ion-row *ngIf="visual3==true">
       <ion-col size="3">
         <app-convenios-manual-ws></app-convenios-manual-ws>
       </ion-col>
       <ion-col>
-        <ion-item *ngIf="mostrarCamposManuales">
+        <ion-item *ngIf="mostrarCamposManuales && !mostrarDocumento">
           <ion-label position="stacked">CLIENTE</ion-label>
-          <ion-input label="" [(ngModel)]="detalle.CODIGO_CLIENTE" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
+          <ion-input label="" [(ngModel)]="detalle.CODIGO_CLIENTE" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" #myInput3 [disabled]="recaudado"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="mostrarCamposManuales && mostrarDocumento">
+          <ion-label position="stacked">DOCUMENTO</ion-label>
+          <ion-input label="" [(ngModel)]="detalle.CODIGO_CLIENTE" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" #myInput3 [disabled]="recaudado"></ion-input>
         </ion-item>
         
       </ion-col>
       <ion-col>
-        <ion-item *ngIf="mostrarCamposManuales">
+        <ion-item *ngIf="mostrarCamposManuales && !mostrarDocumento">
           <ion-label position="stacked">REFERENCIA</ion-label>
+          <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="mostrarCamposManuales && mostrarDocumento">
+          <ion-label position="stacked">NUMERO</ion-label>
           <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
         </ion-item>
         
       </ion-col>
       <ion-col *ngIf="mostrarCamposManuales && mostrarDocumento">
         <ion-item >
-          <ion-label position="stacked">DOCUMENTO</ion-label>
+          <ion-label position="stacked">SERIE</ion-label>
           <ion-input label="" [(ngModel)]="documento" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
         </ion-item>
         
@@ -178,7 +208,7 @@
       <ion-col>
         <ion-item *ngIf="mostrarCamposManuales">
           <ion-label position="stacked">VALOR</ion-label>
-          <ion-input label="" [(ngModel)]="detalle.VALOR_MOVIMIENTO_DET" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" appFormatoMonetario [disabled]="recaudado"></ion-input>
+          <ion-input label="" [(ngModel)]="detalle.VALOR_MOVIMIENTO_DET" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)"  appFormatoMonetario [disabled]="recaudado"></ion-input>
         </ion-item>
       </ion-col>
       
@@ -194,6 +224,7 @@
     <div class="tabla">
       <div >
         <ion-checkbox (ionChange)="agrupar($event)" [disabled]="!desagrupar" [(ngModel)]="estadoCheckbox">Desagrupar</ion-checkbox>
+        <button class="btn_ver" (click)="ListarFacturas()"><ion-icon size="large" class="ver" name="eye" style="color: blue;"></ion-icon></button>
         <ion-grid class="tabla1">
           <ion-row class="header-row">
             <ion-col class="edit small-edit-column data-row" >
@@ -225,7 +256,7 @@
               
               <ion-col title="{{ detalle.CODIGO_CLIENTE }}">{{ detalle.CODIGO_CLIENTE }}</ion-col>
               <ion-col title="{{ detalle.CODIGO_REFERENCIA }}">{{ detalle.CODIGO_REFERENCIA }}</ion-col>
-              <ion-col title="{{ detalle.VALOR_MOVIMIENTO_DET }}"><span>$</span>{{ detalle.VALOR_MOVIMIENTO_DET | number}}</ion-col>
+              <ion-col style="font-weight: bold; color:black" title="{{ detalle.VALOR_MOVIMIENTO_DET }}"><span>$</span>{{ detalle.VALOR_MOVIMIENTO_DET | number}}</ion-col>
               <ion-col title="{{ detalle.FECHA_VENCIMIENTO }}">{{ detalle.FECHA_VENCIMIENTO }}</ion-col>
   
             </ion-row>
@@ -238,14 +269,14 @@
   </ion-card-content>
   
 
-  <button class="btn_m" (click)="confirmacion()" [disabled]="recaudado">
-    <ion-icon class = "Crear" name="add-circle-sharp"></ion-icon>
+  <button class="btn_m" (click)="limpiarYEnviar()" [disabled]="recaudado">
+    <ion-icon class = "Crear" size="large" name="add-circle-sharp"></ion-icon>
   </button>
 
 </ion-card>
-<div class="overlay" *ngIf="imprimir" (click)="cerrarImp()"></div>
+<!-- <div class="overlay" *ngIf="imprimir" (click)="cerrarImp()"></div>
 
-<div class="imprimir"  id="iframe-container"></div>
+<div class="imprimir"  id="iframe-container"></div> -->
 
 <div class="overlay" *ngIf="confirmar_Lista"></div>
 <div class="alerta alerta1" *ngIf="confirmar_Lista">
@@ -289,7 +320,7 @@
 <div class="overlay" *ngIf="confirmar"></div>
 <div class="alerta" *ngIf="confirmar">
   
-  <ion-item >  
+  <ion-item>  
     <div class="cerrar">
       <ion-button class="cerrar-btn" (click)="cerrarTabla()">
         <ion-icon name="close"></ion-icon>
@@ -317,7 +348,12 @@
     <ion-label class="col-descripcion">{{ resultado.RESPUESTA }}</ion-label>
   </ion-item>
 
-  <div *ngIf="resultado && resultado.COD !='200'" class="error">
+  <div *ngIf="resultado && resultado.COD !='200'"
+  style="align-items: center;  
+  justify-content: center;  
+  text-align: center; 
+  height: 100%;  
+  color: red;">
     {{ resultado.RESPUESTA }}
   </div>
 

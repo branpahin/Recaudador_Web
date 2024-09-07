@@ -4,6 +4,7 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
 import { Consultar_Arqueo, Consultar_Arqueo_Param} from 'src/models/usuario.model';
 import * as alertify from 'alertifyjs';
 import { formatDate } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -29,9 +30,10 @@ export class ConsultarArqueoComponent  implements OnInit {
     ACCION: '2',
     NUMERO_ARQUEO: "",
     NUMERO_MOVIMIENTO: "",
-    VALOR_MOVIMIENTO: "",
+    VALOR_MOVIMIENTO_DET: "",
     FECHA_MOVIMIENTO: "",
-    REFERENCIA:""
+    CODIGO_CLIENTE:"",
+    CODIGO_REFERENCIA:""
   }
 
   movimiento:any;
@@ -61,7 +63,7 @@ export class ConsultarArqueoComponent  implements OnInit {
   habilitarfiltrado=false;
 
 
-  constructor(private recaudoService: RecaudoService, private router: Router) {}
+  constructor(private recaudoService: RecaudoService, private http: HttpClient) {}
 
   empresaCod = localStorage.getItem('empresaCOD') || '';
   nombreEmpresa= localStorage.getItem('empresa')|| '';
@@ -88,6 +90,7 @@ export class ConsultarArqueoComponent  implements OnInit {
 
   cerrarTabla() {
     this.detalles = false; 
+    this.consultar_arqueo_param.FECHA_MOVIMIENTO="";
   
   }
   cerrarTablaFac() {
@@ -97,12 +100,19 @@ export class ConsultarArqueoComponent  implements OnInit {
   }
   cerrarlistado() {
     this.listado=false;   
+    this.consultar_arqueo_param.FECHA_MOVIMIENTO="";
   }
   detalleSeleccionado: string | null = null;
 
-  mostrarDetalles(numeroMovimiento: string): void {
-    this.detalleSeleccionado = numeroMovimiento;
+  mostrarDetalles(detalle:{NUMERO_MOVIMIENTO:any,NUMERO_ARQUEO:any,CODIGO_PUNTO_PAGO:any}): void {
+    this.detalleSeleccionado = detalle.NUMERO_MOVIMIENTO;
+    this.arqueoNum=detalle.NUMERO_ARQUEO;
+    this.CODpuntoPago=detalle.CODIGO_PUNTO_PAGO;
     this.detallesFac = true; 
+  }
+
+  fechaConsulta(event: any){
+    this.consultar_arqueo_param.FECHA_MOVIMIENTO = formatDate(event.detail.value, 'dd-MM-yyyy', 'en-US');
   }
 
   filtrar(){
@@ -138,9 +148,18 @@ export class ConsultarArqueoComponent  implements OnInit {
 
 
   consultarArqueo(){
-    this.listado=true;
- 
+    if(this.consultar_arqueo_param.NUMERO_ARQUEO!=""){
+      this.listado=true;
+    }else {
+      if(this.consultar_arqueo.ACCION!='1'){
+        this.listado=false;
+        this.detallerecaudos()
+      }
+    }
+
+    
     if(this.consultar_arqueo.ACCION=='1'){
+      this.listado=true;
       this.recaudoService.postConsultarArqueo(this.empresaCod, this.usuario, this.consultar_arqueo.ACCION, this.puntoPago, this.token).subscribe({
         next: data => {
           this.resultado = data;
@@ -158,7 +177,7 @@ export class ConsultarArqueoComponent  implements OnInit {
       });
   }
     if(this.consultar_arqueo.ACCION=='2'){
-      this.recaudoService.postConsultarArqueoParam(this.empresaCod, this.usuario, this.consultar_arqueo_param.ACCION, this.consultar_arqueo_param.NUMERO_ARQUEO,this.consultar_arqueo_param.NUMERO_MOVIMIENTO,this.consultar_arqueo_param.VALOR_MOVIMIENTO,this.consultar_arqueo_param.FECHA_MOVIMIENTO,this.consultar_arqueo_param.REFERENCIA,this.token).subscribe({
+      this.recaudoService.postConsultarArqueoParam(this.empresaCod, this.usuario, this.consultar_arqueo_param.ACCION, this.consultar_arqueo_param.NUMERO_ARQUEO,this.consultar_arqueo_param.NUMERO_MOVIMIENTO,this.consultar_arqueo_param.VALOR_MOVIMIENTO_DET,this.consultar_arqueo_param.FECHA_MOVIMIENTO,this.consultar_arqueo_param.CODIGO_CLIENTE,this.consultar_arqueo_param.CODIGO_REFERENCIA,this.token).subscribe({
         next: data => {
           this.resultado = data;
           this.recaudos=data.RECAUDOS;
@@ -202,9 +221,11 @@ export class ConsultarArqueoComponent  implements OnInit {
   
   }
 
-  vistaImpresion(recaudo: {NUMERO_MOVIMIENTO:any,}){
+  vistaImpresion(recaudo: {NUMERO_MOVIMIENTO:any,NUMERO_ARQUEO:any,CODIGO_PUNTO_PAGO:any}){
     this.imprimir=true;
     this.movimiento= recaudo.NUMERO_MOVIMIENTO;
+    this.arqueoNum=recaudo.NUMERO_ARQUEO;
+    this.CODpuntoPago=recaudo.CODIGO_PUNTO_PAGO;
     this.imprimirTikect(this.movimiento);
   }
 
@@ -218,9 +239,7 @@ export class ConsultarArqueoComponent  implements OnInit {
     if(this.lstfacturas==""){
       this.lstfacturas="0";
     }
-    const iframeContainer = document.getElementById('iframe-container');
-
-    
+    console.log("entró PDF: ",this.empresaCod,this.CODpuntoPago,this.arqueoNum,movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
     if(this.detalleSeleccionado){
       this.agrupado="N";
       movimiento=this.detalleSeleccionado;
@@ -229,37 +248,37 @@ export class ConsultarArqueoComponent  implements OnInit {
     this.recaudoService.getImpresiónTicket(this.empresaCod,this.CODpuntoPago,this.arqueoNum,movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
     .subscribe(
       (response) => {
-        if (response.body !== null) {
-          console.log("Imprimir: Si")
-          this.iframeUrl='http://172.25.2.2:16000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresaCod+
-          '&CODIGO_PUNTO_PAGO='+this.CODpuntoPago+
-          '&NUMERO_ARQUEO='+this.arqueoNum+
-          '&NUMERO_MOVIMIENTO='+movimiento+
-          '&USUARIO='+this.usuario+
-          '&LSTFACTURAS='+this.lstfacturas+
-          '&AGRUPADO='+this.agrupado+
-          '&TOKEN='+this.token;
+        const url = 'http://172.25.2.2:18000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresaCod+
+                    '&CODIGO_PUNTO_PAGO='+this.CODpuntoPago+
+                    '&NUMERO_ARQUEO='+this.arqueoNum+
+                    '&NUMERO_MOVIMIENTO='+movimiento+
+                    '&USUARIO='+this.usuario+
+                    '&LSTFACTURAS='+this.lstfacturas+
+                    '&AGRUPADO='+this.agrupado+
+                    '&TOKEN='+this.token;
+                    
+        this.http.get(url, { responseType: 'blob' }).subscribe(
+          (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
 
-          
-          if (iframeContainer) {
             const iframe = document.createElement('iframe');
-          iframe.src = this.iframeUrl;
-          iframe.width = '100%';
-          iframe.height = '500px';
+            iframe.style.display = 'none';
 
-          iframeContainer.innerHTML = '';
-          iframeContainer.appendChild(iframe);
+            document.body.appendChild(iframe);
 
-          iframe.onload = () => {
-            if (!this.imprimir) {
-              iframeContainer.innerHTML = '';
-            }
-          };
-            
+            iframe.src = url;
+
+            iframe.onload = () => {
+              iframe.contentWindow?.focus();
+              iframe.contentWindow?.print();
+
+            };
+          },
+          error => {
+            console.error('Error al imprimir el ticket:', error);
           }
-        } else {
-          console.error('La respuesta del servidor no contiene un cuerpo válido.');
-        }
+        );
         
       },
       (error) => {

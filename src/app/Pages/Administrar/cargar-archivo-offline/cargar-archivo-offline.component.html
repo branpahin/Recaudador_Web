@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Cargar Archivo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Cargar Archivo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <form (ngSubmit)="onSubmit()">
+      <ion-item>
+        <ion-label position="stacked">Seleccionar Archivo</ion-label>
+        <div class="file-upload-container">
+          <ion-button (click)="fileInput.click()">Elegir Archivo</ion-button>
+          <input type="file" (change)="onFileSelected($event)" style="display: none;" #fileInput />
+          <ion-text *ngIf="selectedFile">{{ selectedFile.name }}</ion-text>
+          <button *ngIf="selectedFile" class="btn" type="submit"><ion-icon class="guardar" size="large" name="save"></ion-icon></button>
+        </div>
+      </ion-item>
+    </form>
+
+  </ion-card-content>
+</ion-card>

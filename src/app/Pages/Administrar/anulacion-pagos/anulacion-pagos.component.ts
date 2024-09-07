@@ -43,6 +43,9 @@ export class AnulacionPagosComponent  implements OnInit {
     TOKEN:this.token
   }
 
+  filteredList: any[] = [];
+  searchTerm: string = '';
+
 
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
@@ -56,6 +59,29 @@ export class AnulacionPagosComponent  implements OnInit {
     this.crear=false;
     this.editar=false;
     this.ListarAnulaciones();
+  }
+
+  filterList() {
+    if (!this.searchTerm.trim()) {
+      this.filteredList = this.listadoAnulaciones;
+    } else {
+      this.filteredList = this.listadoAnulaciones.filter(item =>
+        item.NUMERO_ARQUEO.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.ESTADO_ARQUEO.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.NUMERO_MOVIMIENTO.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.FECHA_MOVIMIENTO.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.NOMBRE_CODIGO_CONVENIO.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.VALOR_MOVIMIENTO_DET.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.CODIGO_CLIENTE.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.FECHA_ANULACION.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.CODIGO_REFERENCIA.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.USUARIO_ANULA.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+  }
+
+  clearSearch() {
+    this.filteredList = this.listadoAnulaciones;
   }
 
 
@@ -85,6 +111,8 @@ export class AnulacionPagosComponent  implements OnInit {
         (data: any) => {
           console.log('Respuesta del servicio:', data);
           this.listadoAnulaciones= data.MOVIMIENTOS_ANULADOS;
+          
+          this.filteredList = this.listadoAnulaciones;
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);

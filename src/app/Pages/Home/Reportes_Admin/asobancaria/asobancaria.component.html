@@ -49,9 +49,23 @@
                   </ion-col>
                   <ion-col>
                     <div *ngFor="let convenioDet of convenio.convenioDet">
-                      <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet)" [value]="convenioDet.value" [checked]="seleccionarTodos" labelPlacement="end">
-                        <p class="contenido">{{ convenioDet.label }}</p>
-                      </ion-checkbox>
+                        <ion-checkbox *ngIf="convenio.label!='MUNICIPIO'" (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'')" [value]="convenioDet.value" [checked]="seleccionarTodos" labelPlacement="end">
+                          <p class="contenido">{{ convenioDet.label }}</p>
+                        </ion-checkbox>
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
+                          <p >{{ convenioDet.label }}</p>
+                        </ion-col>
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
+                          <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'1')">
+                            <p class="contenido">E</p>
+                          </ion-checkbox>
+                        </ion-col>
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
+
+                          <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'3')">
+                            <p class="contenido">D</p>
+                          </ion-checkbox>
+                        </ion-col>
                     </div>
                   </ion-col>
                 </ion-row>
@@ -69,7 +83,7 @@
             <ion-col>CORREO</ion-col>
             <ion-col>EXCEL</ion-col>
           </ion-row>
-          <div class="tabla_lista" style="overflow-y: auto; max-height: 50vh;">
+          <div class="tabla_lista" id="tablaLista">
 
             <ion-row class="header-row" *ngFor="let detalle of asobancariaGenerado.LISTADO_CONVENIOS">
                 <ion-col>
@@ -77,7 +91,7 @@
                 </ion-col>
                 
                 <ng-container *ngFor="let detalle2 of nombre_convenios">
-                  <ng-container *ngIf="detalle2.CODIGO_CONVENIO==detalle.CODIGO_CONVENIO && detalle2.CODIGO_CONVENIO_DET==detalle.CODIGO_CONVENIO_DET">
+                  <ng-container *ngIf="detalle2.CODIGO_CONVENIO==detalle.CODIGO_CONVENIO && detalle2.CODIGO_CONVENIO_DET==detalle.CODIGO_CONVENIO_DET && detalle2.TIPO_PAGO==detalle.TIPO_PAGO">
                     <ion-col>
                       <p>{{detalle2.NOMBRE}}</p>
                     </ion-col>

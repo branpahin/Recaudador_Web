@@ -32,13 +32,9 @@ export class AsignacionReportesComponent  implements OnInit {
     TOKEN: this.token
   }
 
-  listadoRoles:any[]=[
-    {ROL:"R_ADMINISTRADOR"},
-    {ROL:"R_CAJERO"},
-    {ROL:"R_CONSULTA"},
-    {ROL:"R_CAJERO_ENC"},
-    {ROL:"R_CAJERO_EXT"}
-  ]
+  listadoRoles:any[]=[];
+
+  rolesDesmarcados: string[] = [];
 
   seleccionar:boolean=false;
 
@@ -55,7 +51,19 @@ export class AsignacionReportesComponent  implements OnInit {
   constructor(private recaudoService: RecaudoService) { }
 
   ngOnInit() {
+    this.ListarRoles();
     this.ListarReportes();
+    this.datos={
+      EMPRESA:this.empresa,
+      ID_REPORTE: "",
+      NOMBRE_REPORTE:"",
+      USUARIO:this.usuario,
+      TOKEN: this.token
+    }
+
+    this.listadoRolesSelec="";
+    this.listadoRolesSelec2="";
+  
   }
 
   ionViewWillEnter() {
@@ -74,6 +82,25 @@ export class AsignacionReportesComponent  implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.filteredList = this.listadoReportesAsignados;
+  }
+
+  ListarRoles(){
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getListadoRoles(Number(this.empresa),this.usuario,this.token).subscribe(
+        (data: any) => {
+          console.log('Respuesta del servicio:', data);
+          this.listadoRoles= data.LISTADO_ROLES;
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+
+  }
+
   ListarReportes(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoReportesAsignados(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -90,23 +117,27 @@ export class AsignacionReportesComponent  implements OnInit {
   }
 
   togglePuntoPago(codigo: any, event: any) {
-
-    const codigoConvenioDet = codigo.ROL;
+    const codigoConvenioDet = codigo.ROLE;
     const conveniosBloqueados = this.listadoRolesSelec.split(', ').filter(det => det !== '');
-
+    
     if (event.detail.checked) {
       if (!conveniosBloqueados.includes(codigoConvenioDet)) {
         this.listadoRolesSelec += ', '+ codigoConvenioDet;
         console.log("lista: ",this.listadoRolesSelec)
+        this.rolesDesmarcados = this.rolesDesmarcados.filter(det => det !== codigoConvenioDet);
       }
     } else {
       this.listadoRolesSelec = conveniosBloqueados.filter(det => det !== codigoConvenioDet).join(', ');
       console.log("listaaaa: ",this.listadoRolesSelec)
+      if (!this.rolesDesmarcados.includes(codigoConvenioDet)) {
+        this.rolesDesmarcados.push(codigoConvenioDet);
+      }
     }
   }
 
   isConvenioSelected(codigoConvenioDet: string): boolean {
-    return this.listadoRolesSelec.includes(codigoConvenioDet);
+    const conveniosBloqueados = this.listadoRolesSelec.split(', ').filter(det => det !== '');
+    return conveniosBloqueados.includes(codigoConvenioDet);
   }
 
   
@@ -121,18 +152,18 @@ export class AsignacionReportesComponent  implements OnInit {
     }
     this.listadoRolesSelec=respuesta1.ROLES_ASIGNADOS
     this.listadoRolesSelec2=respuesta1.ROLES_ASIGNADOS
+    console.log("roles:",respuesta1)
     this.MostrarSeleccionador();
   }
 
   MostrarSeleccionador(){
     this.seleccionar=!this.seleccionar
+    console.log("seleccionador: ",this.listadoRolesSelec)
     if(this.seleccionar==false){
       if(this.listadoRolesSelec2){
         const rolesString = this.listadoRolesSelec2;
         console.log("rolesString: ",rolesString +" listadoRolesSelec: ",this.listadoRolesSelec)
         if (this.listadoRolesSelec.length < rolesString.length) {
-          this.datos.ROLE=this.listadoRolesSelec;
-          console.log("menor")
           this.EliminarAsignacion();
         }else if(this.listadoRolesSelec.length > rolesString.length){
           this.datos.ROLES=this.listadoRolesSelec;
@@ -141,6 +172,12 @@ export class AsignacionReportesComponent  implements OnInit {
         }
         else {
           console.log("no hay nada para modificar");
+        }
+      }else{
+        if(this.listadoRolesSelec.length > 0){
+          this.datos.ROLES=this.listadoRolesSelec;
+          console.log("editar nuevo")
+          this.ModificarAsignacion();
         }
       }
     }
@@ -155,6 +192,7 @@ export class AsignacionReportesComponent  implements OnInit {
           this.respuesta= data;
           if(this.respuesta.COD=="200"){
             alertify.success(this.respuesta.RESPUESTA);
+            this.ngOnInit();
           }
           else {
             alertify.error(this.respuesta.RESPUESTA);
@@ -170,25 +208,29 @@ export class AsignacionReportesComponent  implements OnInit {
 
   EliminarAsignacion(){
     console.log("datos:",this.datos)
-    
-    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.postEliminarAsignacionReporte(this.datos).subscribe(
-        (data: any) => {
-          console.log('Respuesta del servicio:', data);
-          this.respuesta= data;
-          if(this.respuesta.COD=="200"){
-            alertify.success(this.respuesta.RESPUESTA);
+    const conveniosBloqueados = this.rolesDesmarcados;
+      conveniosBloqueados.forEach(rol => {
+        const parametrosParaAsignacion = { ...this.datos, ROLE: rol};
+          if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+            this.recaudoService.postEliminarAsignacionReporte(parametrosParaAsignacion).subscribe(
+              (data: any) => {
+                console.log('Respuesta del servicio:', data);
+                this.respuesta= data;
+                if(this.respuesta.COD=="200"){
+                  alertify.success(this.respuesta.RESPUESTA);
+                  this.ngOnInit();
+                }
+                else {
+                  alertify.error(this.respuesta.RESPUESTA);
+                }      
+              },
+              (error) => {
+                console.error('Error al llamar al servicio:', error);
+                alertify.error(error);
+              }
+            );  
           }
-          else {
-            alertify.error(this.respuesta.RESPUESTA);
-          }      
-        },
-        (error) => {
-          console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
-        }
-      );  
-    }
+        
+      })
   }
-
 }

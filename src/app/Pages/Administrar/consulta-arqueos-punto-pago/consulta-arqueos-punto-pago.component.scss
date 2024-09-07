@@ -40,9 +40,9 @@ ion-card-content{
   }
   .overlay-content {
     position: absolute;
-    width: 77%;
+    width: 65%;
     top: 10%;
-    left: 6%;
+    left: 18%;
     z-index: 1000;
   }
 .barras{
@@ -131,21 +131,27 @@ ion-card-content{
 }
 
 
-
-.cerrar-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-
-  }
-
 .cerrar-btn-1 {
     position: absolute;
-    top: 1.5%;
-    right: 1%;
+    top: 0%;
+    right: 0%;
     z-index: 1001;
 
 }
+
+.cerrar-btn {
+    position: absolute;
+    color: rgb(172, 0, 0);
+    padding: 15px;
+    top: 0px;
+    right: 5px;
+  }
+
+  .cerrar-btn:hover {
+    color: rgb(231, 224, 224)
+  }
+
+
 .contenido{
     white-space: normal;
     overflow: hidden;

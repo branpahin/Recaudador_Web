@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import { BorderStyle } from 'exceljs';
 import { Cell } from 'exceljs';
+import { LoadingController } from '@ionic/angular';
 
 
 interface CampoReporte {
@@ -39,6 +40,7 @@ export class ReporteadorComponent  implements OnInit {
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
+  rol : string|null = localStorage.getItem('rol');
 
   listadoReportesActivos:any[]=[];
   listadoReportesInactivos:any[]=[];
@@ -47,14 +49,20 @@ export class ReporteadorComponent  implements OnInit {
   listadoConvenios:any []=[];
   listadoFacturasConvenio:any []=[];
   listadoSubPuntos:any[]=[];
+  listadoUsuarios:any[]=[];
   reporteSeleccionado="";
   nombreReporteSeleccionado="";
   parametros:boolean=false;
   seleccionarTodos: boolean = false;
   respuesta:any;
   tituloArchivo="";
+  filteredList: any[] = [];
+  filteredList2: any[] = [];
+  searchTerm: string = '';
+  searchTerm2: string = '';
 
   convenio=0;
+  puntoPago=0;
 
   parametross: { [key: string]: any } = {};
   parametrosKeys: string[] = [];
@@ -72,7 +80,11 @@ export class ReporteadorComponent  implements OnInit {
   checkboxEstado: { [key: string]: boolean } = {};
 
 
-  constructor(private recaudoService: RecaudoService, private router: Router, private http: HttpClient) {}
+  constructor(private recaudoService: RecaudoService, 
+    private router: Router, 
+    private http: HttpClient,
+    private loadingController: LoadingController
+  ) {}
 
   ngOnInit() {
     this.tituloArchivo="";
@@ -82,6 +94,7 @@ export class ReporteadorComponent  implements OnInit {
     this.ListarConvenios();
     this.inicializarCheckboxEstado();
     this.ListarSubPuntos();
+    this.ListarUsuariosGeneral();
     this.seleccionarTodos=false;
   }
 
@@ -104,13 +117,27 @@ export class ReporteadorComponent  implements OnInit {
     this.respuesta.REPORTES.forEach((reporte: { CAMPOS_REPORTE: CampoReporte[], NUMERO_CONSULTA: string }) => {
       
 
-      if (reporte.NUMERO_CONSULTA == "4") {
+      if (this.parametross['ID_REPORTE']!="23" && reporte.NUMERO_CONSULTA == "4") {
         reporte.CAMPOS_REPORTE.forEach((camposReporte: CampoReporte) => {
           const usuarioID = {
               usuario: camposReporte['USUARIO'],
               id: camposReporte['ID']
           };
           usuariosIDs.push(usuarioID);
+          
+          console.log("usuarios: ",usuariosIDs)
+        });
+      }
+
+      else if(this.parametross['ID_REPORTE']=="23" && reporte.NUMERO_CONSULTA == "1"){
+        reporte.CAMPOS_REPORTE.forEach((camposReporte: CampoReporte) => {
+          const usuarioID = {
+              usuario: camposReporte['USUARIO'],
+              id: camposReporte['ID']
+          };
+          
+          usuariosIDs.push(usuarioID);
+          console.log("usuarios: ",usuariosIDs)
         });
       }
     
@@ -120,8 +147,10 @@ export class ReporteadorComponent  implements OnInit {
       reporte.CAMPOS_REPORTE.forEach((campo: CampoReporte) => {
         const columnHeaders = Object.keys(campo).map(header => {
             const match = header.match(/(N_CUPONES|VALOR)_(\d+)/);
+            const match2 = header.match(/(N_CUPONES|VALOR_E)_(\d+)/);
+            const match3 = header.match(/(N_CUPONES|VALOR_T)_(\d+)/);
             if (match) {
-                console.log("entro match ")
+                console.log("entro match1 ")
                 const field = match[1]; 
                 const userID = match[2]; 
                 const usuarioEncontrado = usuariosIDs.find(usuario => usuario.id === userID);
@@ -140,6 +169,48 @@ export class ReporteadorComponent  implements OnInit {
                 } else {
                     return ''; 
                 }
+            }
+            else if (match2) {
+              console.log("entro match ")
+              const field = match2[1]; 
+              const userID = match2[2]; 
+              const usuarioEncontrado = usuariosIDs.find(usuario => usuario.id === userID);
+              console.log("ID: ",usuariosIDs)
+              if (usuarioEncontrado) {
+                
+                  if (field === 'VALOR') {
+                      return header;
+                  } 
+                  if(field=== 'N_CUPONES'){
+                    return usuarioEncontrado.usuario;
+                  }
+                  else {
+                      return header.replace(/_/g, ' ');
+                  }
+              } else {
+                  return ''; 
+              }
+            }
+            else if (match3) {
+              console.log("entro match ")
+              const field = match3[1]; 
+              const userID = match3[2]; 
+              const usuarioEncontrado = usuariosIDs.find(usuario => usuario.id === userID);
+              console.log("ID: ",usuariosIDs)
+              if (usuarioEncontrado) {
+                
+                  if (field === 'VALOR') {
+                      return header;
+                  } 
+                  if(field=== 'N_CUPONES'){
+                    return usuarioEncontrado.usuario;
+                  }
+                  else {
+                      return header.replace(/_/g, ' ');
+                  }
+              } else {
+                  return ''; 
+              }
             } else {
                 return header.replace(/_/g, ' ');
             }
@@ -170,15 +241,15 @@ export class ReporteadorComponent  implements OnInit {
                 pattern: 'solid',
                 fgColor: { argb: 'FFFFA500' }
             };
+          }
         }
-      } 
-      else {
-        cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFFFA500' }
-        };
-      }
+        else {
+          cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFFFA500' }
+          };
+        }
         cell.border = {
             top: { style: 'thick' as BorderStyle },
             left: { style: 'thick' as BorderStyle },
@@ -204,7 +275,7 @@ export class ReporteadorComponent  implements OnInit {
             if (colIndex > maxColIndex) {
                 maxColIndex = colIndex;
             }
-            if (/VALOR/.test(key) && reporte.NUMERO_CONSULTA!="5") {
+            if (/VALOR/.test(key) && reporte.NUMERO_CONSULTA!="5" && reporte.NUMERO_CONSULTA!="6" && this.parametross['ID_REPORTE']!="23" && reporte.NUMERO_CONSULTA!="2") {
               const value = parseFloat(campo[key]);
               const titulo = key.replace(/_/g, ' ');
               console.log("columnaVerdadera: ",colIndex)
@@ -212,7 +283,7 @@ export class ReporteadorComponent  implements OnInit {
               sumaValores[titulo] = (sumaValores[titulo] || 0) + value;
               columnasTitulosValor.push(colIndex);
             }
-            if (/N_/.test(key) && reporte.NUMERO_CONSULTA!="5") {
+            if (/N_/.test(key) && reporte.NUMERO_CONSULTA!="5" && reporte.NUMERO_CONSULTA!="6" && this.parametross['ID_REPORTE']=="23" && reporte.NUMERO_CONSULTA!="2") {
               const value = parseFloat(campo[key]);
               const titulo = key.replace(/_/g, ' ');
               console.log("columnaVerdadera: ",colIndex)
@@ -220,8 +291,10 @@ export class ReporteadorComponent  implements OnInit {
               sumaN[titulo] = (sumaN[titulo] || 0) + value;
               columnasTitulosN.push(colIndex);
             }
+
             
-             if(reporte.NUMERO_CONSULTA=="5"){
+            
+            if(reporte.NUMERO_CONSULTA=="5" || this.parametross['ID_REPORTE']=="23" && reporte.NUMERO_CONSULTA=="2"){
               const value = campo[key];
               if (key.startsWith('N_CUPONES_') || key.startsWith('VALOR_')) {
                   const lastUnderscoreIndex = key.lastIndexOf('_');
@@ -231,20 +304,21 @@ export class ReporteadorComponent  implements OnInit {
                       return; 
                   }
                   if (/VALOR/.test(key)) {
+                    if(campo[key]==""){
+                      campo[key]="0";
+                    }
                     const value = parseFloat(campo[key]);
                     const titulo = key.replace(/_/g, ' ');
-                    console.log("columnaVerdadera: ",colIndex)
+                    console.log("columnaVerdadera3: ",colIndex)
                     
                     sumaValores[titulo] = (sumaValores[titulo] || 0) + value;
                     columnasTitulosValor.push(colIndex);
-                    const valorFormateado = new Intl.NumberFormat('es-CO', {
-                      style: 'currency',
-                      currency: 'COP',
-                      minimumFractionDigits: 0, 
-                    }).format(value);
-                    worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = valorFormateado;
+                    const cell = worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`);
+                    cell.value = value;
+                    cell.numFmt = '"$"#,##0'; // Formato numérico con dos decimales (por ejemplo)
+                    cell.alignment = { horizontal: 'left' }; // Alineación a la derecha
                   }
-                  if (/N_/.test(key)) {
+                  else if (/N_/.test(key)) {
                     const value = parseFloat(campo[key]);
                     const titulo = key.replace(/_/g, ' ');
                     console.log("columnaVerdadera: ",colIndex)
@@ -262,15 +336,87 @@ export class ReporteadorComponent  implements OnInit {
               }
               colIndex++;
             }
+
+            else if(reporte.NUMERO_CONSULTA=="6" && this.parametross['ID_REPORTE']!="23"){
+              const value = campo[key];
+              if (key.startsWith('N_CUPONES_') || key.startsWith('VALOR_E_') || key.startsWith('VALOR_T_')) {
+                  const lastUnderscoreIndex = key.lastIndexOf('_');
+                  const userId = key.substring(lastUnderscoreIndex + 1); 
+                  const usuarioEncontrado = usuariosIDs.some(usuario => usuario.id === userId);  
+                  if (!usuarioEncontrado) {
+                      return; 
+                  }
+                  if (/VALOR_E/.test(key)) {
+                    if(campo[key]==""){
+                      campo[key]="0"
+                    }
+                    const value = parseFloat(campo[key]);
+                    const titulo = key.replace(/_/g, ' ');
+                    console.log("columnaVerdadera: ",colIndex)
+                    
+                    sumaValores[titulo] = (sumaValores[titulo] || 0) + value;
+                    columnasTitulosValor.push(colIndex);
+                    const cell = worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`);
+                    cell.value = value;
+                    cell.numFmt = '"$"#,##0'; // Formato numérico con dos decimales (por ejemplo)
+                    cell.alignment = { horizontal: 'left' }; // Alineación a la derecha
+                  }
+
+                  else if (/VALOR_T/.test(key)) {
+                    if(campo[key]==""){
+                      campo[key]="0"
+                    }
+                    const value = parseFloat(campo[key]);
+                    const titulo = key.replace(/_/g, ' ');
+                    console.log("columnaVerdadera: ",colIndex)
+                    
+                    sumaValores[titulo] = (sumaValores[titulo] || 0) + value;
+                    columnasTitulosValor.push(colIndex);
+                    // const valorFormateado = new Intl.NumberFormat('es-CO', {
+                    //   style: 'currency',
+                    //   currency: 'COP',
+                    //   minimumFractionDigits: 0, 
+                    // }).format(value);
+                    
+                    const cell = worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`);
+                    cell.value = value;
+                    cell.numFmt = '"$"#,##0'; // Formato numérico con dos decimales (por ejemplo)
+                    cell.alignment = { horizontal: 'left' }; // Alineación a la derecha
+                  }
+                  
+                  else if (/N_/.test(key)) {
+                    const value = parseFloat(campo[key]);
+                    const titulo = key.replace(/_/g, ' ');
+                    console.log("columnaVerdadera: ",colIndex)
+                    
+                    sumaN[titulo] = (sumaN[titulo] || 0) + value;
+                    columnasTitulosN.push(colIndex);
+                    worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = value; 
+                  }
+                  else{
+
+                    worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = value; 
+                  }
+              }else{
+                worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = value; 
+              }
+              colIndex++;
+            }
+
             else {
               if (/VALOR/.test(key)) {
+                if(campo[key]==""){
+                  campo[key]="0"
+                }
                 const value = parseFloat(campo[key]);
-                const valorFormateado = new Intl.NumberFormat('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                  minimumFractionDigits: 0, 
-                }).format(value);
-                worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = valorFormateado;
+                const cell = worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`);
+                cell.value = value;
+                cell.numFmt = '"$"#,##0'; // Formato numérico con dos decimales (por ejemplo)
+                cell.alignment = { horizontal: 'left' }; // Alineación a la derecha
+                if(/VALOR_TOTAL/.test(key)){
+                  //const firstCustomTitleCell=worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`);
+                  applyStyles2(cell);
+                }
               }
               else if (/N_/.test(key)) {
                 const value = parseFloat(campo[key]);
@@ -282,6 +428,7 @@ export class ReporteadorComponent  implements OnInit {
               }else{
                 const value = campo[key];
                 worksheet.getCell(`${getColumnLetter(colIndex)}${filaBase}`).value = value;
+                
               }
                 
                 colIndex++;
@@ -296,14 +443,20 @@ export class ReporteadorComponent  implements OnInit {
         const columna = obtenerColumnaPorTitulo(titulo, columnasTitulosValor[index], columnasPorTitulo);
         const valor = sumaValores[titulo];
     
-        const valorFormateado = new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0, 
-        }).format(valor);
+        // const valorFormateado = new Intl.NumberFormat('es-CO', {
+        //     style: 'currency',
+        //     currency: 'COP',
+        //     minimumFractionDigits: 0, 
+        // }).format(valor);
     
-        worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`).value = valorFormateado;
+        //worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`).value = valorFormateado;
+        const cell = worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`);
+        cell.value = valor;
+        cell.numFmt = '"$"#,##0'; // Formato numérico con dos decimales (por ejemplo)
+        cell.alignment = { horizontal: 'left' }; // Alineación a la derecha
         console.log("columna: ", columna);
+        const firstCustomTitleCell = worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`);
+        applyStyles(firstCustomTitleCell);
       });
       Object.keys(sumaN).forEach((titulo, index) => {
         const columna = obtenerColumnaPorTitulo(titulo, columnasTitulosN[index], columnasPorTitulo);
@@ -312,6 +465,8 @@ export class ReporteadorComponent  implements OnInit {
 
         worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`).value = valor;
         console.log("columna: ", columna);
+        const firstCustomTitleCell = worksheet.getCell(`${getColumnLetter(columna)}${filaBase}`);
+        applyStyles(firstCustomTitleCell);
       });
 
       function getColumnLetter(colIndex: number): string {
@@ -334,21 +489,72 @@ export class ReporteadorComponent  implements OnInit {
           filaBase += 2;
  
     });
+    function applyStyles(cell: Cell) {
+      cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFCB6D' }
+      };
+      cell.border = {
+        top: { style: 'thin' as BorderStyle },
+        left: { style: 'thin' as BorderStyle },
+        bottom: { style: 'thin' as BorderStyle },
+        right: { style: 'thin' as BorderStyle }
+      };
+      cell.font = {
+          bold: true
+      };
+      
+    }
+
+    function applyStyles2(cell: Cell) {
+      cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'BFBFBF' }
+      };
+      cell.border = {
+        top: { style: 'thin' as BorderStyle },
+        left: { style: 'thin' as BorderStyle },
+        bottom: { style: 'thin' as BorderStyle },
+        right: { style: 'thin' as BorderStyle }
+      };
+      cell.font = {
+          bold: true
+      };
+      
+    }
    
-  
+    function applyStylesToCellData(cell: Cell) {
+      cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '92D050' }
+      };
+      cell.border = {
+        top: { style: 'thin' as BorderStyle },
+        left: { style: 'thin' as BorderStyle },
+        bottom: { style: 'thin' as BorderStyle },
+        right: { style: 'thin' as BorderStyle }
+      };
+      cell.font = {
+          bold: true
+      };
+      
+    }
     
     
 
     if(this.parametross['ID_REPORTE']=="6"){
       const customTitles = ['BILLETES', '$ 100.000', '$ 50.000', '$ 20.000', '$ 10.000', '$ 5.000', '$ 2.000', '$ 1.000', 'SUBTOTAL'];
 
-      worksheet.getRow(filaBase+1).getCell(4).value = customTitles[0];
+      worksheet.getRow(filaBase+1).getCell(1).value = customTitles[0];
 
-      const firstCustomTitleCell = worksheet.getCell(`${getExcelColumn(4)}${filaBase+1}`);
+      const firstCustomTitleCell = worksheet.getCell(`${getExcelColumn(1)}${filaBase+1}`);
       applyStylesToCell(firstCustomTitleCell);
 
       for (let i = 1; i < customTitles.length; i++) {
-        const columnIndex = 4 + i;
+        const columnIndex = 1 + i;
         worksheet.getRow(filaBase+1).getCell(columnIndex).value = customTitles[i];
 
         const customTitleCell = worksheet.getCell(`${getExcelColumn(columnIndex)}${filaBase+1}`);
@@ -372,23 +578,7 @@ export class ReporteadorComponent  implements OnInit {
             bold: true
         };
       }
-      function applyStylesToCellData(cell: Cell) {
-        cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: '92D050' }
-        };
-        cell.border = {
-          top: { style: 'thin' as BorderStyle },
-          left: { style: 'thin' as BorderStyle },
-          bottom: { style: 'thin' as BorderStyle },
-          right: { style: 'thin' as BorderStyle }
-        };
-        cell.font = {
-            bold: true
-        };
-        
-      }
+      
       function applyBorderToCell(cell: Cell) {
         cell.border = {
           top: { style: 'thin' as BorderStyle },
@@ -406,36 +596,36 @@ export class ReporteadorComponent  implements OnInit {
           return String.fromCharCode(ACode + columnIndex - 1);
       }
 
-      worksheet.mergeCells(`D${filaBase}:L${filaBase}`);
-      const transportadoraCell = worksheet.getCell(`G${filaBase}`);
+      worksheet.mergeCells(`A${filaBase}:I${filaBase}`);
+      const transportadoraCell = worksheet.getCell(`D${filaBase}`);
       transportadoraCell.value = 'TRANSPORTADORA';
       applyStylesToCell(transportadoraCell);
 
-      const fajosCell = worksheet.getCell(`D${filaBase + 2}`);
+      const fajosCell = worksheet.getCell(`A${filaBase + 2}`);
       fajosCell.value = 'FAJOS';
       applyStylesToCellData(fajosCell)
 
-      const picosCell = worksheet.getCell(`D${filaBase + 3}`);
+      const picosCell = worksheet.getCell(`A${filaBase + 3}`);
       picosCell.value = 'PICOS';
       applyStylesToCellData(picosCell)
 
 
       const customTitles1 = ['MONEDAS', '$ 1.000', '$ 500', '$ 200', '$ 100', '$ 50','SUBTOTAL'];
 
-      worksheet.getRow(filaBase+4).getCell(4).value = customTitles1[0];
+      worksheet.getRow(filaBase+4).getCell(1).value = customTitles1[0];
 
-      const firstCustomTitleCell1 = worksheet.getCell(`${getExcelColumn(4)}${filaBase+4}`);
+      const firstCustomTitleCell1 = worksheet.getCell(`${getExcelColumn(1)}${filaBase+4}`);
       applyStylesToCell(firstCustomTitleCell1);
 
       for (let i = 1; i < customTitles1.length; i++) {
-        const columnIndex = 4 + i;
+        const columnIndex = 1 + i;
         worksheet.getRow(filaBase+4).getCell(columnIndex).value = customTitles1[i];
 
         const customTitleCell = worksheet.getCell(`${getExcelColumn(columnIndex)}${filaBase+4}`);
         applyStylesToCell(customTitleCell);
       }
 
-      const picos1Cell = worksheet.getCell(`D${filaBase + 5}`);
+      const picos1Cell = worksheet.getCell(`A${filaBase + 5}`);
       picos1Cell.value = 'PICOS';
       applyStylesToCellData(picos1Cell)
 
@@ -458,8 +648,8 @@ export class ReporteadorComponent  implements OnInit {
         return String.fromCharCode(number + 64);
       }
       
-      addBordersToEmptyCellsBelowTitles('D', 'L', filaBase + 2, filaBase + 3);
-      addBordersToEmptyCellsBelowTitles('D', 'J', filaBase + 5, filaBase + 5);
+      addBordersToEmptyCellsBelowTitles('A', 'I', filaBase + 2, filaBase + 3);
+      addBordersToEmptyCellsBelowTitles('A', 'G', filaBase + 5, filaBase + 5);
 
       worksheet.views = [
         { state: 'frozen', xSplit: 4, showGridLines: false }
@@ -556,7 +746,7 @@ export class ReporteadorComponent  implements OnInit {
         if(colNumerFin<=6){
           worksheet.addImage(imageId, {
             tl: { col: 0, row: 0 },
-            ext: { width: 95, height: 50 }
+            ext: { width: 90, height: 50 }
           });
         }else{
           worksheet.addImage(imageId, {
@@ -602,6 +792,8 @@ export class ReporteadorComponent  implements OnInit {
           console.log('Respuesta del servicio:', data);
             this.listadoReportesActivos= data.REPORTES_ACTIVOS;
             this.listadoReportesInactivos= data.REPORTES_INACTIVOS;
+            this.filteredList = this.listadoReportesActivos;
+            this.filteredList2 = this.listadoReportesInactivos;
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -666,13 +858,17 @@ export class ReporteadorComponent  implements OnInit {
     this.ListarFacturasConvenio();
   }
 
+  guardarPuntopago(event: any) {
+    this.puntoPago = Number(event.detail.value);
+  }
+
   ListarFacturasConvenio(){
     
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoFacturas(Number(this.empresa),this.convenio,this.usuario,this.token,).subscribe(
         (data: any) => {
           console.log("enviado:",this.empresa,this.convenio,this.usuario,this.token,)
-          console.log('Respuesta del servicio:', data);
+          console.log('Respuesta del servicio facturas convenio:', data);
             this.listadoFacturasConvenio= data.LISTADO_FACTURAS_ACTIVAS;
 
         },
@@ -704,6 +900,8 @@ export class ReporteadorComponent  implements OnInit {
     this.parametross={};
     this.parametrosKeys=[];
     this.puntosPagoSeleccionados = [];
+    this.convenio=0;
+    this.puntoPago=0;
     this.ngOnInit();
   }
 
@@ -806,7 +1004,7 @@ export class ReporteadorComponent  implements OnInit {
   }
 
   isFieldSpecific(key: string): boolean {
-    return key === 'EMPRESA' || key === 'CODIGO_PUNTO_PAGO' || key === 'FECHA_INI' || key === 'FECHA_FIN' || key === 'FECHA' || key === 'CODIGO_CONVENIO';
+    return key === 'EMPRESA' || key === 'CODIGO_PUNTO_PAGO' || key === 'FECHA_INI' || key === 'FECHA_FIN' || key === 'FECHA' || key === 'CODIGO_CONVENIO' || key === 'USUARIO';
   }
 
   
@@ -857,6 +1055,20 @@ export class ReporteadorComponent  implements OnInit {
         this.puntosPagoSeleccionados = [];
       }
     }
+
+    else if(this.reporteSeleccionado=="16" || this.reporteSeleccionado=="28" || this.reporteSeleccionado=="29" || this.reporteSeleccionado=="30"){
+      if (isChecked) {
+        for (const usuario of this.listadoUsuarios) {
+          this.checkboxEstado[usuario.USUARIO] = true;
+        }
+        this.puntosPagoSeleccionados = this.listadoUsuarios.map(usuario => ({ codigo: usuario.USUARIO, nombre: usuario.NOMBRE }));
+      } else {
+        for (const usuario of this.listadoUsuarios) {
+          this.checkboxEstado[usuario.USUARIO] = false;
+        }
+        this.puntosPagoSeleccionados = [];
+      }
+    }
     
     else{
       if (isChecked) {
@@ -884,7 +1096,7 @@ export class ReporteadorComponent  implements OnInit {
         this.puntosPagoSeleccionados.splice(index, 1);
       }
     }
-}
+  }
 
   inicializarCheckboxEstado() {
     for (const puntopago of this.listadoPuntosPago) {
@@ -898,6 +1110,9 @@ export class ReporteadorComponent  implements OnInit {
     }
     for (const Subpunto of this.listadoSubPuntos) {
       this.checkboxEstado[Subpunto.VALOR] = false;
+    }
+    for (const usuario of this.listadoUsuarios) {
+      this.checkboxEstado[usuario.USUARIO] = false;
     }
   }
 
@@ -916,22 +1131,77 @@ export class ReporteadorComponent  implements OnInit {
     });
   }
 
-  GenerarReporte(){
+  ListarUsuariosGeneral(){
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getListadoUsuarios(Number(this.empresa),this.usuario,this.token).subscribe(
+        (data: any) => {
+          console.log('Respuesta del servicio:', data);
+          this.listadoUsuarios= data.USUARIOS_ACTIVOS;
+
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+
+  }
+
+  async GenerarReporte(){
+    const loading = await this.loadingController.create({
+      message: 'Generando Reporte...',
+      spinner: 'crescent',
+    });
+
+    await loading.present();
     this.parametross['ID_REPORTE'] = this.reporteSeleccionado;
     this.parametross['TOKEN'] = this.token;
     this.parametross['USUARIO'] = this.usuario;
-    
+    let fecha="";
+    for(let key of this.parametrosKeys){
+      switch (key){
+        case "FECHA_INI":
+          if(this.parametross["FECHA_INI"]==""){
+            this.parametross["FECHA_INI"]= new Date().toISOString();
+            this.parametross["FECHA_INI"]= formatDate(this.parametross["FECHA_INI"],'dd-MM-yyyy', 'en-US');
+            fecha=this.parametross["FECHA_INI"]+" a "+this.parametross["FECHA_FIN"];
+          }else{
+            fecha=this.parametross["FECHA_INI"]+" a "+this.parametross["FECHA_FIN"];
+          }
+        break;
+        case "FECHA_FIN":
+          if(this.parametross["FECHA_FIN"]==""){
+            this.parametross["FECHA_FIN"]= new Date().toISOString();
+            this.parametross["FECHA_FIN"]= formatDate(this.parametross["FECHA_INI"],'dd-MM-yyyy', 'en-US');
+            fecha=this.parametross["FECHA_INI"]+" a "+this.parametross["FECHA_FIN"];
+          }else{
+            fecha=this.parametross["FECHA_INI"]+" a "+this.parametross["FECHA_FIN"];
+          }
+        break;
+        case "FECHA":
+          if(this.parametross["FECHA"]==""){
+            this.parametross["FECHA"]= new Date().toISOString();
+            this.parametross["FECHA"]= formatDate(this.parametross["FECHA_INI"],'dd-MM-yyyy', 'en-US');
+            fecha=this.parametross["FECHA"];
+          }else{
+            fecha=this.parametross["FECHA"];
+          }
+        break;
+        default:
+        break;
+      }
+    }
     if(this.reporteSeleccionado=='1'){
       this.puntosPagoSeleccionados.forEach(puntoPago => {
         const parametrosParaPuntoPago = { ...this.parametross, CODIGO_PUNTO_PAGO: puntoPago.codigo };
         
         this.recaudoService.postGenerarReporteExcel(parametrosParaPuntoPago).subscribe({
-          next: data => {
+          next: async data => {
             console.log(data);
             this.respuesta = data;
     
             if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
-              this.tituloArchivo=" - "+puntoPago.nombre;
+              this.tituloArchivo=" - "+puntoPago.nombre+" ( "+fecha+" )";
               console.log("Nombre: ",this.tituloArchivo)
               alertify.success("REPORTE GENERADO");
               const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
@@ -958,9 +1228,11 @@ export class ReporteadorComponent  implements OnInit {
               this.puntosPagoSeleccionados = [];
               this.ngOnInit();
             }
+            await loading.dismiss();
           },
-          error: error => {
+          error: async error => {
             console.log("Respuesta:",error);
+            await loading.dismiss();
           }
           
         });
@@ -970,12 +1242,12 @@ export class ReporteadorComponent  implements OnInit {
       this.puntosPagoSeleccionados.forEach(convenio => {
         const parametrosParaPuntoPago = { ...this.parametross, CODIGO_CONVENIO: convenio.codigo };
         this.recaudoService.postGenerarReporteExcel(parametrosParaPuntoPago).subscribe({
-          next: data => {
+          next: async data => {
             console.log(data);
             this.respuesta = data;
     
             if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
-              this.tituloArchivo=" - "+convenio.nombre;
+              this.tituloArchivo=" - "+convenio.nombre+" ( "+fecha+" )";
               console.log("Nombre: ",this.tituloArchivo)
               alertify.success("REPORTE GENERADO");
               const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
@@ -1002,9 +1274,11 @@ export class ReporteadorComponent  implements OnInit {
               this.puntosPagoSeleccionados = [];
               this.ngOnInit();
             }
+            await loading.dismiss();
           },
-          error: error => {
+          error: async error => {
             console.log("Respuesta:",error);
+            await loading.dismiss();
           }
           
         });
@@ -1015,12 +1289,12 @@ export class ReporteadorComponent  implements OnInit {
         const parametrosParaPuntoPago = { ...this.parametross, CODIGO_FACTURA: conveniodet.codigo };
         console.log("Enviado: ",parametrosParaPuntoPago);
         this.recaudoService.postGenerarReporteExcel(parametrosParaPuntoPago).subscribe({
-          next: data => {
+          next: async data => {
             console.log(data);
             this.respuesta = data;
     
             if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
-              this.tituloArchivo=" - "+conveniodet.nombre;
+              this.tituloArchivo=" - "+conveniodet.nombre+" ( "+fecha+" )";
               console.log("Nombre: ",this.tituloArchivo)
               alertify.success("REPORTE GENERADO");
               const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
@@ -1047,9 +1321,11 @@ export class ReporteadorComponent  implements OnInit {
               this.puntosPagoSeleccionados = [];
               this.ngOnInit();
             }
+            await loading.dismiss();
           },
-          error: error => {
+          error: async error => {
             console.log("Respuesta:",error);
+            await loading.dismiss();
           }
           
         });
@@ -1060,12 +1336,12 @@ export class ReporteadorComponent  implements OnInit {
         const parametrosParaPuntoPago = { ...this.parametross, SUB_PUNTO_PAGO: Subpunto.codigo };
         console.log("Enviado: ",parametrosParaPuntoPago);
         this.recaudoService.postGenerarReporteExcel(parametrosParaPuntoPago).subscribe({
-          next: data => {
+          next: async data => {
             console.log(data);
             this.respuesta = data;
     
             if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
-              this.tituloArchivo=" - "+Subpunto.nombre;
+              this.tituloArchivo=" - "+Subpunto.nombre+" ( "+fecha+" )";
               console.log("Nombre: ",this.tituloArchivo)
               alertify.success("REPORTE GENERADO");
               const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
@@ -1092,23 +1368,154 @@ export class ReporteadorComponent  implements OnInit {
               this.puntosPagoSeleccionados = [];
               this.ngOnInit();
             }
+            await loading.dismiss();
           },
-          error: error => {
+          error: async error => {
             console.log("Respuesta:",error);
+            await loading.dismiss();
           }
           
         });
       });
     }
+
+    else if(this.reporteSeleccionado=='16' || this.reporteSeleccionado=='28' || this.reporteSeleccionado=='29' || this.reporteSeleccionado=='30'){
+      if(this.rol!='R_CAJERO_ENC' && this.rol!='R_ADMINISTRADOR'){
+        this.recaudoService.postGenerarReporteExcel(this.parametross).subscribe({
+          next: async data => {
+            console.log("Enviado: ",this.parametross)
+            let subTitulo=""
+            
+            if(this.convenio>0){
+              if(this.reporteSeleccionado=="25"){
+                const parametro = this.listadoConvenios.find(param => param.CODIGO_CONVENIO=== String(this.convenio));
+                subTitulo=parametro.NOMBRE_CONVENIO;
+                console.log("convenio:",subTitulo)
+              }else{
+                const parametro = this.listadoFacturasConvenio.find(param => param.CODIGO_CONVENIO_DET=== String(this.convenio));
+            
+                subTitulo=parametro.NOMBRE_CONVENIO_DET;
+              }
+            }
+            else if(this.puntoPago>0){
+              const parametro2 = this.listadoPuntosPago.find(param => param.CODIGO === String(this.puntoPago));
+              subTitulo=parametro2.NOMBRE;
+            }
+            console.log(data);
+            this.respuesta = data;
+    
+            if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
+              this.tituloArchivo=" - "+subTitulo+" - "+this.usuario+" ( "+fecha+" )";
+              alertify.success("REPORTE GENERADO");
+              const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
+              const imagen="../../assets/logo/logo_energia.png";
+              let todosLosCampos: CampoReporte[] = [];
+    
+              this.respuesta.REPORTES.forEach((reporte: { CAMPOS_REPORTE: CampoReporte[] }) => {
+                reporte.CAMPOS_REPORTE.forEach((campo: CampoReporte) => {
+                    todosLosCampos.push(campo);
+                });
+              });
+    
+              this.exportExcel(todosLosCampos, nombreReporte, imagen);
+              //this.parametross={};
+             
+            }else if((this.respuesta.REPORTES=="")){
+              alertify.error("NO HAY INFORMACIÓN PARA REPORTAR");
+            }
+            else  {
+              alertify.error(this.respuesta.RESPUESTA);
+            }
+            this.convenio=0;
+            this.puntoPago=0;
+            await loading.dismiss();
+          
+          },
+          error: async error => {
+            console.log("Respuesta:",error);
+            await loading.dismiss();
+          }
+          
+        });
+      }else{
+        this.puntosPagoSeleccionados.forEach(usuario => {
+          const parametrosParaPuntoPago = { ...this.parametross, USUARIO: usuario.codigo };
+          console.log("Enviado: ",parametrosParaPuntoPago);
+          this.recaudoService.postGenerarReporteExcel(parametrosParaPuntoPago).subscribe({
+            next: async data => {
+              console.log(data);
+              this.respuesta = data;
+      
+              if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
+                this.tituloArchivo=" - "+usuario.nombre+" ( "+fecha+" )";
+                console.log("Nombre: ",this.tituloArchivo)
+                alertify.success("REPORTE GENERADO");
+                const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
+                const imagen="../../assets/logo/logo_energia.png";
+                let todosLosCampos: CampoReporte[] = [];
+      
+                this.respuesta.REPORTES.forEach((reporte: { CAMPOS_REPORTE: CampoReporte[] }) => {
+                  reporte.CAMPOS_REPORTE.forEach((campo: CampoReporte) => {
+                      todosLosCampos.push(campo);
+                  });
+                });
+      
+                this.exportExcel(todosLosCampos, nombreReporte, imagen);
+                //this.parametross={};
+  
+               
+              }else if((this.respuesta.REPORTES=="")){
+                alertify.error("NO HAY INFORMACIÓN PARA REPORTAR");
+              }
+              else  {
+                alertify.error(this.respuesta.RESPUESTA);
+              }
+              if (usuario === this.puntosPagoSeleccionados[this.puntosPagoSeleccionados.length - 1]) {
+                this.puntosPagoSeleccionados = [];
+                this.ngOnInit();
+              }
+              await loading.dismiss();
+            },
+            error: async error => {
+              console.log("Respuesta:",error);
+              await loading.dismiss();
+            }
+            
+          });
+        });
+      }
+    }
     else{
-      console.log("Enviado: ",this.parametross)
+      console.log("Inicio Enviado: ",this.parametross)
       this.recaudoService.postGenerarReporteExcel(this.parametross).subscribe({
-        next: data => {
+        next: async data => {
+          console.log("Enviado: ",this.parametross)
+          let subTitulo=""
+          
+          if(this.convenio>0){
+            console.log("convenio:",this.convenio)
+            console.log("convenios:",this.listadoFacturasConvenio)
+            console.log("convenios1:",this.listadoConvenios)
+            if(this.reporteSeleccionado=="25" || this.reporteSeleccionado=="32"){
+              const parametro = this.listadoConvenios.find(param => param.CODIGO_CONVENIO=== String(this.convenio));
+              subTitulo=parametro.NOMBRE_CONVENIO;
+              console.log("convenio:",subTitulo)
+            }else{
+              const parametro = this.listadoFacturasConvenio.find(param => param.CODIGO_CONVENIO_DET=== String(this.convenio));
+          
+              subTitulo=parametro.NOMBRE_CONVENIO_DET;
+              
+            }
+          }
+          else if(this.puntoPago>0){
+            const parametro2 = this.listadoPuntosPago.find(param => param.CODIGO === String(this.puntoPago));
+            subTitulo=parametro2.NOMBRE;
+          }
           console.log(data);
           this.respuesta = data;
   
           if(this.respuesta.COD=='200' && this.respuesta.REPORTES!=""){
-  
+            this.tituloArchivo=" - "+subTitulo+" ( "+fecha+" )";
             alertify.success("REPORTE GENERADO");
             const nombreReporte = this.respuesta.REPORTES[0].NOMBRE_REPORTE;
             const imagen="../../assets/logo/logo_energia.png";
@@ -1129,13 +1536,47 @@ export class ReporteadorComponent  implements OnInit {
           else  {
             alertify.error(this.respuesta.RESPUESTA);
           }
+          this.convenio=0;
+          this.puntoPago=0;
+          await loading.dismiss();
         
         },
-        error: error => {
+        error: async error => {
           console.log("Respuesta:",error);
+          await loading.dismiss();
         }
         
       });
     }
+  }
+
+  filterList() {
+    if (!this.searchTerm.trim()) {
+      this.filteredList = this.listadoReportesActivos;
+    } else {
+      this.filteredList = this.listadoReportesActivos.filter(item =>
+        item.ID_REPORTE.toLowerCase().includes(this.searchTerm.toLowerCase())
+        || item.REPORTE.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+  }
+
+  clearSearch() {
+    this.filteredList = this.listadoReportesActivos;
+  }
+
+  filterList2() {
+    if (!this.searchTerm2.trim()) {
+      this.filteredList2 = this.listadoReportesInactivos;
+    } else {
+      this.filteredList2 = this.listadoReportesInactivos.filter(item =>
+        item.ID_REPORTE.toLowerCase().includes(this.searchTerm2.toLowerCase())
+        || item.REPORTE.toLowerCase().includes(this.searchTerm2.toLowerCase())
+      );
+    }
+  }
+
+  clearSearch2() {
+    this.filteredList2 = this.listadoReportesInactivos;
   }
 }

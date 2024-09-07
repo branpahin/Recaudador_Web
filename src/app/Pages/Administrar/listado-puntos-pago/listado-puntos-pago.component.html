@@ -42,7 +42,7 @@
           <ion-label>Puntos de Pago: 
             <button *ngIf="!subPunto" class="btn-sup" style="margin-left: 2px;" expand="full" (click)="Punto()"> Sub Puntos </button> 
           </ion-label>
-          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
         </ion-item>
         <ion-grid >
           
@@ -95,7 +95,7 @@
           <ion-label>Sub Puntos: 
             <button *ngIf="subPunto" class="btn-sup" style="margin-left: 2px;" expand="full" (click)="Punto()"> Puntos de pago</button> 
           </ion-label>
-          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+          <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
         </ion-item>
         <ion-grid >
           
@@ -307,7 +307,7 @@
                     </ng-container>
                   </div>
                   <div *ngIf="editar">
-                    <ion-label position="stacked">Conevios Bloqueados2: </ion-label>
+                    <ion-label position="stacked">Bloquear Convenios: </ion-label>
                     <ion-select aria-label="Convenios2" interface="popover" placeholder="Seleccionar" [(ngModel)]="convenioSelec" name="empresa" required [disabled]="!datos.EMPRESA" label-placement="stacked">
                       <ion-select-option *ngFor="let convenio of listadoConveniosActivos" [value]="convenio.CODIGO_CONVENIO">{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
                     </ion-select>
@@ -317,6 +317,10 @@
                           {{ convenioDet.NOMBRE_CONVENIO_DET }}
                         </ion-checkbox>
                       </ion-item>
+                    </ng-container>
+                    <ion-label position="stacked">Lista Bloqueados: </ion-label>
+                    <ng-container *ngFor="let puntoPago of listadoPuntos">
+                      <p *ngIf="datos.CODIGO_PUNTO_PAGO==puntoPago.CODIGO_PUNTO_PAGO">{{ puntoPago.NOMBRES_CONVENIO_DET_BLOQUEADO }}</p>
                     </ng-container>
                   </div>
                 </ion-col>

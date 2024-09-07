@@ -142,18 +142,20 @@ ion-card-content{
 
 
 
-.cerrar-btn {
+.cerrar-btn-1 {
     position: absolute;
-    top: 5px;
-    right: 5px;
-  }
-
-
-  .cerrar-btn-1 {
-    
-    float: right;
     top: 0%;
     right: 0%;
+    z-index: 1001;
+
+}
+
+.cerrar-btn {
+    position: absolute;
+    color: rgb(172, 0, 0);
+    padding: 15px;
+    top: 0px;
+    right: 5px;
   }
   .cerrar {
     

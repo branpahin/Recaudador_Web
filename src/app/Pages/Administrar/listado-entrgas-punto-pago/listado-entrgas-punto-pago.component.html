@@ -24,7 +24,7 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label position="stacked">Cuadres: </ion-label>
+        <ion-label position="stacked">Entregas: </ion-label>
         <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="accion" name="accion" (ionChange)="ListarEntregasPunto()">
           <ion-select-option value='1'>Pendientes</ion-select-option>
           <ion-select-option value='2'>Validadas</ion-select-option>
@@ -82,6 +82,8 @@
                   <ion-col>DATAFONO EEP</ion-col>
                   <ion-col>DATAFONO AGUAS</ion-col>
                   <ion-col>DATAFONO MUNICIPIO</ion-col>
+                  <ion-col>BANCO DE BOGOTA</ion-col>
+                  <ion-col>PUNTO RED</ion-col>
                   <ion-col>ESTADO ENTREGA</ion-col>
                 </ion-row>
                 <ion-row  class="data-row">
@@ -90,6 +92,8 @@
                   <ion-col title="{{ respuesta1.DATAFONO_EEP | number }}">{{ respuesta1.DATAFONO_EEP | number}}</ion-col>
                   <ion-col title="{{ respuesta1.DATAFONO_AGUAS | number }}">{{ respuesta1.DATAFONO_AGUAS | number}}</ion-col>
                   <ion-col title="{{ respuesta1.DATAFONO_MUNICIPIO | number }}">{{ respuesta1.DATAFONO_MUNICIPIO | number}}</ion-col>
+                  <ion-col title="{{ respuesta1.BANCO_BOGOTA | number }}">{{ respuesta1.BANCO_BOGOTA | number }}</ion-col>
+                  <ion-col title="{{ respuesta1.PUNTO_RED | number }}">{{ respuesta1.PUNTO_RED | number}}</ion-col>
                   <ion-col title="{{ respuesta1.NOMBRE_ESTADO_ENTREGA }}">{{ respuesta1.NOMBRE_ESTADO_ENTREGA }}</ion-col>
                 </ion-row>
                 
@@ -103,9 +107,9 @@
           <ion-item>
   
             <div class="cerrar">
-              <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-                <ion-icon name="close"></ion-icon>
-              </ion-button>
+              <button class="cerrar-btn-1" (click)="cerrarTabla()">
+                <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+              </button>
             </div>
             
             <ion-label>Recaudos: </ion-label>
@@ -206,9 +210,9 @@
 <div class="overlay" *ngIf="confirmacion"></div>
       <div class="alerta" *ngIf="confirmacion">
         <div class="cerrar">
-          <ion-button class="cerrar-btn-1" (click)="cerrarAlerta()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
+          <button class="cerrar-btn-1" (click)="cerrarAlerta()">
+            <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+          </button>
         </div>   
         <h1 *ngIf="accionEntrega=='1'">Aprobar arqueo: {{arqueoSelect}} </h1>
         <h1 *ngIf="accionEntrega=='2'">Rechazar arqueo: {{arqueoSelect}} </h1>

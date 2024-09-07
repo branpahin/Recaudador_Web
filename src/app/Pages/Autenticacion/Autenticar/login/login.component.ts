@@ -3,6 +3,8 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
 import { Usuario, Error_Login, Obtener_Rol } from 'src/models/usuario.model';
 import { Router } from '@angular/router';
 import * as alertify from 'alertifyjs';
+import { CambiarClaveComponent } from 'src/app/Pages/General/cambiar-clave/cambiar-clave.component';
+import { ModalController } from '@ionic/angular';
 
 
 @Component({
@@ -55,7 +57,7 @@ export class LoginComponent  implements OnInit {
   resultado!: Usuario;
   inforol!: Obtener_Rol;
   modulos: any [] = [];
-  constructor(private recaudoService: RecaudoService, private router: Router) {}
+  constructor(private recaudoService: RecaudoService, private router: Router, private modalController: ModalController) {}
 
   ngOnInit() {
 
@@ -122,7 +124,6 @@ export class LoginComponent  implements OnInit {
     
       this.recaudoService.postAutenticarUsuario(this.usuario.USUARIO, this.usuario.PASSWORD, this.usuario.EMPRESA, this.CODIGO_PUNTO_PAGO).subscribe((data) => {
         this.resultado = data;
-        
         if(this.resultado && this.resultado.COD =='200'){
           this.mostrarLoginUser = false;
         }else{
@@ -142,11 +143,14 @@ export class LoginComponent  implements OnInit {
         localStorage.setItem('empresa', this.resultado.EMPRESA);
         localStorage.setItem('puntoPago', this.CODIGO_PUNTO_PAGO);
         localStorage.setItem('token', this.resultado.TOKEN);
-        localStorage.setItem('contraseña', this.usuario.PASSWORD);
+        this.recaudoService.setContraseña(this.usuario.PASSWORD);
         if(this.resultado.COD=='200'){
-          this.obtenerRol();
-          
-        
+          const claveRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]+$/;
+          if(claveRegex.test(this.usuario.PASSWORD)){
+            this.obtenerRol();
+          }else{
+            this.cambiarClave();
+          }
         }
         else  {
           this.errorLogin=data;
@@ -158,6 +162,22 @@ export class LoginComponent  implements OnInit {
       }
       );
   }
+
+  async cambiarClave() {
+    const modal = await this.modalController.create({
+      component: CambiarClaveComponent,
+      cssClass: 'my-custom-class'
+    });
+    modal.style.cssText = `
+      --height:auto;
+      --max-height: 80%;
+      --width:auto;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
+  }
+
   obtenerRol(){
     const usuario = localStorage.getItem('usuario') || '';
     const empresa = localStorage.getItem('empresaCOD') || '';

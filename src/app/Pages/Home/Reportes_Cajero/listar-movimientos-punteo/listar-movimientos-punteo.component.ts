@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import { ChangeDetectorRef } from '@angular/core';
 import * as alertify from 'alertifyjs';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-listar-movimientos-punteo',
@@ -45,14 +46,12 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
   resultado2: any[] = [];
 
   
-  constructor(private recaudoService: RecaudoService, private router: Router, private cdRef: ChangeDetectorRef) { }
+  constructor(private recaudoService: RecaudoService, private router: Router, private cdRef: ChangeDetectorRef, private modalController: ModalController) { }
 
   ngOnInit() {
     this.listarMovimientos();
     this.visual=false;
   }
-
-  
 
   listarMovimientos(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.arqueo !== null) {

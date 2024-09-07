@@ -26,3 +26,12 @@
 @import "@ionic/angular/css/flex-utils.css";
 @import '~alertifyjs/build/css/alertify.min.css';
 @import '~alertifyjs/build/css/themes/default.min.css';
+
+ion-loading .loading-wrapper {
+    background: #ffa500 !important; /* Fondo naranja */
+    color: white !important; /* Texto en blanco */
+  }
+  
+  ion-loading .spinner-crescent circle {
+    stroke: #ffa500 !important; /* Cambia el color del spinner a naranja */
+  }

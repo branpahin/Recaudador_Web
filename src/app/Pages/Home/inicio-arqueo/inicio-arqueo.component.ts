@@ -2,8 +2,11 @@ import { Component,OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
-import { MenuController} from '@ionic/angular';
+import { MenuController, ModalController} from '@ionic/angular';
 import { interval } from 'rxjs';
+import { InformacionUsuarioComponent } from '../../Autenticacion/informacion-usuario/informacion-usuario.component';
+import { CargarArchivoOfflineComponent } from '../../Administrar/cargar-archivo-offline/cargar-archivo-offline.component';
+import { ReabrirArqueoComponent } from '../../Administrar/reabrir-arqueo/reabrir-arqueo.component';
 
 
 
@@ -70,6 +73,7 @@ export class InicioArqueoComponent  implements OnInit {
   parametrizacionBarras:boolean=false;
   informacionParametrizacion:boolean=false;
   mostrarAsignacionReportes:boolean=false;
+  mostrarCargarArchivo:boolean=false;
 
   turno:boolean=true;
   turnero:any;
@@ -88,7 +92,7 @@ export class InicioArqueoComponent  implements OnInit {
   isToastOpen:boolean=false;
   intervalId: any;
   
-  constructor(private recaudoService: RecaudoService, private router: Router, private menuCtrl: MenuController) { }
+  constructor(private recaudoService: RecaudoService, private router: Router, private menuCtrl: MenuController, private modalController: ModalController) { }
 
   
   ngOnInit() {
@@ -192,15 +196,12 @@ export class InicioArqueoComponent  implements OnInit {
   }
 
 
-  openEndMenu() {
-    this.menuCtrl.toggle('end');
 
-  }
 
   
 
   cerrarMenu() {
-    this.menuCtrl.toggle('end');
+    this.menuCtrl.close();
   }
 
   cerrarPunteo(){
@@ -331,6 +332,7 @@ export class InicioArqueoComponent  implements OnInit {
 
     switch (modulo.MODULO) {
       case '1':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -356,8 +358,10 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '2':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -383,8 +387,10 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '3':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -410,8 +416,10 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '4':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -437,8 +445,10 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '5':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -464,9 +474,11 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '6':
         this.Punteo=true;
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -494,6 +506,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '7':
         this.mostrarListaDeBotones = !this.mostrarListaDeBotones;
@@ -548,9 +561,11 @@ export class InicioArqueoComponent  implements OnInit {
 
     switch (modulo.SUB_MODULO) {
       case '1':
-        this.mostrarReportesGen = !this.mostrarReportesGen;
+        
+        this.cargarArchivo();
         break;
       case '2':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarListadoAnulaciones=false;
         this.mostrarVistaReporteador=false;
@@ -573,8 +588,10 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       case '3':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=!this.mostrarVistaReporteador;
         this.mostrarListadoAnulaciones=false;
@@ -597,6 +614,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.parametrizacionBarras=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=false;
+        this.cerrarMenu();
         break;
       default:
 
@@ -606,8 +624,10 @@ export class InicioArqueoComponent  implements OnInit {
 
   toggleContenido3(indice: number, modulo:any) {
     this.indiceModuloSeleccionado=null;
+    this.cerrarMenu();
     switch (modulo.SUB_MODULO) {
       case '1':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -632,6 +652,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '2':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -656,6 +677,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '3':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -680,6 +702,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '4':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -704,6 +727,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '5':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -728,6 +752,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '6':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -752,6 +777,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '7':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarListadoAnulaciones=false;
         this.mostrarVistaReporteador=false;
@@ -776,6 +802,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '8':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarListadoAnulaciones=false;
         this.mostrarVistaReporteador=false;
@@ -800,6 +827,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '9':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarListadoAnulaciones=false;
         this.mostrarVistaReporteador=false;
@@ -824,6 +852,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '10':
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=false;
         this.mostrarListadoAnulaciones=!this.mostrarListadoAnulaciones;
         this.mostrarVistaReporteador=false;
@@ -848,7 +877,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '11':
-        
+        this.mostrarCargarArchivo=false;
         this.mostrarVistaCierreCaja=!this.mostrarVistaCierreCaja;
         this.mostrarVistaReporteador=false;
         this.mostrarListadoAnulaciones=false;
@@ -873,6 +902,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarAsignacionReportes=false;
         break;
       case '12':
+        this.mostrarCargarArchivo=false;
         this.parametrizacionBarras=!this.parametrizacionBarras;
         this.mostrarAsignacionReportes=false;
         this.informacionParametrizacion=false;
@@ -897,6 +927,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarInicio=true;
         break;
       case '13':
+        this.mostrarCargarArchivo=false;
         this.informacionParametrizacion=!this.informacionParametrizacion;
         this.mostrarAsignacionReportes=false;
         this.parametrizacionBarras=false
@@ -921,6 +952,7 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarInicio=false;
         break;
       case '14':
+        this.mostrarCargarArchivo=false;
         this.informacionParametrizacion=false;
         this.mostrarAsignacionReportes=!this.mostrarAsignacionReportes;
         this.parametrizacionBarras=false
@@ -943,6 +975,9 @@ export class InicioArqueoComponent  implements OnInit {
         this.mostrarContenido3 = false;
         this.mostrarContenido = false;
         this.mostrarInicio=false;
+        break;
+        case '15':
+        this.ReabrirArqueo();
         break;
       default:
 
@@ -1010,6 +1045,36 @@ export class InicioArqueoComponent  implements OnInit {
 
   infoUsuario(){
     this.informacionUser=!this.informacionUser;
+  }
+
+  async cargarArchivo() {
+    const modal = await this.modalController.create({
+      component: CargarArchivoOfflineComponent,
+      cssClass: 'my-custom-class'
+    });
+    modal.style.cssText = `
+      --height:auto;
+      max-height: 100%;
+      --width:auto;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
+  }
+
+  async ReabrirArqueo() {
+    const modal = await this.modalController.create({
+      component: ReabrirArqueoComponent,
+      cssClass: 'my-custom-class'
+    });
+    modal.style.cssText = `
+      --height:auto;
+      --max-height: 80%;
+      --width:auto;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
   }
 
   preferencial(event:{ detail: { checked: any; }; } ){

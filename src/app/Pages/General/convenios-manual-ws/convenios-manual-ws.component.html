@@ -8,9 +8,17 @@
     </ion-col>
     <ion-col>    
       <ng-container *ngFor="let moneda of resultado">
-        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO">
+        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO && mostrarsoloDet">
           <ion-label>Detalle</ion-label>
-          <p>{{ moneda.NOMRE_CONVENIO_DET }}</p>
+            <ion-select interface="action-sheet" placeholder="Seleccionar" [(ngModel)]="selectedConvenioDet" name="moneda" required (ionChange)="seleccionado2($event)">
+              <ion-select-option *ngFor="let convenioDet of moneda.CODIGOS_CONVENIO_DET" [value]="convenioDet.CODIGO_CONVENIO_DET" >{{ convenioDet.NOMBRE_CONVENIO_DET }}</ion-select-option>
+            </ion-select>
+        </ng-container>
+        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO && !mostrarsoloDet">
+          <ion-label>Detalle</ion-label>
+          <ng-container *ngFor="let convenioDet of moneda.CODIGOS_CONVENIO_DET">
+            <p>{{ convenioDet.NOMBRE_CONVENIO_DET }}</p>
+          </ng-container>
         </ng-container>
       </ng-container>
     </ion-col>

@@ -13,7 +13,7 @@ export class InformacionUsuarioComponent  implements OnInit {
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
   empresa: string|null = localStorage.getItem('empresaCOD');
-  contraseña=localStorage.getItem('contraseña') || "";
+  contraseña:string | undefined;
 
   datos={
     EMPRESA: this.empresa,
@@ -23,7 +23,7 @@ export class InformacionUsuarioComponent  implements OnInit {
     NOMBRE:"",
     DIRECCION: "",
     TELEFONO:"",
-    PASSWORD:this.contraseña,
+    PASSWORD:"",
     TOKEN:this.token
   }
 
@@ -53,6 +53,8 @@ export class InformacionUsuarioComponent  implements OnInit {
           this.datos.DIRECCION=data.DIRECCION;
           this.datos.TELEFONO=data.TELEFONO;
           this.datos.TIPO_DOCUMENTO=data.TIPO_DOCUMENTO;
+          this.contraseña=this.recaudoService.getContraseña();
+          this.datos.PASSWORD=this.contraseña || '';
 
         },
         (error) => {
@@ -73,12 +75,18 @@ export class InformacionUsuarioComponent  implements OnInit {
   }
 
   modificarClave(){
+    const claveRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]+$/;
     if(this.claveAnterior==this.datos.PASSWORD){
       if(this.clave==this.confirmacionClave){
-        this.datos.PASSWORD=this.clave;
-        this.modificarUsuario();
-        this.modificar=false;
-        localStorage.setItem('contraseña', this.datos.PASSWORD);
+        if(claveRegex.test(this.clave)){
+          this.datos.PASSWORD=this.clave;
+          this.modificarUsuario();
+          this.modificar=false;
+          localStorage.setItem('contraseña', this.datos.PASSWORD);
+        }else{
+          alertify.error("La clave debe tener letras, numeros y simbolos");
+        }
+        
       }else{
         alertify.error("Clave de confirmacion no es correcta");
       }
@@ -93,6 +101,9 @@ export class InformacionUsuarioComponent  implements OnInit {
     (data:any) => {
       console.log('Respuesta del servicio:', data);
       alertify.success(data.RESPUESTA);
+      this.clave="";
+      this.claveAnterior="";
+      this.confirmacionClave="";
 
     },(error) => {
       alertify.error(error);

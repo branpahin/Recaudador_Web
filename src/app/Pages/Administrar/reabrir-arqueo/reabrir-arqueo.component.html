@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Modificar Arqueo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Modificar Arqueo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-item class="barras">
+      <ion-label position="stacked">Punto de Pago: </ion-label>
+      <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="codigo_punto_pago" (ionChange)="ListarReabrirArqueo()" name="moneda"required >
+        <ion-select-option *ngFor="let opcion of listadoPuntos" [value]="opcion.CODIGO">
+          {{opcion.NOMBRE}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-list class="tabla">
+      <ion-grid >
+          
+        <ion-row class="header-row">
+          <ion-col>ACCIÓN</ion-col>
+          <ion-col>EMPRESA</ion-col>
+          <ion-col>PUNTO DE PAGO</ion-col>
+          <ion-col>CAJA</ion-col>
+          <ion-col>USUARIO</ion-col>
+          <ion-col>N° ARQUEO</ion-col>
+          <ion-col>FECHA INICIO</ion-col>
+          <ion-col>FECHA FIN</ion-col>
+          <ion-col>N° CUPONES</ion-col>
+          <ion-col>VALOR RECAUDADO</ion-col>
+          <ion-col>ESTADO</ion-col>
+          <ion-col class="edit small-edit-column-fin"></ion-col>
+          
+        </ion-row>
+        <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
+      
+        <div class="tabla-content" *ngFor="let respuesta1 of datos">
+          <ion-row class="data-row" slot="fixed">
+            <ion-col >
+              <button [disabled]="datosEnviar.NUMERO_ARQUEO!=respuesta1.NUMERO_ARQUEO" class="btn_m" (click)="ReabrirArqueo(respuesta1.EMPRESA,respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,numero_cupones,valor_reportado)"><ion-icon class="aprobar" name="checkmark-circle" size="large"></ion-icon></button>
+            </ion-col>
+            <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}</ion-col>
+            <ion-col title="{{ respuesta1.NOMBRE_PUNTO_PAGO }}">{{ respuesta1.NOMBRE_PUNTO_PAGO}}</ion-col>
+            <ion-col title="{{ respuesta1.CAJA }}">{{ respuesta1.CAJA}}</ion-col>
+            <ion-col title="{{ respuesta1.USUARIO }}">{{ respuesta1.USUARIO}}</ion-col>
+            <ion-col title="{{ respuesta1.NUMERO_ARQUEO }}">{{ respuesta1.NUMERO_ARQUEO }}</ion-col>
+            <ion-col title="{{ respuesta1.FECHA_INICIO }}">{{ respuesta1.FECHA_INICIO }}</ion-col>
+            <ion-col title="{{ respuesta1.FECHA_FIN }}">{{ respuesta1.FECHA_FIN }}</ion-col>
+            <ion-col title="{{ respuesta1.NUMERO_CUPONES }}">{{ respuesta1.NUMERO_CUPONES}}</ion-col>
+            <ion-col title="{{ respuesta1.VALOR_RECAUDADO | number }}">{{ respuesta1.VALOR_RECAUDADO | number}}</ion-col>
+
+            <ion-col title="{{ respuesta1.ESTADO_ARQUEO}}">{{ respuesta1.ESTADO_ARQUEO}}</ion-col>
+            
+            <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
+          </ion-row>
+          <ion-grid *ngIf="respuesta1.selected">
+            <ion-row  class="header-row-info">
+              <ion-col>N° CUPONES REPORTADOS</ion-col>
+              <ion-col>VALOR RECAUDADO REPORTADO</ion-col>
+              <ion-col>DIFERENCIA DE VALOR</ion-col>
+              <ion-col>DIFERENCIA DE CUPONES</ion-col>
+            </ion-row>
+            <ion-row  class="data-row">
+              <ion-col [ngClass]="{ 'diferente': respuesta1.NUMERO_CUPONES_REPORTADOS !== respuesta1.NUMERO_CUPONES }"
+              title="{{ respuesta1.NUMERO_CUPONES_REPORTADOS }}">
+                <ion-input appFormatoMonetario (input)="editar(respuesta1.EMPRESA,respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_CUPONES_REPORTADOS,respuesta1.VALOR_RECAUDADO_REPORTADO)" [(ngModel)]="numero_cupones" value="{{respuesta1.NUMERO_CUPONES_REPORTADOS}}" placeholder="{{respuesta1.NUMERO_CUPONES_REPORTADOS }}"></ion-input>
+              </ion-col>
+              <ion-col [ngClass]="{ 'diferente': respuesta1.VALOR_RECAUDADO_REPORTADO !== respuesta1.VALOR_RECAUDADO }"
+                        title="{{ respuesta1.VALOR_RECAUDADO_REPORTADO | number }}">
+                
+                <ion-input appFormatoMonetario (input)="editar(respuesta1.EMPRESA,respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_CUPONES_REPORTADOS,respuesta1.VALOR_RECAUDADO_REPORTADO)" [(ngModel)]="valor_reportado" value="{{respuesta1.VALOR_RECAUDADO_REPORTADO}}" placeholder="{{respuesta1.VALOR_RECAUDADO_REPORTADO | number}}"></ion-input>
+              </ion-col>
+              <ion-col title="{{ respuesta1.DIFERENCIA_VALORES | number }}">{{ respuesta1.DIFERENCIA_VALOR | number}}</ion-col>
+              <ion-col title="{{ respuesta1.DIFERENCIA_VALORES | number }}">{{ respuesta1.DIFERENCIA_CUPONES | number}}</ion-col>
+              
+            </ion-row>
+            
+          </ion-grid>
+        </div>
+      </div> 
+    </ion-grid>
+      <p *ngIf="respuesta">{{respuesta}}</p>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

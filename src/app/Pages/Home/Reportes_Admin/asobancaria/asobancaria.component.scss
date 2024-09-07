@@ -38,22 +38,22 @@ ion-card-content{
     z-index: 2500;
   }
 
-  .alerta{
-    position: absolute;
-    align-items: center;  
-    justify-content: center;  
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    max-height: 50%;
-    z-index: 9999;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-  }
+//   .alerta{
+//     position: absolute;
+//     align-items: center;  
+//     justify-content: center;  
+//     text-align: center;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     width: 50%;
+//     max-height: 50%;
+//     z-index: 9999;
+//     margin: 0 auto;
+//     padding: 20px;
+//     background-color: #fff;
+//     border-radius: 5px;
+//   }
 
 .error{
     align-items: center;
@@ -118,14 +118,23 @@ ion-card-content{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.tabla_lista {
+    overflow-y: auto;
+    max-height: 42vh;
+    transition: width 0.3s ease;
+  }
 .tabla_lista::-webkit-scrollbar {
-    width: 0px;
-}
+    width: 5px;
+  }
 
 .tabla_lista::-webkit-scrollbar-thumb {
-    margin-right: 0px;
-}
-
+    background: rgb(243, 125, 47); /* Color de la barra de desplazamiento */
+    border-radius: 10px;
+  }
+  
+  .tabla_lista::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
 
 .cerrar-btn {
@@ -177,8 +186,16 @@ ion-card-content{
     align-items: center;
     justify-content: center;
     text-align: left;
-
-
+}
+.header-row .forma_pago{
+    font-weight: bold;
+    border: 0px solid rgb(255, 255, 255);
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
 }
 .fecha-enviar{
     align-items:end;

@@ -3,6 +3,8 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
 import { formatDate } from '@angular/common';
 import { DetalleCierre } from 'src/models/usuario.model';
+import { CajasSacComponent } from '../cajas-sac/cajas-sac.component';
+import { ModalController } from '@ionic/angular';
 
 
 
@@ -43,7 +45,7 @@ export class CierreCajaComponent  implements OnInit {
     TOKEN: this.token
   }
 
-  constructor(private recaudoService: RecaudoService) { }
+  constructor(private recaudoService: RecaudoService,  private modalController: ModalController) { }
 
   ngOnInit() 
   {
@@ -72,6 +74,8 @@ export class CierreCajaComponent  implements OnInit {
         (data: any) => {
           console.log('Respuesta del servicio:', data);
           this.listadoConvenios= data.CONVENIOS_CIERRE;
+          this.datos.CODIGO_CONVENIO="";
+          this.datos.IDENTIFICADOR_PUNTO_PAGO="";
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -99,6 +103,21 @@ export class CierreCajaComponent  implements OnInit {
   filtroFecha(event: any){
     this.datos.FECHA_CIERRE = formatDate(event.detail.value, 'd/MM/yyyy', 'en-US');   
 
+  }
+
+  async CajasActivasSac() {
+    const modal = await this.modalController.create({
+      component: CajasSacComponent,
+      cssClass: 'my-custom-class'
+    });
+    modal.style.cssText = `
+      --height:auto;
+      --max-height: 80%;
+      --width:auto;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
   }
 
 

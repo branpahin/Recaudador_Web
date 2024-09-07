@@ -58,9 +58,10 @@ export interface Usuario {
     ACCION: string;
     NUMERO_ARQUEO: string;
     NUMERO_MOVIMIENTO: string;
-    VALOR_MOVIMIENTO: string;
+    VALOR_MOVIMIENTO_DET: string;
     FECHA_MOVIMIENTO: string;
-    REFERENCIA: string;
+    CODIGO_CLIENTE:string;
+    CODIGO_REFERENCIA:string;
   }
 
   export interface Estado_Arqueo{

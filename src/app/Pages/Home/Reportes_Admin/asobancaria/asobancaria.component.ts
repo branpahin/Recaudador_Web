@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
+import { LoadingController } from '@ionic/angular';
 
 interface convenioDet {
 
@@ -24,6 +25,8 @@ interface Detalle{
   TIPO_ASOBANCARIA: string;
   CORREO_ASOBANCARIA: string;
   EXCEL: string;
+  TIPO_PAGO: string;
+  PAGOS_ASOBANCARIA:string;
 }
 interface Detalle2{
   CODIGO_CONVENIO: string;
@@ -31,6 +34,7 @@ interface Detalle2{
   NOMBRE:string;
   NOMBRE_DET:string;
   ASOBANCARIA:string;
+  TIPO_PAGO: string;
 }
 
 
@@ -56,7 +60,9 @@ export class AsobancariaComponent  implements OnInit {
     CODIGO_CONVENIO_DET: "",            
     TIPO_ASOBANCARIA: "",
     CORREO_ASOBANCARIA: "",
-    EXCEL:""
+    EXCEL:"",
+    TIPO_PAGO:"",
+    PAGOS_ASOBANCARIA:""
   };
 
   nombre_convenios= [] as Detalle2[];
@@ -66,7 +72,8 @@ export class AsobancariaComponent  implements OnInit {
     CODIGO_CONVENIO_DET: "",     
     NOMBRE:"",
     NOMBRE_DET:"",
-    ASOBANCARIA:""
+    ASOBANCARIA:"",
+    TIPO_PAGO: ""
   };
 
 
@@ -90,10 +97,26 @@ export class AsobancariaComponent  implements OnInit {
 
   convenios:any[]=[];
 
-  constructor(private recaudoService: RecaudoService, private router: Router) { }
+  constructor(private recaudoService: RecaudoService, private router: Router,
+    private loadingController: LoadingController
+  ) { }
 
   ngOnInit() {
     this.listarAsobancaria();
+  }
+
+  ngAfterViewInit() {
+    const tablaLista = document.getElementById('tablaLista');
+
+    if (tablaLista) {
+      tablaLista.addEventListener('scroll', () => {
+        if (tablaLista.scrollHeight > tablaLista.clientHeight) {
+          tablaLista.style.width = 'calc(100% + 5px)'; // Ajusta el ancho para acomodar la barra de desplazamiento
+        } else {
+          tablaLista.style.width = '100%'; // Restaura el ancho original si no hay desplazamiento
+        }
+      });
+    }
   }
 
   listarAsobancaria() {
@@ -142,29 +165,55 @@ export class AsobancariaComponent  implements OnInit {
   seleccionarTodo(event:{ detail: { checked: any; }; } ){
     if (event.detail.checked) {
       this.seleccionarTodos = event.detail.checked;
-
+      
       for (const detalle of this.convenios) {
         for(const detalleFin of detalle.convenioDet){
-          this.obtenerDetalleConvenio({ detail: { checked: this.seleccionarTodos } }, detalle,detalleFin);
+          console.log("detalle: ",detalle)
+          if(detalle.value!='1'){
+
+            this.obtenerDetalleConvenio({ detail: { checked: this.seleccionarTodos } }, detalle,detalleFin,'');
+          }
         }
       }
     }else {
       this.listadoConveniosDet = [];
       this.asobancaria.LISTADO_CONVENIOS = [];
+      this.listadoConveniosNom=
+          {CODIGO_CONVENIO: "",
+          CODIGO_CONVENIO_DET: "",     
+          NOMBRE:"",
+          NOMBRE_DET:"",
+          ASOBANCARIA:"",
+          TIPO_PAGO: ""};
+      this.nombre_convenios=[];
       this.seleccionarTodos = event.detail.checked;
  
     }
   }
 
 
-  obtenerDetalleConvenio(event: { detail: { checked: any; }; }, convenio: { value: any; label:any;}, convenioDet: { value: any; label:any;}) {
+  obtenerDetalleConvenio(event: { detail: { checked: any; }; }, convenio: { value: any; label:any;}, convenioDet: { value: any; label:any;}, forma_pago:string) {
     
     const convenioSelect=convenio.value;
     if (event.detail.checked) {
       this.listadoConvenios.CODIGO_CONVENIO=convenioSelect;
+      this.listadoConvenios.TIPO_PAGO=forma_pago;
       this.convenios.forEach(c => c.isSelected = (c === convenio));
     } else {
       this.listadoConvenios.CODIGO_CONVENIO="";
+      //this.asobancaria.LISTADO_CONVENIOS = [];
+      this.listadoConveniosNom=
+          {CODIGO_CONVENIO: "",
+          CODIGO_CONVENIO_DET: "",     
+          NOMBRE:"",
+          NOMBRE_DET:"",
+          ASOBANCARIA:"",
+          TIPO_PAGO: ""};
+      
+      const codigoCliente = convenioDet.value;
+      this.nombre_convenios = this.nombre_convenios.filter(detalle => detalle.CODIGO_CONVENIO_DET!== codigoCliente);
+      
+      console.log("convenioSelect: ", this.nombre_convenios)
     }
     if (this.listadoConvenios.CODIGO_CONVENIO) {
   
@@ -177,6 +226,8 @@ export class AsobancariaComponent  implements OnInit {
         NOMBRE:convenio.label,
         NOMBRE_DET:convenioDet.label,
         ASOBANCARIA:"",
+        TIPO_PAGO: forma_pago,
+        
       };
       
       const nuevoDetalle: Detalle = { ...this.listadoConvenios };
@@ -191,7 +242,9 @@ export class AsobancariaComponent  implements OnInit {
         CODIGO_CONVENIO_DET: "",            
         TIPO_ASOBANCARIA: "",
         CORREO_ASOBANCARIA: "",
-        EXCEL:""
+        EXCEL:"",
+        TIPO_PAGO:"",
+        PAGOS_ASOBANCARIA:"",
       };
     } else {
       this.listadoConveniosDet = [];
@@ -213,12 +266,13 @@ export class AsobancariaComponent  implements OnInit {
     }
 
     const detalleConvenio = this.listadoConveniosDet.find(det => det.CODIGO_CONVENIO_DET === convenioSelect);
-
+    const detalleConvenioForma = this.listadoConveniosDet.find(det => det.FORMA_PAGO === convenioSelect);
     if (detalleConvenio) {
         detalle.TIPO_ASOBANCARIA = detalleConvenio.TIPO_ASOBANCARIA;
         this.listadoConveniosNom.ASOBANCARIA=detalleConvenio.NOMBRE_ASOBANCARIA;
         detalle.CORREO_ASOBANCARIA = detalleConvenio.CORREO_ASOBANCARIA;
         detalle.EXCEL = detalleConvenio.EXCEL;
+        detalle.PAGOS_ASOBANCARIA =detalleConvenio.PAGOS_ASOBANCARIA
         const nuevoDetalle2: Detalle2 = { ...this.listadoConveniosNom };
         this.nombre_convenios.push(nuevoDetalle2);
     }    
@@ -228,10 +282,17 @@ export class AsobancariaComponent  implements OnInit {
     this.asobancaria.FECHA_ASOBANCARIA = formatDate(event.detail.value, 'dd/MM/yyyy', 'en-US');
   }
 
-  generarAsobancaria(){
+  async generarAsobancaria(){
+    const loading = await this.loadingController.create({
+      message: 'Generando Asobancaria...',
+      spinner: 'crescent',
+    });
+
+    await loading.present();
+    
+    console.log("enviado: ",this.asobancaria)
     this.recaudoService.postGenerarAsobancaria(this.asobancaria).subscribe({
-      next: data => {
-        console.log("enviado: ",this.asobancaria)
+      next: async data => {
         console.log(data);
         console.log("Convenios generados: ",this.nombre_convenios)
         this.respuesta = data;
@@ -248,18 +309,17 @@ export class AsobancariaComponent  implements OnInit {
           alertify.error(this.respuesta.RESPUESTA);
 
         }
-      
+        await loading.dismiss();
         
   
       },
-      error: error => {
+      error: async error => {
         console.log("Respuesta:",error);
+        await loading.dismiss();
       }
     });
     
   }
-
-   
   
 }
 

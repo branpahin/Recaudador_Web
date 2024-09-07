@@ -50,18 +50,30 @@
       
       <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
         <ion-label position="stacked">Valor de Movimiento</ion-label>
-        <ion-input [(ngModel)]="consultar_arqueo_param.VALOR_MOVIMIENTO" name="valorMovimiento"></ion-input>
+        <ion-input [(ngModel)]="consultar_arqueo_param.VALOR_MOVIMIENTO_DET" name="valorMovimiento"></ion-input>
       </ion-item>
       
       <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
         <ion-label position="stacked">Fecha de Movimiento</ion-label>
-        <ion-input [(ngModel)]="consultar_arqueo_param.FECHA_MOVIMIENTO" name="fechaMovimiento"></ion-input>
+        <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="datetime2"  display-format="dd/MM/YYYY" presentation="date"
+              (ionChange)="fechaConsulta($event)"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+      </ion-item>
+      <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
+        <ion-label position="stacked">Cliente</ion-label>
+        <ion-input [(ngModel)]="consultar_arqueo_param.CODIGO_CLIENTE" name="referencia"></ion-input>
       </ion-item>
       <ion-item *ngIf="consultar_arqueo.ACCION === '2'">
         <ion-label position="stacked">Referencia</ion-label>
-        <ion-input [(ngModel)]="consultar_arqueo_param.REFERENCIA" name="referencia"></ion-input>
+        <ion-input [(ngModel)]="consultar_arqueo_param.CODIGO_REFERENCIA" name="referencia"></ion-input>
       </ion-item>
-      <button class="btn" expand="full" (click)="consultarArqueo()">Consultar</button>
+      <div class="btn-container">
+        <button class="btn" expand="full" (click)="consultarArqueo()">Consultar</button>
+      </div>
     <br>
     </ion-card-content>
     
@@ -71,9 +83,11 @@
   <ion-list class="Listado" *ngIf="listado && resultado && resultado.COD=='200'" lines="full">
     
     <ion-item>
-      <ion-button class="cerrar-btn" (click)="cerrarlistado()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+      <div class="cerrar">
+        <button class="cerrar-btn-1" (click)="cerrarlistado()">
+          <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+        </button>
+      </div>
       <ion-label class="titulo">Nombre de Empresa: </ion-label>
       <ion-label>{{ resultado.NOMBRE_EMPRESA }}</ion-label>
     </ion-item>
@@ -113,7 +127,9 @@
       <ion-label class="titulo">Valor movimientos detalle: </ion-label>
       <ion-label>$ {{ resultado.VALOR_MOVIMIENTOS_DET | number }}</ion-label>
     </ion-item>
-    <button class="btn" expand="full" (click)="detallerecaudos()"> Detalles Recaudos</button>
+    <div class="btn-container">
+      <button class="btn" expand="full" (click)="detallerecaudos()"> Detalles Recaudos</button>
+    </div>
     
   </ion-list>
 
@@ -129,9 +145,9 @@
         <ion-item>
 
           <div class="cerrar">
-            <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-              <ion-icon name="close"></ion-icon>
-            </ion-button>
+            <button class="cerrar-btn-1" (click)="cerrarTabla()">
+              <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+            </button>
           </div>
           
           <ion-label>Recaudos: </ion-label>
@@ -222,7 +238,7 @@
   
           <ion-row class="data-row" *ngFor="let recaudo of recaudos | filterByColumn: filtroNumeroMovimiento: 'NUMERO_MOVIMIENTO' | filterByColumn: filtroFecha:'FECHA_MOVIMIENTO' | filterByColumn: filtroTipoPago:'NOMBRE_TIPO_PAGO' | filterByColumn: filtrovalorRecibido:'VALOR_RECIBIDO' | filterByColumn: filtrovalorMovimiento:'VALOR_MOVIMIENTO' | filterByColumn: filtroValorCambio:'VALOR_CAMBIO' | filterByColumn: filtroNumeroCupones:'NUMERO_CUPONES_MOVIMIENTO'" class="data-row" >
             <ion-col class="edit small-edit-column"><button class="imprimir-btn" (click)="vistaImpresion(recaudo)"><ion-icon class="imprimir1" name="print-outline" size="lage"></ion-icon></button></ion-col>
-            <ion-col title="{{ recaudo.NUMERO_MOVIMIENTO }}">{{ recaudo.NUMERO_MOVIMIENTO }}<span class="link-text" (click)="mostrarDetalles(recaudo.NUMERO_MOVIMIENTO)">detalles...</span></ion-col>
+            <ion-col title="{{ recaudo.NUMERO_MOVIMIENTO }}">{{ recaudo.NUMERO_MOVIMIENTO }}<span class="link-text" (click)="mostrarDetalles(recaudo)">detalles...</span></ion-col>
             <ion-col title="{{ recaudo.FECHA_MOVIMIENTO }}">{{ recaudo.FECHA_MOVIMIENTO }}</ion-col>
             <ion-col title="{{ recaudo.NOMBRE_TIPO_PAGO }}">{{ recaudo.NOMBRE_TIPO_PAGO }}</ion-col>
             <ion-col title="{{ recaudo.VALOR_RECIBIDO }}">{{ recaudo.VALOR_RECIBIDO | number}}</ion-col>
@@ -242,9 +258,9 @@
     <div class="overlay"></div>
     <ion-content class="overlay-content">
       <ion-item>
-        <ion-button class="cerrar-btn" (click)="cerrarTablaFac()">
-          <ion-icon name="close"></ion-icon>
-        </ion-button>
+        <button class="cerrar-btn-1" (click)="cerrarTablaFac()">
+          <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+        </button>
         <ion-label>Informacion Facturas: </ion-label>
       </ion-item>
     
@@ -286,13 +302,9 @@
       </ion-grid>
     </ion-content>
   </ion-list>
-  
-  
-  
+
   <ng-template #noData>
   </ng-template>
-  <div class="overlay-Imp" *ngIf="imprimir" (click)="cerrarImp()"></div>
 
-  <div class="imprimir"  id="iframe-container"></div>
   
 

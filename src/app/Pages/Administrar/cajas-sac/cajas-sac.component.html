@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Cajas Activas Sac</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Cajas Activas Sac</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list class="tabla_lista">
+      <ion-grid>
+        <ion-row *ngFor="let dato of datos" class="tabla1">
+          <ion-note class="fecha">{{dato.FECHA}}</ion-note>
+          <ion-col>
+              <ion-item>
+                <ion-label position="stacked">
+                  PUNTO DE PAGO
+                </ion-label>
+                {{dato.PUNTO_PAGO}}
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked">
+                  COD.PUNTO PAGO
+                </ion-label>
+                {{dato.CODIGO_PUNTO_PAGO}}
+              </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="stacked">
+                CANTIDAD
+              </ion-label>
+              {{dato.CANTIDAD}}
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">
+                VALOR
+              </ion-label>
+              {{dato.VALOR_TOTAL | number}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+          
+      <p *ngIf="respuesta">{{respuesta}}</p>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

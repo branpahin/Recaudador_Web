@@ -43,7 +43,7 @@
                 <ion-item>
                   <ion-label *ngIf="facturas=='ACTIVAS'">Listado Facturas Activas: </ion-label>
                   <ion-label *ngIf="facturas=='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
-                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
                 </ion-item>
                 <ion-row class="header-row1" >
                   <ion-col class="edit small-edit-column"></ion-col>
@@ -84,6 +84,7 @@
                         <ion-col>RECAUDO WS</ion-col>
                         <ion-col>BUSQUEDA REFERENCIA</ion-col>
                         <ion-col>ASOBANCARIA</ion-col>
+                        <ion-col>PAGO ASOBANCARIA</ion-col>
                         <ion-col>TIPO ASOBANCARIA</ion-col>
                         <ion-col>CORREO</ion-col>
                         <ion-col>EXCEL</ion-col>
@@ -94,6 +95,7 @@
                         <ion-col title="{{ respuesta1.TIPO_RECAUDO_WS}}">{{ respuesta1.TIPO_RECAUDO_WS}}</ion-col>
                         <ion-col title="{{ respuesta1.BUSQUEDA_REFERENCIA}}">{{ respuesta1.BUSQUEDA_REFERENCIA}}</ion-col>
                         <ion-col title="{{ respuesta1.ASOBANCARIA}}">{{ respuesta1.ASOBANCARIA}}</ion-col>
+                        <ion-col title="{{ respuesta1.NOMBRE_PAGOS_ASOBANCARIA}}">{{ respuesta1.NOMBRE_PAGOS_ASOBANCARIA}}</ion-col>
                         <ion-col title="{{ respuesta1.NOMBRE_TIPO_ASOBANCARIA}}">{{ respuesta1.NOMBRE_TIPO_ASOBANCARIA}}</ion-col>
                         <ion-col title="{{ respuesta1.CORREO_ASOBANCARIA}}">{{ respuesta1.CORREO_ASOBANCARIA}}</ion-col>
                         <ion-col title="{{ respuesta1.EXCEL}}">{{ respuesta1.EXCEL}}</ion-col>
@@ -112,9 +114,9 @@
 
       <ion-list class="tabla1" *ngIf="crear">
         <div class="cerrar">
-          <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
+          <button class="cerrar-btn-1" (click)="cerrarTabla()">
+            <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+          </button>
         </div>
         <ion-grid>
           <ion-row>
@@ -259,6 +261,36 @@
                       </div>
                     </ion-col>
                   </ion-row>
+                  <!-- <ion-row class="header-row">
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Tarjeta Manual: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.TARJETA_MANUAL">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                    <ion-col>
+                      <div>
+                        <div>
+                          <ion-label position="stacked">Por Referencia: </ion-label>
+                          <ion-radio-group [(ngModel)]="datos.BUSQUEDA_REFERENCIA">
+                            <ion-item *ngFor="let estados of seleccionar" class="custom-radio-item">
+                              <ion-radio class="custom-radio" [value]="estados.CODIGO"></ion-radio>
+                              <span>|</span>
+                              <ion-label class="custom-label" style="font-size: 12px;  margin-bottom: 100%;">{{ estados.DESCRIPCION }}</ion-label>
+                            </ion-item>
+                          </ion-radio-group>
+                        </div>
+                      </div>
+                    </ion-col>
+                  </ion-row> -->
                 </ion-col>
                 <ion-col>
                   <ion-item class="barras">
@@ -289,7 +321,7 @@
                                  
                         </div>
 
-                        <div class="fecha" *ngIf="editar">
+                        <div class="fecha" *ngIf="editar && fecha!=''">
           
                           <ion-datetime-button [ngModel]="fecha" datetime="datetime"></ion-datetime-button>
               
@@ -297,6 +329,18 @@
                             <ng-template>
                               <ion-datetime [ngModel]="fecha" id="datetime" presentation="date"
                               (ionChange)="filtro($event)" ></ion-datetime>
+                            </ng-template>
+                          </ion-modal>
+                        </div>
+
+                        <div class="fecha" *ngIf="editar && fecha==''">
+          
+                          <ion-datetime-button datetime="datetime"></ion-datetime-button>
+                
+                          <ion-modal [keepContentsMounted]="true">
+                            <ng-template>
+                              <ion-datetime id="datetime" presentation="date"
+                              (ionChange)="filtro($event)"></ion-datetime>
                             </ng-template>
                           </ion-modal>
                         </div>
@@ -397,6 +441,16 @@
                       <option *ngFor="let seleccion of BancosAsobancaria" [value]="seleccion.CODIGO" >{{ seleccion.DESCRIPCION }} </option>
                     </select>
                   </div>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                    <ion-label position="stacked">Tipo Asobancaria: </ion-label>
+                    <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.PAGOS_ASOBANCARIA" name="empresa" required>
+                      <ion-select-option *ngFor="let seleccion of PagosAsobancaria" [value]="seleccion.CAMPO">{{ seleccion.DESCRIPCION }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
                 </ion-col>
               </ion-row>
             </ion-col>

@@ -31,7 +31,7 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="2">
+        <!-- <ion-col size="2">
           <ion-item>
             <ion-label position="stacked">Banco de Bogota</ion-label>
             <ion-input label="" [(ngModel)]="datos.CORRESPONSAL_1" name="valor" placeholder="$" (input)="formatNumberInput2($event)"></ion-input>
@@ -42,7 +42,7 @@
             <ion-label position="stacked">Punto Red</ion-label>
             <ion-input label="" [(ngModel)]="datos.CORRESPONSAL_2" name="valor" placeholder="$" (input)="formatNumberInput($event)"></ion-input>
           </ion-item>
-        </ion-col>
+        </ion-col> -->
         <ion-col>
           <ion-item>
             <ion-label position="stacked">Comentario</ion-label>
@@ -81,9 +81,11 @@
           <ion-col>
             <ion-item >
               <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.CODIGO_MONEDA" name="moneda" (ionChange)="tipoEntrega($event)" required>
-                <ion-select-option *ngFor="let moneda of monedas" [value]="moneda.CODIGO" [disabled]="campoRepetido(moneda.CODIGO)">
-                  {{ moneda.DESCRIPCION }}
-                </ion-select-option>
+                <ng-container *ngFor="let moneda of monedas">
+                  <ion-select-option *ngIf="moneda.CODIGO!=21 && moneda.CODIGO!=22 && moneda.CODIGO!=23 && moneda.CODIGO!=24 && moneda.CODIGO!=25" [value]="moneda.CODIGO" [disabled]="campoRepetido(moneda.CODIGO)">
+                    <p>{{ moneda.DESCRIPCION }}</p>
+                  </ion-select-option>
+                </ng-container>
               </ion-select>
           </ion-item>
           </ion-col>

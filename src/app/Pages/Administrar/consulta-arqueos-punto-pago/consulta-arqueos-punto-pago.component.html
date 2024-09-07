@@ -8,9 +8,9 @@
   <ion-toolbar color = "mycolor">
     <ion-title >Arqueos Punto de Pago</ion-title>
     <div class="cerrar">
-      <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+      <button class="cerrar-btn-1" (click)="cerrarTabla()">
+        <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+      </button>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -194,9 +194,9 @@
             <ion-item>
     
               <div class="cerrar">
-                <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-                  <ion-icon name="close"></ion-icon>
-                </ion-button>
+                <button class="cerrar-btn-1" (click)="cerrarTabla()">
+                  <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+                </button>
               </div>
               
               <ion-label>Recaudos: </ion-label>
@@ -294,9 +294,9 @@
       <ion-list *ngIf="detallesFac" class="tabla1">
         <ion-content class="listaDet">
           <ion-item>
-            <ion-button class="cerrar-btn" (click)="cerrarTablaFac()">
-              <ion-icon name="close"></ion-icon>
-            </ion-button>
+            <button class="cerrar-btn-1" (click)="cerrarTablaFac()">
+              <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+            </button>
             <ion-label>Informacion Facturas: </ion-label>
           </ion-item>
 
@@ -417,9 +417,9 @@
   <div class="overlay"></div>
   <div class="overlay-content">
     <div class="cerrar">
-      <ion-button class="cerrar-btn-1" (click)="cerrarTabla()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+      <button class="cerrar-btn-1" (click)="cerrarTabla()">
+        <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+      </button>
     </div>
     <app-listado-entrgas-punto-pago></app-listado-entrgas-punto-pago>
   </div>
@@ -428,9 +428,9 @@
   <div class="overlay"></div>
   <div class="overlay-content">
     <div class="cerrar">
-      <ion-button class="cerrar-btn-1" (click)="cerrarTabla()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+      <button class="cerrar-btn-1" (click)="cerrarTabla()">
+        <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+      </button>
     </div>
     <app-listado-cuadres-punto-pago></app-listado-cuadres-punto-pago>
   </div>
@@ -439,9 +439,9 @@
 <div class="overlay" *ngIf="comentarioAnulacion"></div>
       <div class="alerta" *ngIf="comentarioAnulacion">
         <div class="cerrar">
-          <ion-button class="cerrar-btn-1" (click)="cerrarAlerta()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
+          <button class="cerrar-btn-1" (click)="cerrarAlerta()">
+            <ion-icon class="cerrar-btn" name="close-circle-sharp" size="large"></ion-icon>
+          </button>
         </div>   
         <h1>Anular movimiento detalle: {{datosAnulacion.NUMERO_MOVIMIENTO_DET}} </h1>
         <ion-item>

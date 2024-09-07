@@ -1,5 +1,5 @@
 
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable} from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 
@@ -12,8 +12,16 @@ import { Injectable, EventEmitter } from '@angular/core';
 })
 export class RecaudoService {
 
+  contraseña:string | undefined;
+  codConvenioDet:string | undefined;
+
 //private myAppUrl = 'http://localhost:36920/';
+
+//#PRUEBAS
   private myAppUrl = 'http://172.25.2.2:16000/';
+
+//#PRODUCCION
+  // private myAppUrl = 'http://172.25.2.2:18000/';
 
 //Servicios Autenticacion
   private myApiUrlEmpresas = 'api/Autenticacion/Empresas';
@@ -47,6 +55,7 @@ export class RecaudoService {
   private myApiUrlListadoCamposBarra= 'api/General/Listado_Campos_Barra';
   private myApiUrlListadoConsultaParametros= 'api/General/Listado_Consulta_Parametros';
   private myApiUrlListadoConsultaTablas= 'api/General/Listado_Consulta_Tablas';
+  private myApiUrlListadoPagosAsobancaria= 'api/General/Listado_Pagos_Asobancaria'; 
 
 
 //Servicios Arqueo
@@ -132,6 +141,10 @@ export class RecaudoService {
   private myApiUrlListadoSubPuntosPago= 'api/Administrador/Listado_Sub_Puntos_Pago';
   private myApiUrlCrearSubPuntoPago= 'api/Administrador/Crear_Sub_Puntos_Pago';
   private myApiUrlEliminarSubPuntoPago= 'api/Administrador/Eliminar_Sub_Puntos_Pago';
+  private myApiUrlConsultarCajasActivasSac= 'api/Administrador/Consultar_Cajas_Activas_SAC';
+  private myApiUrlCargarArchivo= 'api/Administrador/Offline';
+  private myApiUrlListarReabrirArqueo='api/Administrador/Listado_Reabrir_Arqueos';
+  private myApiUrlReabrirArqueo='api/Administrador/Modificar_Reabrir_Arqueo';
   
   
 
@@ -151,6 +164,8 @@ export class RecaudoService {
   private myApiUrlListadoReportesAsignados= 'api/Desarrollador/Listado_Reportes_Asignados';
   private myApiUrlCrearAsignacionReporte= 'api/Desarrollador/Crear_Asignaciones_Reporte';
   private myApiUrlEliminarAsignacionReporte= 'api/Desarrollador/Eliminar_Asignacion_Reporte';
+  private myApiUrlEliminarFacturaBarra= 'api/Desarrollador/Eliminar_Factura_Barra';
+  
   
 
   constructor(private http: HttpClient) { }
@@ -184,6 +199,13 @@ export class RecaudoService {
   postCerrarSesion(token: string, usuario:string, empresa:string): Observable<any> {
     const body = { TOKEN: token, USUARIO:usuario, EMPRESA:empresa};
     return this.http.post(this.myAppUrl + this.myApiUrlCerrarSesion, body);
+  }
+
+  setContraseña(contraseña:string){
+    this.contraseña=contraseña
+  }
+  getContraseña(){
+    return this.contraseña
   }
 
 
@@ -260,16 +282,25 @@ export class RecaudoService {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoConsultaTablas+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
 
+  getListadoPagosAsobancaria(empresa: number, usuario: string, token:string): Observable<any> {
+    return this.http.get(this.myAppUrl + this.myApiUrlListadoPagosAsobancaria+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
+  }
+
 
 
   private enviarAlumbrado = new BehaviorSubject<boolean>(false);
   private enviarManual = new BehaviorSubject<boolean>(false);
+  private CodConvenioDet = new BehaviorSubject<boolean>(false);
   public enviarAlumbrado$ = this.enviarAlumbrado.asObservable();
   public enviarManual$ = this.enviarManual.asObservable();
+  public CodConvenioDet$ = this.CodConvenioDet.asObservable();
 
   enviarEstadoAlumbrado(barras: boolean, manual:boolean) {
     this.enviarAlumbrado.next(barras);
     this.enviarManual.next(manual);
+  }
+  enviarConConvenioDet(codConvenioDet: boolean) {
+    this.CodConvenioDet.next(codConvenioDet);
   }
 
   getLisadoConveniosSincronizador(empresa: number, usuario: string, token:string): Observable<any> {
@@ -301,15 +332,16 @@ export class RecaudoService {
     return this.http.post(this.myAppUrl+this.myApiUrlConsultarArqueo, body);
   }
 
-  postConsultarArqueoParam(empresa:string, usuario:string, accion:string='2', numero_arqueo:string, numero_movimiento:string, valor_movimiento:string, fecha_movimiento:string, referencia:string, token:string):  Observable<any> {
+  postConsultarArqueoParam(empresa:string, usuario:string, accion:string='2', numero_arqueo:string, numero_movimiento:string, valor_movimiento:string, fecha_movimiento:string,cliente:string , referencia:string, token:string):  Observable<any> {
     const body = { EMPRESA: empresa,
                   USUARIO: usuario, 
                   ACCION: accion,
                   NUMERO_ARQUEO:numero_arqueo,
                   NUMERO_MOVIMIENTO:numero_movimiento,
-                  VALOR_MOVIMIENTO:valor_movimiento,
+                  VALOR_MOVIMIENTO_DET:valor_movimiento,
                   FECHA_MOVIMIENTO:fecha_movimiento,
-                  REFERENCIA: referencia,
+                  CODIGO_CLIENTE: cliente,
+                  CODIGO_REFERENCIA: referencia,
                   TOKEN:token
                 };
 
@@ -379,6 +411,15 @@ export class RecaudoService {
       },
       ...options
     });
+  }
+
+  setCodigoConvenioDet(codigo:string){
+    console.log("condigoConvenioDet",codigo)
+    this.codConvenioDet=codigo
+  }
+
+  getCodigoConvenioDet(){
+    return this.codConvenioDet
   }
 
   postActivarCajero(datos: any): Observable<any>{
@@ -644,13 +685,35 @@ export class RecaudoService {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoSubPuntosPago+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
 
+  getListadoCajasActivasSac(token:string,fecha: string): Observable<any> {
+    return this.http.get(this.myAppUrl + this.myApiUrlConsultarCajasActivasSac+'?token='+token+'&fecha='+fecha);
+  }
+  getListadoReabrirArqueo(empresa: number, condigo_punto_pago:string, usuario: string, token: string): Observable<any> {
+    return this.http.get(this.myAppUrl + this.myApiUrlListarReabrirArqueo+'?empresa='+empresa+'&codigo_punto_pago='+condigo_punto_pago+'&usuario='+usuario+'&token='+token);
+  }
+
   postCrearSubPuntoPago(datos: any): Observable<any>{
     return this.http.post(this.myAppUrl+this.myApiUrlCrearSubPuntoPago,datos);
   };
   postEliminarSubPuntoPago(datos: any): Observable<any>{
     return this.http.post(this.myAppUrl+this.myApiUrlEliminarSubPuntoPago,datos);
   };
+  postCargarArchivo(file: File, empresa: string, usuario: string, token: string): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('DOCUMENTO_CIERRE', file, file.name);
+    formData.append('EMPRESA', empresa);
+    formData.append('USUARIO', usuario);
+    formData.append('TOKEN', token);
 
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'multipart/form-data');
+
+    return this.http.post(this.myAppUrl+this.myApiUrlCargarArchivo, formData, { headers: headers });
+  }
+
+  postReabrirArqueo(datos: any): Observable<any>{
+    return this.http.post(this.myAppUrl+this.myApiUrlReabrirArqueo,datos);
+  };
 
 //Reporteador
 
@@ -700,8 +763,9 @@ export class RecaudoService {
   postEliminarAsignacionReporte(datos: any): Observable<any> {
     return this.http.post(this.myAppUrl + this.myApiUrlEliminarAsignacionReporte, datos);
   }
-
-  
+  postEliminarFacturaBarra(datos: any): Observable<any> {
+    return this.http.post(this.myAppUrl + this.myApiUrlEliminarFacturaBarra, datos);
+  }
   
 }
 

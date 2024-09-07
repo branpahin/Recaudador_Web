@@ -128,6 +128,10 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.filteredList = this.listadoPuntos;
+  }
+
   Hora(event: CustomEvent<DatetimeChangeEventDetail>): Date {
     const hora: string = (event.detail.value as string) || '';
 

@@ -31,7 +31,7 @@
                 <ion-item>
                   <ion-label *ngIf="facturas=='ACTIVAS'">Listado Facturas Activas: </ion-label>
                   <ion-label *ngIf="facturas=='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
-                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (ionChange)="filterList()"></ion-searchbar>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
                 </ion-item>
                 <ion-row class="header-row1" >
                   <ion-col class="edit small-edit-column"></ion-col>
@@ -113,6 +113,8 @@
             </ion-col>
           </ion-row>
           <ion-row>
+            <ion-col class="edit small-edit-column">
+            </ion-col>
             <ion-col>
               <h2>CAMPO</h2>
             </ion-col>
@@ -134,6 +136,9 @@
               <ion-row *ngFor="let parametros of listadoCamposBarras">
                 <ng-container *ngFor="let dato of datos.CAMPOS">
                   <ng-container *ngIf="dato.CAMPO==parametros.CAMPO">
+                    <ion-col class="edit small-edit-column">
+                      <button class="eliminarFila" (click)="eliminar(datos,parametros)"><ion-icon id="eliminarFila" name="remove-circle-outline" ></ion-icon></button>
+                    </ion-col>
                     <ion-col> {{parametros.CAMPO}}</ion-col>
                     <ion-col>
                       <ion-item class="campo">
@@ -161,6 +166,42 @@
                   </ng-container>
                 </ng-container>
               </ion-row>
+            </ng-container>
+            <ng-container *ngIf="mostrarCamposAgregar">
+              <ion-row *ngFor="let detalle of datosNuevos.CAMPOS; let i = index">
+                <ion-col class="edit small-edit-column">
+                  <button class="eliminarFila" (click)="eliminarFila(detalle)"><ion-icon id="eliminarFila" name="remove-circle-outline" ></ion-icon></button>
+                </ion-col> 
+                <ion-col> 
+                  <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="detalle.CAMPO"name="OBLIGATORIO" required>
+
+                    <ion-select-option *ngFor="let parametros of listadoCamposBarras" [value]="parametros.CAMPO" [disabled]="campoRepetido(parametros.CAMPO)" >{{parametros.CAMPO}}</ion-select-option>
+                  </ion-select>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.ORDEN" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col >
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.POSICION_INICIAL" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col >
+                  <ion-item class="campo">
+                    <ion-input [(ngModel)]="detalle.CARACTERES" required></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="campo">
+                    <ion-select interface="popover" placeholder="Seleccionar"  [(ngModel)]="detalle.OBLIGATORIO" name="OBLIGATORIO" required>
+                      <ion-select-option value="S" >SI</ion-select-option>
+                      <ion-select-option value="N" >NO</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row >
             </ng-container>
             <ng-container *ngIf="!mostrarModificar">
               <ion-row *ngFor="let detalle of datos.CAMPOS; let i = index">
@@ -197,8 +238,9 @@
                   </ion-item>
                 </ion-col>
               </ion-row >
-              <button class="btn-base" type="button" (click)="agregarCampo()">Agregar Campo</button>
+              
             </ng-container>
+            <button class="btn-base" type="button" (click)="agregarCampo()">Agregar Campo</button>
           </div>
 
         </ion-grid>

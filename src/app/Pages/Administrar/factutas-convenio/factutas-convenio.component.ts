@@ -17,6 +17,8 @@ interface Datos{
   TARJETA: string;
   TARJETA_EXITO: string;
   MIXTO: string;
+  // MIXTO_MANUAL: string;
+  // TARJETA_MANUAL: string;
   TIPO_VENCIMIENTO: string;
   DIAS_VENCIMIENTO: string;
   FECHA_FINALIZACION: string;
@@ -30,6 +32,7 @@ interface Datos{
   EXCEL: string;
   BUSQUEDA_REFERENCIA:string;
   ESTADO:string;
+  PAGOS_ASOBANCARIA:string;
   USUARIO: string;
   TOKEN: string;
 }
@@ -46,6 +49,7 @@ export class FactutasConvenioComponent  implements OnInit {
 
   TipoVencimiento:any[]=[];
   TipoAsobancaria:any[]=[];
+  PagosAsobancaria:any[]=[];
   TipoCuentaAsobancaria:any[]=[];
   BancosAsobancaria:any[]=[];
   FacturasConvenio:any[]=[];
@@ -67,6 +71,8 @@ export class FactutasConvenioComponent  implements OnInit {
     TARJETA: "",
     TARJETA_EXITO: "",
     MIXTO: "",
+    // MIXTO_MANUAL:"",
+    // TARJETA_MANUAL:"",
     TIPO_VENCIMIENTO: "",
     DIAS_VENCIMIENTO: "",
     FECHA_FINALIZACION: "",
@@ -80,6 +86,7 @@ export class FactutasConvenioComponent  implements OnInit {
     EXCEL: "",
     BUSQUEDA_REFERENCIA:"",
     ESTADO:"",
+    PAGOS_ASOBANCARIA:"",
     USUARIO: this.usuario,
     TOKEN:this.token
   }
@@ -98,6 +105,8 @@ export class FactutasConvenioComponent  implements OnInit {
     TARJETA:"",   
     TARJETA_EXITO:"",
     MIXTO:"",
+    // MIXTO_MANUAL:"",
+    // TARJETA_MANUAL:"",
     TIPO_VENCIMIENTO:"",
     DIAS_VENCIMIENTO:"",
     FECHA_FINALIZACION:"",
@@ -111,6 +120,7 @@ export class FactutasConvenioComponent  implements OnInit {
     EXCEL:"",
     BUSQUEDA_REFERENCIA:"",
     ESTADO:"",
+    PAGOS_ASOBANCARIA:"",
     USUARIO: this.usuario,    
     TOKEN: this.token
   }
@@ -148,7 +158,12 @@ export class FactutasConvenioComponent  implements OnInit {
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
-
+    this.ListarConvenios();
+    this.ListarTipoVencimientoFactura();
+    this.ListarTiposAsobancaria();
+    this.ListarBancosAsobancaria();
+    this.ListarTiposCuentaAsobancaria();
+    this.ListarPagosAsobancaria();
   }
 
   ionViewWillEnter() {
@@ -168,12 +183,31 @@ export class FactutasConvenioComponent  implements OnInit {
     }
   }
 
+  clearSearch() {
+    this.filteredList = this.FacturasConvenio;
+  }
+
   ListarTipoVencimientoFactura(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getTipoVencimientoFactura(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
           console.log('Respuesta del servicio:', data);
           this.TipoVencimiento= data.TIPOS_VENCIMIENTO;
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+
+  }
+
+  ListarPagosAsobancaria(){
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getListadoPagosAsobancaria(Number(this.empresa),this.usuario,this.token).subscribe(
+        (data: any) => {
+          console.log('Respuesta del servicio:', data);
+          this.PagosAsobancaria= data.PAGOS_ASOBANCARIA;
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -269,6 +303,7 @@ export class FactutasConvenioComponent  implements OnInit {
   cerrarTabla(){
     this.crear=false;
     this.editar=false;
+    this.fecha="";
     this.ListarFacturasConvenio();
   }
 
@@ -293,6 +328,8 @@ export class FactutasConvenioComponent  implements OnInit {
               TARJETA: "",
               TARJETA_EXITO: "",
               MIXTO: "",
+              // MIXTO_MANUAL:"",
+              // TARJETA_MANUAL:"",
               TIPO_VENCIMIENTO: "",
               DIAS_VENCIMIENTO: "",
               FECHA_FINALIZACION: "",
@@ -306,9 +343,11 @@ export class FactutasConvenioComponent  implements OnInit {
               EXCEL: "",
               BUSQUEDA_REFERENCIA:"",
               ESTADO:"",
+              PAGOS_ASOBANCARIA:"",
               USUARIO: this.usuario,
               TOKEN:this.token
             };
+            this.fecha="";
           }
           else {
             alertify.error(this.resultado.RESPUESTA);
@@ -340,6 +379,8 @@ export class FactutasConvenioComponent  implements OnInit {
       TARJETA: "",
       TARJETA_EXITO: "",
       MIXTO: "",
+      // MIXTO_MANUAL:"",
+      // TARJETA_MANUAL:"",
       TIPO_VENCIMIENTO: "",
       DIAS_VENCIMIENTO: "",
       FECHA_FINALIZACION: "",
@@ -353,9 +394,11 @@ export class FactutasConvenioComponent  implements OnInit {
       EXCEL: "",
       BUSQUEDA_REFERENCIA:"",
       ESTADO:"",
+      PAGOS_ASOBANCARIA:"",
       USUARIO: this.usuario,
       TOKEN:this.token
     };
+    this.fecha="";
 
     this.ListarConvenios();
     this.ListarTipoVencimientoFactura();
@@ -376,153 +419,174 @@ filtro(event: any){
 
   Editar(respuesta1: any){
 
-      this.crear=true;
+    this.crear=true;
 
-      this.editar=true;
+    this.editar=true;
 
-      if(respuesta1.ASOBANCARIA=="NO"){
-        respuesta1.ASOBANCARIA="N";
-      }
-      else if(respuesta1.ASOBANCARIA=="SI"){
-        respuesta1.ASOBANCARIA="S"
+    if(respuesta1.ASOBANCARIA=="NO"){
+      respuesta1.ASOBANCARIA="N";
+    }
+    else if(respuesta1.ASOBANCARIA=="SI"){
+      respuesta1.ASOBANCARIA="S"
 
-      }
+    }
 
-      if(respuesta1.CODIGO_BARRAS=="NO"){
-        respuesta1.CODIGO_BARRAS="N";
-      }
-      else if(respuesta1.CODIGO_BARRAS=="SI"){
-        respuesta1.CODIGO_BARRAS="S"
-      }
-      if(respuesta1.TIPO_RECAUDO_MANUAL=="NO"){
-        respuesta1.TIPO_RECAUDO_MANUAL="N";
-      }
-      else if(respuesta1.TIPO_RECAUDO_MANUAL=="SI"){
-        respuesta1.TIPO_RECAUDO_MANUAL="S"
-      }
-      if(respuesta1.TIPO_RECAUDO_WS=="NO"){
-        respuesta1.TIPO_RECAUDO_WS="N";
-      }
-      else if(respuesta1.TIPO_RECAUDO_WS=="SI"){
-        respuesta1.TIPO_RECAUDO_WS="S"
-      }
+    if(respuesta1.CODIGO_BARRAS=="NO"){
+      respuesta1.CODIGO_BARRAS="N";
+    }
+    else if(respuesta1.CODIGO_BARRAS=="SI"){
+      respuesta1.CODIGO_BARRAS="S"
+    }
+    if(respuesta1.TIPO_RECAUDO_MANUAL=="NO"){
+      respuesta1.TIPO_RECAUDO_MANUAL="N";
+    }
+    else if(respuesta1.TIPO_RECAUDO_MANUAL=="SI"){
+      respuesta1.TIPO_RECAUDO_MANUAL="S"
+    }
+    if(respuesta1.TIPO_RECAUDO_WS=="NO"){
+      respuesta1.TIPO_RECAUDO_WS="N";
+    }
+    else if(respuesta1.TIPO_RECAUDO_WS=="SI"){
+      respuesta1.TIPO_RECAUDO_WS="S"
+    }
 
-      if(respuesta1.RECAUDO_EFECTIVO=="NO"){
-        respuesta1.RECAUDO_EFECTIVO="N";
-      }
-      else if(respuesta1.RECAUDO_EFECTIVO=="SI"){
-        respuesta1.RECAUDO_EFECTIVO="S"
-      }
+    if(respuesta1.RECAUDO_EFECTIVO=="NO"){
+      respuesta1.RECAUDO_EFECTIVO="N";
+    }
+    else if(respuesta1.RECAUDO_EFECTIVO=="SI"){
+      respuesta1.RECAUDO_EFECTIVO="S"
+    }
 
-      if(respuesta1.RECAUDO_CHEQUE=="NO"){
-        respuesta1.RECAUDO_CHEQUE="N";
-      }
-      else if(respuesta1.RECAUDO_CHEQUE=="SI"){
-        respuesta1.RECAUDO_CHEQUE="S"
-      }
+    if(respuesta1.RECAUDO_CHEQUE=="NO"){
+      respuesta1.RECAUDO_CHEQUE="N";
+    }
+    else if(respuesta1.RECAUDO_CHEQUE=="SI"){
+      respuesta1.RECAUDO_CHEQUE="S"
+    }
 
-      if(respuesta1.RECAUDO_DATAFONO=="NO"){
-        respuesta1.RECAUDO_DATAFONO="N";
-      }
-      else if(respuesta1.RECAUDO_DATAFONO=="SI"){
-        respuesta1.RECAUDO_DATAFONO="S"
-      }
+    if(respuesta1.RECAUDO_DATAFONO=="NO"){
+      respuesta1.RECAUDO_DATAFONO="N";
+    }
+    else if(respuesta1.RECAUDO_DATAFONO=="SI"){
+      respuesta1.RECAUDO_DATAFONO="S"
+    }
 
-      if(respuesta1.RECAUDO_DATAFONO_EXITO=="NO"){
-        respuesta1.RECAUDO_DATAFONO_EXITO="N";
-      }
-      else if(respuesta1.RECAUDO_DATAFONO_EXITO=="SI"){
-        respuesta1.RECAUDO_DATAFONO_EXITO="S"
-      }
+    if(respuesta1.RECAUDO_DATAFONO_EXITO=="NO"){
+      respuesta1.RECAUDO_DATAFONO_EXITO="N";
+    }
+    else if(respuesta1.RECAUDO_DATAFONO_EXITO=="SI"){
+      respuesta1.RECAUDO_DATAFONO_EXITO="S"
+    }
 
-      if(respuesta1.RECAUDO_MIXTO=="NO"){
-        respuesta1.RECAUDO_MIXTO="N";
-      }
-      else if(respuesta1.RECAUDO_MIXTO=="SI"){
-        respuesta1.RECAUDO_MIXTO="S"
-      }
+    if(respuesta1.RECAUDO_MIXTO=="NO"){
+      respuesta1.RECAUDO_MIXTO="N";
+    }
+    else if(respuesta1.RECAUDO_MIXTO=="SI"){
+      respuesta1.RECAUDO_MIXTO="S"
+    }
 
-      if(respuesta1.EXCEL=="NO"){
-        respuesta1.EXCEL="N";
-      }
-      else if(respuesta1.EXCEL=="SI"){
-        respuesta1.EXCEL="S"
-      }
+    // if(respuesta1.MIXTO_MANUAL=="NO"){
+    //   respuesta1.MIXTO_MANUAL="N";
+    // }
+    // else if(respuesta1.MIXTO_MANUAL=="SI"){
+    //   respuesta1.MIXTO_MANUAL="S"
+    // }
+    // if(respuesta1.TARJETA_MANUAL=="NO"){
+    //   respuesta1.TARJETA_MANUAL="N";
+    // }
+    // else if(respuesta1.TARJETA_MANUAL=="SI"){
+    //   respuesta1.TARJETA_MANUAL="S"
+    // }
+    if(respuesta1.EXCEL=="NO"){
+      respuesta1.EXCEL="N";
+    }
+    else if(respuesta1.EXCEL=="SI"){
+      respuesta1.EXCEL="S"
+    }
 
-      if(respuesta1.BUSQUEDA_REFERENCIA=="NO"){
-        respuesta1.BUSQUEDA_REFERENCIA="N";
-      }
-      else if(respuesta1.BUSQUEDA_REFERENCIA=="SI"){
-        respuesta1.BUSQUEDA_REFERENCIA="S"
-      }
+    if(respuesta1.BUSQUEDA_REFERENCIA=="NO"){
+      respuesta1.BUSQUEDA_REFERENCIA="N";
+    }
+    else if(respuesta1.BUSQUEDA_REFERENCIA=="SI"){
+      respuesta1.BUSQUEDA_REFERENCIA="S"
+    }
 
 
-  
-      
-      this.datos={
-        EMPRESA: this.empresa,
-        CODIGO_CONVENIO: respuesta1.CODIGO_CONVENIO,
-        CODIGO_CONVENIO_DET: respuesta1.CODIGO_CONVENIO_DET,
-        NOMBRE_FACTURA: respuesta1.NOMBRE_CONVENIO_DET,  
-        CODIGO_BARRAS: respuesta1.CODIGO_BARRAS, 
-        MANUAL: respuesta1.TIPO_RECAUDO_MANUAL, 
-        PAGO_LINEA: respuesta1.TIPO_RECAUDO_WS,
-        EFECTIVO: respuesta1.RECAUDO_EFECTIVO,
-        CHEQUE: respuesta1.RECAUDO_CHEQUE,
-        TARJETA: respuesta1.RECAUDO_DATAFONO,
-        TARJETA_EXITO: respuesta1.RECAUDO_DATAFONO_EXITO,
-        MIXTO: respuesta1.RECAUDO_MIXTO,
-        TIPO_VENCIMIENTO: respuesta1.TIPO_VENCIMIENTO,
-        DIAS_VENCIMIENTO: respuesta1.DIAS_VENCIMIENTO,
-        FECHA_FINALIZACION: respuesta1.FECHA_FINALIZACION,
-        ASOBANCARIA: respuesta1.ASOBANCARIA,
-        TIPO_ASOBANCARIA: respuesta1.TIPO_ASOBANCARIA,
-        CORREO_ASOBANCARIA: respuesta1.CORREO_ASOBANCARIA,
-        BANCO: respuesta1.BANCO,
-        TIPO_CUENTA: respuesta1.TIPO_CUENTA,
-        NUMERO_CUENTA: respuesta1.NUMERO_CUENTA,
-        BANCO_RECAUDADOR: respuesta1.BANCO_RECAUDADOR,
-        EXCEL: respuesta1.EXCEL,
-        BUSQUEDA_REFERENCIA:respuesta1.BUSQUEDA_REFERENCIA,
-        ESTADO:respuesta1.ESTADO,
-        USUARIO: this.usuario,
-        TOKEN:this.token
-      };
-      
+
+    
+    this.datos={
+      EMPRESA: this.empresa,
+      CODIGO_CONVENIO: respuesta1.CODIGO_CONVENIO,
+      CODIGO_CONVENIO_DET: respuesta1.CODIGO_CONVENIO_DET,
+      NOMBRE_FACTURA: respuesta1.NOMBRE_CONVENIO_DET,  
+      CODIGO_BARRAS: respuesta1.CODIGO_BARRAS, 
+      MANUAL: respuesta1.TIPO_RECAUDO_MANUAL, 
+      PAGO_LINEA: respuesta1.TIPO_RECAUDO_WS,
+      EFECTIVO: respuesta1.RECAUDO_EFECTIVO,
+      CHEQUE: respuesta1.RECAUDO_CHEQUE,
+      TARJETA: respuesta1.RECAUDO_DATAFONO,
+      TARJETA_EXITO: respuesta1.RECAUDO_DATAFONO_EXITO,
+      MIXTO: respuesta1.RECAUDO_MIXTO,
+      // MIXTO_MANUAL: respuesta1.MIXTO_MANUAL,
+      // TARJETA_MANUAL: respuesta1.TARJETA_MANUAL,
+      TIPO_VENCIMIENTO: respuesta1.TIPO_VENCIMIENTO,
+      DIAS_VENCIMIENTO: respuesta1.DIAS_VENCIMIENTO,
+      FECHA_FINALIZACION: respuesta1.FECHA_FINALIZACION,
+      ASOBANCARIA: respuesta1.ASOBANCARIA,
+      TIPO_ASOBANCARIA: respuesta1.TIPO_ASOBANCARIA,
+      CORREO_ASOBANCARIA: respuesta1.CORREO_ASOBANCARIA,
+      BANCO: respuesta1.BANCO,
+      TIPO_CUENTA: respuesta1.TIPO_CUENTA,
+      NUMERO_CUENTA: respuesta1.NUMERO_CUENTA,
+      BANCO_RECAUDADOR: respuesta1.BANCO_RECAUDADOR,
+      EXCEL: respuesta1.EXCEL,
+      BUSQUEDA_REFERENCIA:respuesta1.BUSQUEDA_REFERENCIA,
+      ESTADO:respuesta1.ESTADO,
+      PAGOS_ASOBANCARIA:respuesta1.PAGOS_ASOBANCARIA,
+      USUARIO: this.usuario,
+      TOKEN:this.token
+    };
+    
+    if(this.datos.FECHA_FINALIZACION!=""){
       let fechaCompleta = this.datos.FECHA_FINALIZACION;
-// Obtener las partes de la fecha y la hora
-let partes = fechaCompleta.split(' ');
-let fecha = partes[0];
-let hora = partes[1] + ' ' + partes[2]; // Combinar la hora y AM/PM
+    // Obtener las partes de la fecha y la hora
+    let partes = fechaCompleta.split(' ');
+    let fecha = partes[0];
+    let hora = partes[1] + ' ' + partes[2]; // Combinar la hora y AM/PM
 
-// Separar las partes de la fecha (día, mes, año) y convertirlas en un formato compatible con Date
-let partesFecha = fecha.split('/');
-let dia = partesFecha[0].padStart(2, '0'); // Agregar un 0 al principio si es necesario
-let mes = partesFecha[1].padStart(2, '0'); // Agregar un 0 al principio si es necesario
-let anio = partesFecha[2];
+    // Separar las partes de la fecha (día, mes, año) y convertirlas en un formato compatible con Date
+    let partesFecha = fecha.split('/');
+    let dia = partesFecha[0].padStart(2, '0'); // Agregar un 0 al principio si es necesario
+    let mes = partesFecha[1].padStart(2, '0'); // Agregar un 0 al principio si es necesario
+    let anio = partesFecha[2];
 
-// Separar las partes de la hora (horas, minutos, segundos) y convertirlas en un formato compatible con Date
-let partesHora = hora.split(':');
-let horas = partesHora[0].padStart(2, '0'); // Agregar un 0 al principio si es necesario
-let minutos = partesHora[1].padStart(2, '0'); // Agregar un 0 al principio si es necesario
-let segundos = '00'; // Establecer los segundos como 00
+    // Separar las partes de la hora (horas, minutos, segundos) y convertirlas en un formato compatible con Date
+    let partesHora = hora.split(':');
+    let horas = partesHora[0].padStart(2, '0'); // Agregar un 0 al principio si es necesario
+    let minutos = partesHora[1].padStart(2, '0'); // Agregar un 0 al principio si es necesario
+    let segundos = '00'; // Establecer los segundos como 00
 
-// Crear la cadena de fecha y hora en el formato "YYYY-MM-DDTHH:mm:ss"
-let fechaHora = `${anio}-${mes}-${dia}T00:00:00`;
+    // Crear la cadena de fecha y hora en el formato "YYYY-MM-DDTHH:mm:ss"
+    let fechaHora = `${anio}-${mes}-${dia}T00:00:00`;
 
-// Crear el objeto Date con la cadena formateada
-this.fecha = fechaHora;
-console.log("FECHA:", fechaHora);
+    // Crear el objeto Date con la cadena formateada
+    this.fecha = fechaHora;
+    
+    console.log("FECHA:", fechaHora);
+    }
+    
 
-      this.ListarConvenios();
-      this.ListarTipoVencimientoFactura();
-      this.ListarTiposAsobancaria();
-      this.ListarBancosAsobancaria();
-      this.ListarTiposCuentaAsobancaria();
+    this.ListarConvenios();
+    this.ListarTipoVencimientoFactura();
+    this.ListarTiposAsobancaria();
+    this.ListarBancosAsobancaria();
+    this.ListarTiposCuentaAsobancaria();
   }
 
   ModificarFacturaConvenio(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      
+      console.log("enviado: ",this.datos)
       this.recaudoService.postModificarFacturaConvenio(this.datos).subscribe(
         (data: any) => {
           console.log('Respuesta del servicio:', data);
@@ -530,7 +594,7 @@ console.log("FECHA:", fechaHora);
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
 
-           
+            this.fecha="";
             this.cerrarTabla();
           }
           else {

@@ -40,6 +40,7 @@
               <ion-col>
                 <ion-item>
                   <ion-label>Anulaciones: </ion-label>
+                  <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
                 </ion-item>
                 <ion-row class="header-row" >
                   <ion-col class="edit small-edit-column"></ion-col>
@@ -59,7 +60,7 @@
                 </ion-row>
                 <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
               
-                  <div class="tabla-content" *ngFor="let respuesta1 of listadoAnulaciones">
+                  <div class="tabla-content" *ngFor="let respuesta1 of filteredList">
                     <ion-row class="data-row" slot="fixed">
                       <ion-col class="edit small-edit-column"><button class="editar-btn" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="ban-outline"></ion-icon></button></ion-col>
                       <ion-col title="{{ respuesta1.EMPRESA }}">{{ respuesta1.EMPRESA }}</ion-col>
@@ -110,9 +111,9 @@
   <ion-card-content>
     <ion-list class="tabla1" >
       <div class="cerrar">
-        <ion-button class="cerrar-btn" (click)="cerrarTabla()">
-          <ion-icon name="close"></ion-icon>
-        </ion-button>
+        <button class="cerrar-btn-1" (click)="cerrarTabla()">
+          <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
+        </button>
       </div>
       <ion-grid>
         <ion-row>

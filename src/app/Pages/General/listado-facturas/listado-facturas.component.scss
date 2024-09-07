@@ -1,0 +1,116 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-title{
+  font-weight: bold;
+}
+
+
+
+
+.tabla_lista {
+    overflow-y: auto;
+    max-height: 60vh;
+    transition: width 0.3s ease;
+  }
+.tabla_lista::-webkit-scrollbar {
+    width: 5px;
+  }
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    background: rgb(243, 125, 47); /* Color de la barra de desplazamiento */
+    border-radius: 10px;
+  }
+  
+  .tabla_lista::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+
+
+#facturasTitulo{
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.tabla {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tabla1 {
+  width: 100%;
+  display: inline-block;
+}
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  height: auto;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.data-row ion-col {
+  font-weight: bold;
+  font-size: 15px;
+ white-space: nowrap;
+ text-overflow: ellipsis; 
+ overflow: hidden;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ border: 1px solid black;
+}
+
+.data-row1 ion-col {
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  border: 1px solid black;
+ 
+}
+
+
+.header-row ion-col{
+ font-weight: bold;
+ border: 1px solid black;
+ background-color: #e48f0f;
+ color:#fff;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ align-items: center; 
+ justify-content: center; 
+ text-align: center;
+
+}
+
+.header-row1 ion-col{
+  font-weight: bold;
+  border: 1px solid black;
+  background-color: rgb(2, 145, 21);
+  color:#fff;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  align-items: center; 
+  justify-content: center;  
+  text-align: center;
+ }
+
+
+
+  ion-label{
+    font-weight: bold;
+    font-size: 20px;
+  }
+  ion-label.stacked-label {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
