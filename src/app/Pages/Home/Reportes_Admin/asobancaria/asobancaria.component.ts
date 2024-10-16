@@ -20,6 +20,7 @@ interface ConvenioDet1 {
 }
 
 interface Detalle{
+  ASOBANCARIA: string;
   CODIGO_CONVENIO: string;
   CODIGO_CONVENIO_DET: string;          
   TIPO_ASOBANCARIA: string;
@@ -56,6 +57,7 @@ export class AsobancariaComponent  implements OnInit {
   listadoConveniosDet:any[]=[];
 
   listadoConvenios={
+    ASOBANCARIA:"",
     CODIGO_CONVENIO: "",
     CODIGO_CONVENIO_DET: "",            
     TIPO_ASOBANCARIA: "",
@@ -125,7 +127,7 @@ export class AsobancariaComponent  implements OnInit {
       
       this.recaudoService.getListarAsobancaria(Number(this.empresa), this.puntoPago, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log(data);
+          
           this.listadoAsobancaria = data;
           this.convenios=this.obtenerConvenio();
 
@@ -168,7 +170,7 @@ export class AsobancariaComponent  implements OnInit {
       
       for (const detalle of this.convenios) {
         for(const detalleFin of detalle.convenioDet){
-          console.log("detalle: ",detalle)
+          
           if(detalle.value!='1'){
 
             this.obtenerDetalleConvenio({ detail: { checked: this.seleccionarTodos } }, detalle,detalleFin,'');
@@ -194,6 +196,7 @@ export class AsobancariaComponent  implements OnInit {
 
   obtenerDetalleConvenio(event: { detail: { checked: any; }; }, convenio: { value: any; label:any;}, convenioDet: { value: any; label:any;}, forma_pago:string) {
     
+    
     const convenioSelect=convenio.value;
     if (event.detail.checked) {
       this.listadoConvenios.CODIGO_CONVENIO=convenioSelect;
@@ -213,7 +216,7 @@ export class AsobancariaComponent  implements OnInit {
       const codigoCliente = convenioDet.value;
       this.nombre_convenios = this.nombre_convenios.filter(detalle => detalle.CODIGO_CONVENIO_DET!== codigoCliente);
       
-      console.log("convenioSelect: ", this.nombre_convenios)
+      
     }
     if (this.listadoConvenios.CODIGO_CONVENIO) {
   
@@ -238,6 +241,7 @@ export class AsobancariaComponent  implements OnInit {
      
     
       this.listadoConvenios = {
+        ASOBANCARIA:"",
         CODIGO_CONVENIO: "",
         CODIGO_CONVENIO_DET: "",            
         TIPO_ASOBANCARIA: "",
@@ -272,6 +276,7 @@ export class AsobancariaComponent  implements OnInit {
         this.listadoConveniosNom.ASOBANCARIA=detalleConvenio.NOMBRE_ASOBANCARIA;
         detalle.CORREO_ASOBANCARIA = detalleConvenio.CORREO_ASOBANCARIA;
         detalle.EXCEL = detalleConvenio.EXCEL;
+        detalle.ASOBANCARIA = detalleConvenio.ASOBANCARIA;
         detalle.PAGOS_ASOBANCARIA =detalleConvenio.PAGOS_ASOBANCARIA
         const nuevoDetalle2: Detalle2 = { ...this.listadoConveniosNom };
         this.nombre_convenios.push(nuevoDetalle2);
@@ -286,15 +291,16 @@ export class AsobancariaComponent  implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Generando Asobancaria...',
       spinner: 'crescent',
+      cssClass: 'custom-loading'
     });
 
     await loading.present();
     
-    console.log("enviado: ",this.asobancaria)
+    
     this.recaudoService.postGenerarAsobancaria(this.asobancaria).subscribe({
       next: async data => {
-        console.log(data);
-        console.log("Convenios generados: ",this.nombre_convenios)
+        
+        
         this.respuesta = data;
         if(this.respuesta.COD=='200'){
           alertify.success(this.respuesta.RESPUESTA);
@@ -314,7 +320,7 @@ export class AsobancariaComponent  implements OnInit {
   
       },
       error: async error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
         await loading.dismiss();
       }
     });

@@ -90,7 +90,7 @@ export class AsignacionReportesComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoRoles(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.listadoRoles= data.LISTADO_ROLES;
         },
         (error) => {
@@ -105,7 +105,7 @@ export class AsignacionReportesComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoReportesAsignados(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.listadoReportesAsignados= data.LISTADO_REPORTES;
           this.filterList();
         },
@@ -123,12 +123,12 @@ export class AsignacionReportesComponent  implements OnInit {
     if (event.detail.checked) {
       if (!conveniosBloqueados.includes(codigoConvenioDet)) {
         this.listadoRolesSelec += ', '+ codigoConvenioDet;
-        console.log("lista: ",this.listadoRolesSelec)
+        
         this.rolesDesmarcados = this.rolesDesmarcados.filter(det => det !== codigoConvenioDet);
       }
     } else {
       this.listadoRolesSelec = conveniosBloqueados.filter(det => det !== codigoConvenioDet).join(', ');
-      console.log("listaaaa: ",this.listadoRolesSelec)
+      
       if (!this.rolesDesmarcados.includes(codigoConvenioDet)) {
         this.rolesDesmarcados.push(codigoConvenioDet);
       }
@@ -152,31 +152,31 @@ export class AsignacionReportesComponent  implements OnInit {
     }
     this.listadoRolesSelec=respuesta1.ROLES_ASIGNADOS
     this.listadoRolesSelec2=respuesta1.ROLES_ASIGNADOS
-    console.log("roles:",respuesta1)
+    
     this.MostrarSeleccionador();
   }
 
   MostrarSeleccionador(){
     this.seleccionar=!this.seleccionar
-    console.log("seleccionador: ",this.listadoRolesSelec)
+    
     if(this.seleccionar==false){
       if(this.listadoRolesSelec2){
         const rolesString = this.listadoRolesSelec2;
-        console.log("rolesString: ",rolesString +" listadoRolesSelec: ",this.listadoRolesSelec)
+        
         if (this.listadoRolesSelec.length < rolesString.length) {
           this.EliminarAsignacion();
         }else if(this.listadoRolesSelec.length > rolesString.length){
           this.datos.ROLES=this.listadoRolesSelec;
-          console.log("mayor<")
+          
           this.ModificarAsignacion();
         }
         else {
-          console.log("no hay nada para modificar");
+          
         }
       }else{
         if(this.listadoRolesSelec.length > 0){
           this.datos.ROLES=this.listadoRolesSelec;
-          console.log("editar nuevo")
+          
           this.ModificarAsignacion();
         }
       }
@@ -184,11 +184,11 @@ export class AsignacionReportesComponent  implements OnInit {
   }
 
   ModificarAsignacion(){
-    console.log("datos:",this.datos)
+    
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearAsignacionReporte(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.respuesta= data;
           if(this.respuesta.COD=="200"){
             alertify.success(this.respuesta.RESPUESTA);
@@ -207,14 +207,14 @@ export class AsignacionReportesComponent  implements OnInit {
   }
 
   EliminarAsignacion(){
-    console.log("datos:",this.datos)
+    
     const conveniosBloqueados = this.rolesDesmarcados;
       conveniosBloqueados.forEach(rol => {
         const parametrosParaAsignacion = { ...this.datos, ROLE: rol};
           if (this.empresa !== null && this.usuario !== null && this.token !== null) {
             this.recaudoService.postEliminarAsignacionReporte(parametrosParaAsignacion).subscribe(
               (data: any) => {
-                console.log('Respuesta del servicio:', data);
+                
                 this.respuesta= data;
                 if(this.respuesta.COD=="200"){
                   alertify.success(this.respuesta.RESPUESTA);

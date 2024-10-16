@@ -21,7 +21,12 @@ export class RecaudoService {
   private myAppUrl = 'http://172.25.2.2:16000/';
 
 //#PRODUCCION
-  // private myAppUrl = 'http://172.25.2.2:18000/';
+    // private myAppUrl = 'http://172.25.2.2:18000/';
+
+//#PRODUCCION HTTPS
+  // private myAppUrl = 'http://172.25.2.2:19000/';
+
+  url=this.myAppUrl;
 
 //Servicios Autenticacion
   private myApiUrlEmpresas = 'api/Autenticacion/Empresas';
@@ -56,6 +61,7 @@ export class RecaudoService {
   private myApiUrlListadoConsultaParametros= 'api/General/Listado_Consulta_Parametros';
   private myApiUrlListadoConsultaTablas= 'api/General/Listado_Consulta_Tablas';
   private myApiUrlListadoPagosAsobancaria= 'api/General/Listado_Pagos_Asobancaria'; 
+  private myApiUrlListadoTipoPunteo= 'api/General/Listado_Tipo_Punteo'; 
 
 
 //Servicios Arqueo
@@ -145,6 +151,7 @@ export class RecaudoService {
   private myApiUrlCargarArchivo= 'api/Administrador/Offline';
   private myApiUrlListarReabrirArqueo='api/Administrador/Listado_Reabrir_Arqueos';
   private myApiUrlReabrirArqueo='api/Administrador/Modificar_Reabrir_Arqueo';
+  private myApiUrlImpresionCuadre='api/Administrador/Impresion_Cuadre_Arqueo';
   
   
 
@@ -285,6 +292,9 @@ export class RecaudoService {
   getListadoPagosAsobancaria(empresa: number, usuario: string, token:string): Observable<any> {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoPagosAsobancaria+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
+  getListadoTipoPunteo(empresa: number, usuario: string, token:string): Observable<any> {
+    return this.http.get(this.myAppUrl + this.myApiUrlListadoTipoPunteo+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
+  }
 
 
 
@@ -414,7 +424,7 @@ export class RecaudoService {
   }
 
   setCodigoConvenioDet(codigo:string){
-    console.log("condigoConvenioDet",codigo)
+    
     this.codConvenioDet=codigo
   }
 
@@ -692,6 +702,14 @@ export class RecaudoService {
     return this.http.get(this.myAppUrl + this.myApiUrlListarReabrirArqueo+'?empresa='+empresa+'&codigo_punto_pago='+condigo_punto_pago+'&usuario='+usuario+'&token='+token);
   }
 
+  getImprimirCuadre(empresa: number, numeroArqueo: number, token: string): Observable<Blob> {
+    const url = `${this.myAppUrl}${this.myApiUrlImpresionCuadre}?empresa=${empresa}&numero_arqueo=${numeroArqueo}&token=${token}`;
+  
+    // No es necesario el 'as' casting aquí, simplemente especifica el tipo correctamente
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+
   postCrearSubPuntoPago(datos: any): Observable<any>{
     return this.http.post(this.myAppUrl+this.myApiUrlCrearSubPuntoPago,datos);
   };
@@ -715,11 +733,14 @@ export class RecaudoService {
     return this.http.post(this.myAppUrl+this.myApiUrlReabrirArqueo,datos);
   };
 
+
+
 //Reporteador
 
   getReportesReporteador(empresa: number, usuario: string, token: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListadoReportesReporteador+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   };
+
 
   getParametrosReporte(empresa: number, id_reporte:number, usuario: string, token: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListadoParametrosReporte+'?empresa='+empresa+'&ID_REPORTE='+id_reporte+'&usuario='+usuario+'&token='+token);

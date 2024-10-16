@@ -91,7 +91,6 @@ export class AnulacionPagosComponent  implements OnInit {
 
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -109,7 +108,6 @@ export class AnulacionPagosComponent  implements OnInit {
 
       this.recaudoService.getListarAnulacionesPagos(Number(this.empresa),Number(this.puntoPago),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoAnulaciones= data.MOVIMIENTOS_ANULADOS;
           
           this.filteredList = this.listadoAnulaciones;
@@ -170,7 +168,6 @@ export class AnulacionPagosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearAnulacionPago(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -205,7 +202,6 @@ export class AnulacionPagosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postEliminarAnulacionPago(this.datosEliminar).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);

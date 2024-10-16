@@ -8,7 +8,7 @@
       <ion-checkbox (ionChange)="preferencial($event)" [disabled]="!turno" [checked]="seleccionar">Preferencial</ion-checkbox>
     </div>
   </div>  
-  <button class="limpiar"expand="full" slot="end" (click)="limpiar()">Limpiar</button>
+  <button class="limpiar"expand="full" slot="end" (click)="Confirmacionlimpiar()">Limpiar</button>
   </ion-toolbar>
 </ion-header>
 
@@ -78,7 +78,7 @@
           </ion-item>
           <ion-item>
             <ion-label position="stacked" class="stacked-label">N° Cupones Movimiento</ion-label>
-            <ion-input style="color:rgb(161, 161, 161)" name="Cupones" type="text" [(ngModel)]="datos.NUMERO_CUPONES_MOVIMIENTO" name="Cupones" readonly></ion-input>
+            <ion-input style="color:rgb(0, 0, 0); font-weight: bold;" name="Cupones" type="text" [(ngModel)]="datos.NUMERO_CUPONES_MOVIMIENTO" name="Cupones" readonly></ion-input>
           </ion-item>
           <ion-item *ngIf="mostrarCampos">
             <ion-label position="stacked" class="stacked-label">Documento</ion-label>
@@ -250,7 +250,7 @@
                   <ng-container *ngIf="detalle.CODIGO_CONVENIO==detalle2.CODIGO_CONVENIO && detalle.CODIGO_CONVENIO_DET == detalle2.CODIGO_CONVENIO_DET 
                                       && detalle.CODIGO_CLIENTE==detalle2.CODIGO_CLIENTE && detalle.CODIGO_REFERENCIA == detalle2.CODIGO_REFERENCIA">
                     <ion-col title="{{ detalle2.NOMBRE_CONVENIO}}">{{ detalle2.NOMBRE_CONVENIO }}</ion-col>
-                    <ion-col title="{{ detalle2.NOMBRE_CONVENIO_DET }}">{{ detalle2.NOMBRE_CONVENIO_DET }}</ion-col>
+                    <ion-col style="font-weight: bold; color:black" title="{{ detalle2.NOMBRE_CONVENIO_DET }}">{{ detalle2.NOMBRE_CONVENIO_DET }}</ion-col>
                   </ng-container>
                 </ng-container>
               
@@ -329,6 +329,20 @@
     <ion-label class="col-descripcion">¿Está seguro de recaudar {{datos.VALOR_MOVIMIENTO | number}} en {{desFormaPago}}?</ion-label>
   </ion-item>
   <button class="btn_mi" (click)="recaudarFinal()">Aceptar</button>
+</div>
+
+<div class="overlay" *ngIf="limpia"></div>
+<div class="alerta" *ngIf="limpia">
+  
+  <ion-item>  
+    <div class="cerrar">
+      <ion-button class="cerrar-btn" (click)="cerrarTabla()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>    
+    <ion-label class="col-descripcion">El movimiento aun no se ha recaudado, ¿Está seguro de limpiar?</ion-label>
+  </ion-item>
+  <button class="btn_mi" (click)="limpiar()">Aceptar</button>
 </div>
 
 

@@ -88,7 +88,6 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -165,7 +164,6 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.puntoPago !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getFormaPago(Number(this.empresa),Number(this.puntoPago),this.accion, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.pago = data.FORMAS_PAGO;
         },
         (error) => {
@@ -265,7 +263,6 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
       }
       this.recaudoService.getConsultarArqueoPuntos(Number(this.empresa),Number(this.codigo_punto_pago),this.usuario,this.token,this.fechaInicio,this.fechaFin).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoArqueos= data.LISTADO_ARQUEOS;
         },
         (error) => {
@@ -291,7 +288,6 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
       
       this.recaudoService.postCrearAnulacionPago(this.datosAnulacion).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -325,11 +321,9 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
   }
 
   ListarArqueosDet(){
-    console.log("empresa: ",this.empresa+"punto pago: ", this.codigo_punto_pago+"arqueo: ",this.arqueoSelect+"usuario: ",this.usuario)
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getConsultarMovimientoArqueo(Number(this.empresa),Number(this.codigo_punto_pago),this.arqueoSelect,this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           this.recaudos=data.RECAUDOS;
           this.informacionF=data.RECAUDOS;

@@ -129,7 +129,6 @@ export class AdministrarCajasComponent  implements OnInit {
 
       this.recaudoService.getConsultarCajasPunto(Number(this.empresa),Number(this.puntoPago),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
             this.listadoCajasActivas= data.CAJAS_ACTIVAS;
             this.listadoCajasInactivas= data.CAJAS_INACTIVAS;
 
@@ -150,7 +149,6 @@ export class AdministrarCajasComponent  implements OnInit {
 
       this.recaudoService.getListadoRoles(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoRoles= data.LISTADO_ROLES;
         },
         (error) => {
@@ -168,7 +166,6 @@ export class AdministrarCajasComponent  implements OnInit {
 
       this.recaudoService.getListadoEstadoUsuarios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoEstadoUsuario= data.ESTADOS_USUARIOS;
         },
         (error) => {
@@ -195,7 +192,6 @@ export class AdministrarCajasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearCaja(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -260,7 +256,6 @@ export class AdministrarCajasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postModificarCaja(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
 import { formatDate } from '@angular/common';
+import { LoadingController } from '@ionic/angular';
 
 interface Datos{
   EMPRESA: string;
@@ -24,6 +25,7 @@ interface Datos{
   FECHA_FINALIZACION: string;
   ASOBANCARIA: string;
   TIPO_ASOBANCARIA: string;
+  PUNTEO:string;
   CORREO_ASOBANCARIA: string;
   BANCO: string;
   TIPO_CUENTA: string;
@@ -50,6 +52,7 @@ export class FactutasConvenioComponent  implements OnInit {
   TipoVencimiento:any[]=[];
   TipoAsobancaria:any[]=[];
   PagosAsobancaria:any[]=[];
+  TipoPunteo:any[]=[];
   TipoCuentaAsobancaria:any[]=[];
   BancosAsobancaria:any[]=[];
   FacturasConvenio:any[]=[];
@@ -78,6 +81,7 @@ export class FactutasConvenioComponent  implements OnInit {
     FECHA_FINALIZACION: "",
     ASOBANCARIA: "",
     TIPO_ASOBANCARIA: "",
+    PUNTEO:"",
     CORREO_ASOBANCARIA: "",
     BANCO: "",
     TIPO_CUENTA: "",
@@ -111,7 +115,8 @@ export class FactutasConvenioComponent  implements OnInit {
     DIAS_VENCIMIENTO:"",
     FECHA_FINALIZACION:"",
     ASOBANCARIA:"",
-    TIPO_ASOBANCARIA:"",    
+    TIPO_ASOBANCARIA:"",
+    PUNTEO:"",
     CORREO_ASOBANCARIA:"",
     BANCO:"",        
     TIPO_CUENTA:"",
@@ -155,7 +160,7 @@ export class FactutasConvenioComponent  implements OnInit {
   mostrarMas:boolean=false;
   
 
-  constructor(private recaudoService: RecaudoService, private router: Router) { }
+  constructor(private recaudoService: RecaudoService, private router: Router,private loadingController: LoadingController,) { }
 
   ngOnInit() {
     this.ListarConvenios();
@@ -164,6 +169,7 @@ export class FactutasConvenioComponent  implements OnInit {
     this.ListarBancosAsobancaria();
     this.ListarTiposCuentaAsobancaria();
     this.ListarPagosAsobancaria();
+    this.ListarTipoPunteo();
   }
 
   ionViewWillEnter() {
@@ -191,7 +197,6 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getTipoVencimientoFactura(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.TipoVencimiento= data.TIPOS_VENCIMIENTO;
         },
         (error) => {
@@ -206,8 +211,21 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoPagosAsobancaria(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.PagosAsobancaria= data.PAGOS_ASOBANCARIA;
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+
+  }
+
+  ListarTipoPunteo(){
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getListadoTipoPunteo(Number(this.empresa),this.usuario,this.token).subscribe(
+        (data: any) => {
+          this.TipoPunteo= data.TIPOS_PUNTEO;
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -221,7 +239,6 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getTipoAsobancariaFactura(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.TipoAsobancaria= data.TIPOS_ASOBANCARIA;
         },
         (error) => {
@@ -236,7 +253,6 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getTipoCuentaAsobancaria(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.TipoCuentaAsobancaria= data.TIPOS_CUENTA;
         },
         (error) => {
@@ -251,7 +267,6 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getBancosAsobancaria(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.BancosAsobancaria= data.BANCOS;
         },
         (error) => {
@@ -266,7 +281,6 @@ export class FactutasConvenioComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarConvenios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoConveniosActivos= data.CONVENIOS_ACTIVOS;
           
         },
@@ -278,11 +292,15 @@ export class FactutasConvenioComponent  implements OnInit {
   }
   
 
-  ListarFacturasConvenio(){
+  async ListarFacturasConvenio(){
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await loading.present();
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarFacturasConvenio(Number(this.empresa),this.usuario,this.token).subscribe(
-        (data: any) => {
-          console.log('Respuesta del servicio:', data);
+        async (data: any) => {
           if(this.facturas=="ACTIVAS"){
             this.FacturasConvenio= data.LISTADO_FACTURAS_ACTIVAS;
           }
@@ -290,9 +308,10 @@ export class FactutasConvenioComponent  implements OnInit {
             this.FacturasConvenio= data.LISTADO_FACTURAS_INACTIVAS;
           }
           this.filteredList = this.FacturasConvenio;
-
+          await loading.dismiss();
         },
-        (error) => {
+        async (error) => {
+          await loading.present();
           console.error('Error al llamar al servicio:', error);
         }
       );
@@ -308,11 +327,9 @@ export class FactutasConvenioComponent  implements OnInit {
   }
 
   CrearFacturaConvenio(){
-    console.log("Enviado:",this.datos)
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearFacturaConvenio(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -335,6 +352,7 @@ export class FactutasConvenioComponent  implements OnInit {
               FECHA_FINALIZACION: "",
               ASOBANCARIA: "",
               TIPO_ASOBANCARIA: "",
+              PUNTEO:"",
               CORREO_ASOBANCARIA: "",
               BANCO: "",
               TIPO_CUENTA: "",
@@ -386,6 +404,7 @@ export class FactutasConvenioComponent  implements OnInit {
       FECHA_FINALIZACION: "",
       ASOBANCARIA: "",
       TIPO_ASOBANCARIA: "",
+      PUNTEO:"",
       CORREO_ASOBANCARIA: "",
       BANCO: "",
       TIPO_CUENTA: "",
@@ -413,7 +432,6 @@ MostrarMas(respuesta: any) {
 
 filtro(event: any){
   this.datos.FECHA_FINALIZACION = formatDate(event.detail.value, 'd/MM/yyyy', 'en-US');
-  console.log("fecha: ",event.detail.value)
   
 }
 
@@ -534,6 +552,7 @@ filtro(event: any){
       FECHA_FINALIZACION: respuesta1.FECHA_FINALIZACION,
       ASOBANCARIA: respuesta1.ASOBANCARIA,
       TIPO_ASOBANCARIA: respuesta1.TIPO_ASOBANCARIA,
+      PUNTEO:respuesta1.PUNTEO,
       CORREO_ASOBANCARIA: respuesta1.CORREO_ASOBANCARIA,
       BANCO: respuesta1.BANCO,
       TIPO_CUENTA: respuesta1.TIPO_CUENTA,
@@ -572,7 +591,6 @@ filtro(event: any){
     // Crear el objeto Date con la cadena formateada
     this.fecha = fechaHora;
     
-    console.log("FECHA:", fechaHora);
     }
     
 
@@ -586,10 +604,8 @@ filtro(event: any){
   ModificarFacturaConvenio(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       
-      console.log("enviado: ",this.datos)
       this.recaudoService.postModificarFacturaConvenio(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);

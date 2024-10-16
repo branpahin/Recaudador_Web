@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
+import * as saveAs from 'file-saver';
 
 @Component({
   selector: 'app-listado-cuadres-punto-pago',
@@ -54,7 +55,6 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -105,6 +105,32 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     respuesta.selected = !respuesta.selected;
   }
 
+  imprimir(data:any){
+    if(this.empresa !== null && this.usuario !== null && this.token !== null){
+    
+      this.recaudoService.getImprimirCuadre(Number(this.empresa), data.NUMERO_ARQUEO, this.token).subscribe(
+        (response: Blob) => {
+          const fileName = `Cierre_Arqueo_${data.NUMERO_ARQUEO}.pdf`;
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+  
+          // Abre el archivo PDF en una nueva pestaña
+          const newWindow = window.open(url, '_blank');
+          if (newWindow) {
+            newWindow.focus(); // Asegúrate de que la nueva pestaña tenga el foco
+          } else {
+            alertify.warning("Por favor habilita ventanas emergentes para ver el PDF.");
+          }
+  
+          alertify.success("Archivo PDF generado con éxito.");
+        },
+        (error) => {
+          alertify.error("Error al descargar el archivo: ");
+        }
+      );
+    }
+  }
+
   Aprobar(codPuntoPago:string,numeroArqueo: string){
     this.codigo_punto_pago=codPuntoPago;
     this.arqueoSelect=numeroArqueo;
@@ -133,7 +159,6 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getConsultarCuadresPunto(Number(this.empresa),this.accion,Number(this.codigo_punto_pago),this.usuario,this.token,).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
 
           if(this.accion=="1"){
             this.listadoCuadres= data.CUADRES_PENDIENTES;
@@ -158,7 +183,6 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postAccionCuadrePunto(this.empresa,this.codigo_punto_pago,this.arqueoSelect,this.accionCuadre,this.observacion,this.usuario,this.token,).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             

@@ -26,7 +26,7 @@ export class PuntosPagoComponent  implements OnInit {
         this.listadoPuntosPago = data.PUNTOS_PAGO;
       },
       error: error => {
-        console.log(error);
+        console.error(error);
       }
     });
   }

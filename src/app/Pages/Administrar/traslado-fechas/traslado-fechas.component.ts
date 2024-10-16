@@ -41,7 +41,7 @@ export class TrasladoFechasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -73,7 +73,7 @@ export class TrasladoFechasComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
     

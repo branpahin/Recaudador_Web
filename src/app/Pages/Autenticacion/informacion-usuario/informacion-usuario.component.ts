@@ -45,7 +45,7 @@ export class InformacionUsuarioComponent  implements OnInit {
     if (this.usuario !== null && this.token !== null && this.empresa !== null) {
       this.recaudoService.getInformacionUsuario(this.empresa, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.resultado = data;
           this.datos.DOCUMENTO=data.NUMERO_DOCUMENTO;
           this.datos.EMPRESA=data.EMPRESA;
@@ -99,7 +99,7 @@ export class InformacionUsuarioComponent  implements OnInit {
   modificarUsuario(){
     this.recaudoService.postModificarInformacion(this.datos).subscribe(
     (data:any) => {
-      console.log('Respuesta del servicio:', data);
+      
       alertify.success(data.RESPUESTA);
       this.clave="";
       this.claveAnterior="";

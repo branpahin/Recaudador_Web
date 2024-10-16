@@ -28,7 +28,7 @@ export class InformacionPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.codigo_punto_pago!== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getInformacionPuntoPago(Number(this.empresa),Number(this.codigo_punto_pago),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.resultado = [data];
         },
         (error) => {

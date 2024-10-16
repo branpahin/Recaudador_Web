@@ -191,7 +191,7 @@ export class CierreArqueoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getTipoEntregas(Number(this.empresa), 3, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log("monedas: ",data)
+          
           this.monedas = data.MONEDAS;
   
           const detalleEspecifico = this.datos.BASE.BASE_DET.find(detalle => detalle.CODIGO_MONEDA === this.otraVariable);
@@ -244,7 +244,7 @@ export class CierreArqueoComponent  implements OnInit {
           }
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
     }
@@ -258,14 +258,14 @@ export class CierreArqueoComponent  implements OnInit {
 
           if(data.COD=='200'){
             this.datos.VALOR_RECAUDADO_REPORTADO=data.VALOR_TOTAL_ENTREGAS;
-            console.log(data);
+            
           }
           else{
             alertify.error(data.RESPUESTA);
           }
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
     }
@@ -323,7 +323,7 @@ export class CierreArqueoComponent  implements OnInit {
     this.recaudoService.postCierreArqueo(this.datos)
     .subscribe((respuesta) =>{
       this.resultado = respuesta;
-      console.log(respuesta);
+      
       if(this.resultado.COD=='200'){
         alertify.success(this.resultado.RESPUESTA);
         localStorage.removeItem('numeroArqueo');

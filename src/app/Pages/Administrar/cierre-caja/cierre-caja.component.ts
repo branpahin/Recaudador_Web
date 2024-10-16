@@ -56,7 +56,6 @@ export class CierreCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -72,7 +71,6 @@ export class CierreCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoConvenioCierre(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoConvenios= data.CONVENIOS_CIERRE;
           this.datos.CODIGO_CONVENIO="";
           this.datos.IDENTIFICADOR_PUNTO_PAGO="";
@@ -89,7 +87,6 @@ export class CierreCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoCajasConvenioCierre(Number(this.empresa),this.datos.CODIGO_CONVENIO,this.datos.CODIGO_PUNTO_PAGO,this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoCajasConvenios= data.CAJAS_CIERRE;
         },
         (error) => {
@@ -130,7 +127,6 @@ export class CierreCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCierreCaja(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           const detallecodigo = this.listado.find(detalle => detalle.ID_CAJA===this.datos.IDENTIFICADOR_PUNTO_PAGO);
           if(this.resultado.COD=="200" && detallecodigo?.ID_CAJA!=this.datos.IDENTIFICADOR_PUNTO_PAGO && detallecodigo?.FECHA!=this.datos.FECHA_CIERRE){

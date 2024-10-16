@@ -115,7 +115,7 @@ export class EntregaArqueoComponent  implements OnInit {
 
     nuevoDetalle.VALOR_UNITARIO = String(this.valorfajo);
     this.datos.ENTREGAS_DET.push(nuevoDetalle);
-    console.log("datos: ",this.datos.ENTREGAS_DET)
+    
 
     this.detalle = {
       CODIGO_MONEDA: "",
@@ -131,7 +131,7 @@ export class EntregaArqueoComponent  implements OnInit {
   eliminarFila(detalle:{ CODIGO_MONEDA: any; TIPO: string; CANTIDAD:string; VALOR_UNITARIO:string; VALOR:string}){
     const codigoMoneda = detalle.CODIGO_MONEDA;
     this.datos.ENTREGAS_DET = this.datos.ENTREGAS_DET.filter(detalle => detalle.CODIGO_MONEDA !== codigoMoneda);
-    console.log("valorrr:",detalle.VALOR)
+    
     this.totalDetallesFal=this.totalDetallesFal+Number(detalle.VALOR);
     
   }
@@ -330,6 +330,48 @@ export class EntregaArqueoComponent  implements OnInit {
   
   }
 
+  formatNumberInputBogota(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let inputValue = inputElement.value.trim();
+  
+    const isNegative = inputValue.startsWith('-');
+    if (isNegative) {
+      inputValue = inputValue.substring(1);
+    }
+  
+    inputValue = inputValue.replace(/\D/g, '');
+  
+    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+    if (isNegative) {
+      inputValue = '-' + inputValue;
+    }
+  
+    this.datos2.CORRESPONSAL_1 = inputValue;
+  
+  }
+
+  formatNumberInputRed(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let inputValue = inputElement.value.trim();
+  
+    const isNegative = inputValue.startsWith('-');
+    if (isNegative) {
+      inputValue = inputValue.substring(1);
+    }
+  
+    inputValue = inputValue.replace(/\D/g, '');
+  
+    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+    if (isNegative) {
+      inputValue = '-' + inputValue;
+    }
+  
+    this.datos2.CORRESPONSAL_2 = inputValue;
+  
+  }
+
 
   
   limpiarYEnviar() {
@@ -339,12 +381,14 @@ export class EntregaArqueoComponent  implements OnInit {
     this.datos2.DATAFONO_EEP=this.datos2.DATAFONO_EEP.replace(/\./g, '');
     this.datos2.DATAFONO_MUNICIPIO=this.datos2.DATAFONO_MUNICIPIO.replace(/\./g, '');
     this.datos2.PRESTAMOS_EEP=this.datos2.PRESTAMOS_EEP.replace(/\./g, '');
+    this.datos2.CORRESPONSAL_1=this.datos2.CORRESPONSAL_1.replace(/\./g, '');
+    this.datos2.CORRESPONSAL_2=this.datos2.CORRESPONSAL_2.replace(/\./g, '');
     this.datos2.VALOR_CHEQUES=this.datos2.VALOR_CHEQUES.replace(/\./g, '');
     
     
-    console.log("Cheque2: ",this.datos2.VALOR_CHEQUES)
     
-    console.log("Enviado2: ",this.datos2)
+    
+    
     this.entregaArqueo();
   }
 
@@ -359,7 +403,7 @@ export class EntregaArqueoComponent  implements OnInit {
       .subscribe((respuesta) => {
        
         this.resultado=respuesta;
-        console.log(respuesta);
+        
         if(this.resultado.COD=='200'){
           alertify.success(this.resultado.RESPUESTA);
           this.mostrartabla=false;
@@ -398,7 +442,7 @@ export class EntregaArqueoComponent  implements OnInit {
           this.mostrartabla=false;
         }
         else  {
-          console.log(this.datos2);
+          
           this.formatoNumero();
           alertify.error(this.resultado.RESPUESTA);
           this.enviar=true;
@@ -411,9 +455,9 @@ export class EntregaArqueoComponent  implements OnInit {
     }else{
       this.recaudoService.postEntregaArqueo(this.datos)
       .subscribe((respuesta) => {
-        console.log("Enviado: ",this.datos);
+        
         this.resultado=respuesta;
-        console.log(respuesta);
+        
         if(this.resultado.COD=='200'){
           alertify.success(this.resultado.RESPUESTA);
           this.mostrartabla=false;
@@ -453,7 +497,7 @@ export class EntregaArqueoComponent  implements OnInit {
           }
         else  {
           this.formatoNumero();
-          console.log(this.datos);
+          
           alertify.error(this.resultado.RESPUESTA);
           this.enviar=true;
         }

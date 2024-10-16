@@ -34,15 +34,21 @@ export class CargarArchivoOfflineComponent  implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Cargando Archivo...',
       spinner: 'crescent',
+      cssClass: 'custom-loading'
     });
 
     await loading.present();
     if (this.selectedFile && this.empresa && this.usuario && this.token) {
       this.recaudoService.postCargarArchivo(this.selectedFile, this.empresa, this.usuario, this.token).subscribe(
         async (response) => {
-          this.respuesta=response
-          console.log('Archivo enviado exitosamente', response);
-          alertify.success(this.respuesta);
+          this.respuesta=response.RESPUESTA
+          if(response.COD=="200"){
+            alertify.success(this.respuesta);
+            this.selectedFile=null;
+            this.ngOnInit();
+          }else{
+            alertify.error(this.respuesta);
+          }
           await loading.dismiss();
         },
         async (error) => {

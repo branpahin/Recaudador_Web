@@ -20,7 +20,6 @@ export class CajasSacComponent  implements OnInit {
     
     this.currentDateTime = now.toISOString();
     
-    console.log("now: ",this.currentDateTime)
     this.fecha(this.currentDateTime);
   }
 
@@ -33,7 +32,6 @@ export class CajasSacComponent  implements OnInit {
     if (this.token !== null) {
       this.recaudoService.getListadoCajasActivasSac(this.token,this.fechas).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           if(data.COD!='200'){
             this.respuesta=data.RESPUESTA;
           }else{

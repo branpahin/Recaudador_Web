@@ -120,7 +120,6 @@ export class AsignarCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -147,7 +146,6 @@ export class AsignarCajaComponent  implements OnInit {
             this.guardar=false;
           }
         
-          console.log('Respuesta del servicio:', this.empresas);
           this.puntosPago = this.obtenerCodigosPuntoPago();
         },
         (error) => {
@@ -161,7 +159,6 @@ export class AsignarCajaComponent  implements OnInit {
   actualizarCajasSinAsignar() {
     if (this.empresa_Asignada) {
       this.detalle.CODIGO_PUNTO_PAGO=this.empresa_Asignada;
-      console.log("punto: ",this.empresa_Asignada)
       const puntoSeleccionado = Object.values(this.empresas).find(punto => (punto as PuntoPago).CODIGO_PUNTO_PAGO === this.empresa_Asignada);
       this.cajasSinAsignar = puntoSeleccionado ? (puntoSeleccionado as PuntoPago).CAJAS_SIN_ASIGNAR || [] : [];
       this.cajasAsignadas = puntoSeleccionado ? (puntoSeleccionado as PuntoPago).CAJAS_ASIGNADAS || [] : [];
@@ -189,9 +186,6 @@ export class AsignarCajaComponent  implements OnInit {
         (data: any) => {
           this.usuarios = data.CAJEROS_SIN_ASIGNAR;
 
-  
-          console.log('Respuesta del servicio:', data);
-          
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -205,7 +199,6 @@ export class AsignarCajaComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoUsuarios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoUsuarios= data.USUARIOS_ACTIVOS;
 
         },
@@ -222,7 +215,6 @@ export class AsignarCajaComponent  implements OnInit {
 
   ModificarCaja(){
     
-    console.log("enviado:", this.modificar);
     this.recaudoService.postModificarCajas(this.modificar)
         .subscribe((respuesta) => {
           this.guardar=true;

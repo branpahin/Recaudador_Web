@@ -125,7 +125,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoCamposBarra(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.listadoCamposBarras= data.CAMPOS_PARAMETROS_BARRA;
         },
         (error) => {
@@ -140,7 +140,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoFacturasBarras(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           if(this.facturas=="ACTIVAS"){
             this.FacturasBarras= data.FACTURAS_BARRAS_ACTIVAS;
           }
@@ -183,7 +183,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
         OBLIGATORIO: "" 
       }
       
-    console.log("camposNuevos:",this.datosNuevos)
+    
     }else{
       this.mostrarCamposAgregar=false;
       const campo : Detalle = { ...this.detalle};
@@ -197,7 +197,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       }
       
 
-      console.log("campos:",this.datos.CAMPOS)
+      
     }
   }
 
@@ -213,7 +213,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postEliminarFacturaBarra(this.datosEliminar).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -265,7 +265,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       this.mostrarModificar=false;
     
     }
-    console.log("datos:",this.datos)
+    
     this.crear=true;
     this.ListarCamposBarras();
    
@@ -281,13 +281,13 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       this.datosNuevos.USUARIO= this.usuario,
       this.datosNuevos.TOKEN=this.token
 
-      console.log("entro para enviar")
+      
       this.CrearFacturaBarras();
     }else{
       if (this.empresa !== null && this.usuario !== null && this.token !== null) {
         this.recaudoService.postModificarFacturaBarra(this.datos).subscribe(
           (data: any) => {
-            console.log('Respuesta del servicio:', data);
+            
             this.resultado= data;
             if(this.resultado.COD=="200"){
               alertify.success(this.resultado.RESPUESTA);
@@ -311,7 +311,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       if(this.mostrarCamposAgregar){
         this.recaudoService.postCrearFacturaBarra(this.datosNuevos).subscribe(
           (data: any) => {
-            console.log('Respuesta del servicio:', data);
+            
             this.resultado= data;
             if(this.resultado.COD=="200"){
               alertify.success(this.resultado.RESPUESTA);
@@ -329,7 +329,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       }else{
         this.recaudoService.postCrearFacturaBarra(this.datos).subscribe(
           (data: any) => {
-            console.log('Respuesta del servicio:', data);
+            
             this.resultado= data;
             if(this.resultado.COD=="200"){
               alertify.success(this.resultado.RESPUESTA);

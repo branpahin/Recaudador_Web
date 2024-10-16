@@ -53,10 +53,10 @@ export class ConveniosManualWsComponent  implements OnInit {
       if(this.selectedConvenio === convenio.CODIGO_CONVENIO){
         for(let convenioDet of convenio.CODIGOS_CONVENIO_DET){
           contador=contador+1
-          console.log("ConvenioDet: ",contador)
+          
           
           localStorage.setItem('NombreConvenioDet',convenioDet.NOMBRE_CONVENIO_DET);
-          console.log("ConvenioDet: ",convenioDet)
+          
           if(contador>1){
             this.mostrarsoloDet=true;
           }else{
@@ -87,7 +87,7 @@ export class ConveniosManualWsComponent  implements OnInit {
         {
           localStorage.setItem('NombreConvenio',detalleEspecifico[i].NOMRE_CONVENIO);
           //localStorage.setItem('NombreConvenioDet',detalleEspecifico[i].NOMRE_CONVENIO_DET);
-          console.log("convenioDet: ",detalleEspecifico[i].NOMRE_CONVENIO_DET)
+          
         }    
       }
                                             

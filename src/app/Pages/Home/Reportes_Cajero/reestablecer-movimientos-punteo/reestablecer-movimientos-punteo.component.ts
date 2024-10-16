@@ -22,7 +22,7 @@ export class ReestablecerMovimientosPunteoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.arqueo !== null) {
       this.recaudoService.getReestablecerMovimientosPunteo(Number(this.empresa),this.usuario,this.token,this.arqueo).subscribe(
         (data: any) => {
-          console.log(data);
+          
           this.resultado=data;
         },
         (error) => {

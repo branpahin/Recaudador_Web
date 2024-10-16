@@ -172,7 +172,7 @@ export class ConsultarArqueoComponent  implements OnInit {
             }
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
   }
@@ -190,7 +190,7 @@ export class ConsultarArqueoComponent  implements OnInit {
             }
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
     }
@@ -239,7 +239,7 @@ export class ConsultarArqueoComponent  implements OnInit {
     if(this.lstfacturas==""){
       this.lstfacturas="0";
     }
-    console.log("entró PDF: ",this.empresaCod,this.CODpuntoPago,this.arqueoNum,movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
+    
     if(this.detalleSeleccionado){
       this.agrupado="N";
       movimiento=this.detalleSeleccionado;
@@ -248,7 +248,7 @@ export class ConsultarArqueoComponent  implements OnInit {
     this.recaudoService.getImpresiónTicket(this.empresaCod,this.CODpuntoPago,this.arqueoNum,movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
     .subscribe(
       (response) => {
-        const url = 'http://172.25.2.2:18000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresaCod+
+        const url = this.recaudoService.url+'api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresaCod+
                     '&CODIGO_PUNTO_PAGO='+this.CODpuntoPago+
                     '&NUMERO_ARQUEO='+this.arqueoNum+
                     '&NUMERO_MOVIMIENTO='+movimiento+

@@ -26,11 +26,11 @@ export class EstadoArqueoComponent  implements OnInit {
     const usuario = localStorage.getItem('usuario') || '';
     this.recaudoService.postEstadoArqueo(this.estado_arqueo.EMPRESA, this.estado_arqueo.NUMERO_ARQUEO, this.estado_arqueo.CODIGO_PUNTO_PAGO, usuario, token).subscribe({
       next:data=>{
-        console.log(data);
+        
         this.resultado=data;
       },
       error: error => {
-        console.log(error);
+        console.error(error);
       }
     });
   }

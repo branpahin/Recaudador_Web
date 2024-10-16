@@ -282,7 +282,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
           this.filteredList = this.listadoPuntos;
         },
@@ -300,7 +299,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoSubPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoSubPuntosPago= data.SUB_PUNTOS_PAGO;
         },
         (error) => {
@@ -315,7 +313,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.puntoPago !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getFormaPago(Number(this.empresa),Number(this.puntoPago), this.accion, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.pago = data.FORMAS_PAGO;
         },
         (error) => {
@@ -330,7 +327,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarTipoPuntoPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoTipoPuntosPago= data.TIPOS_PUNTO_PAGO;
         },
         (error) => {
@@ -346,7 +342,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
 
       this.recaudoService.getListarUsuariosEncargado(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio usuarios:', data);
           this.UsuariosEncargado= data.USUARIOS_ENCARGADOS;
         },
         (error) => {
@@ -361,7 +356,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarEstadosPuntoPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoEstadoPuntos= data.ESTADOS_PUNTO_PAGO;
         },
         (error) => {
@@ -376,7 +370,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarConvenios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoConveniosActivos= data.CONVENIOS_ACTIVOS;
           this.ListarFacturasConvenio();
 
@@ -393,8 +386,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarFacturasConvenio(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
-
             this.listadoConvenios= data.LISTADO_FACTURAS_ACTIVAS;
 
         },
@@ -469,14 +460,12 @@ export class ListadoPuntosPagoComponent  implements OnInit {
   }
 
   CrearPuntoPago(){
-    console.log('enviado:', this.datos);
     this.datos.HORA_MAXIMA_RECAUDO=this.horaMax;
     this.datos.FORMA_PAGO=this.lstFormaPago;
     this.datos.HORARIO=this.inicio+" - "+this.fin+" "+this.horaInicio+" a "+this.horaFin;
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearPuntoPago(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -589,7 +578,6 @@ export class ListadoPuntosPagoComponent  implements OnInit {
 
       this.datos.HORARIO=this.inicio+" - "+this.fin+" "+this.horaInicio+" a "+this.horaFin;
     } else {
-      console.log("No se pudo extraer la información del horario.");
     }
     let cadenaFormaPago: string = this.datos.FORMA_PAGO || '';
       
@@ -631,7 +619,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
     
@@ -665,7 +653,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
   }
@@ -719,10 +707,8 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     this.datos.HORARIO=this.inicio+" - "+this.fin+" "+this.horaInicio+" a "+this.horaFin;
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       
-      console.log('enviado:', this.datos);
       this.recaudoService.postModificarPuntoPago(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);

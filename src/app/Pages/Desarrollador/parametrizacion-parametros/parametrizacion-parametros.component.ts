@@ -114,7 +114,7 @@ export class ParametrizacionParametrosComponent  implements OnInit {
         }
         this.recaudoService.postConsultarInfoParametros(this.datos).subscribe(
           (data: any) => {
-            console.log('Respuesta del servicio:', data);
+            
             this.resultado= data;
             if(this.resultado.COD=="200"){
               this.informacionConsulta=data.INFORMACION_PARAMETROS;
@@ -139,7 +139,7 @@ export class ParametrizacionParametrosComponent  implements OnInit {
         }
         this.recaudoService.postConsultarInfoTablas(this.datos).subscribe(
           (data: any) => {
-            console.log('Respuesta del servicio:', data);
+            
             this.resultado= data;
             if(this.resultado.COD=="200"){
               this.informacionConsulta=data.INFORMACION_TABLAS;

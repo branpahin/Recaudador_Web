@@ -27,7 +27,7 @@
       
             <ion-item >
               <ion-label position="stacked">Valor total</ion-label>
-              <ion-input label="" [(ngModel)]="datos.VALOR_TOTAL" name="valor"  placeholder="$" required appFormatoMonetario></ion-input>
+              <ion-input label="" [(ngModel)]="datos.VALOR_TOTAL" name="valor" (input)="infoMonedas($event)" placeholder="$" required appFormatoMonetario></ion-input>
             </ion-item>
       
            
@@ -90,13 +90,13 @@
               <ion-col>
                 <ion-item>
                   <ion-label position="stacked">Banco de Bogota</ion-label>
-                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_1" name="valor" placeholder="$" appFormatoMonetario></ion-input>
+                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_1" name="valor" placeholder="$" (input)="formatNumberInputBogota($event)"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col>
                 <ion-item>
                   <ion-label position="stacked">Punto Red</ion-label>
-                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_2" name="valor" placeholder="$" appFormatoMonetario></ion-input>
+                  <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_2" name="valor" placeholder="$" (input)="formatNumberInputRed($event)"></ion-input>
                 </ion-item>
               </ion-col>
       
@@ -107,11 +107,6 @@
         </ion-row>
       </ion-grid>
           
-        
-
-      
-
-
       <div *ngIf="mostrartabla">
         <ion-grid class="detalle-container">
           <ion-row>

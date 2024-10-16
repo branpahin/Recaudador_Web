@@ -27,11 +27,26 @@
 @import '~alertifyjs/build/css/alertify.min.css';
 @import '~alertifyjs/build/css/themes/default.min.css';
 
-ion-loading .loading-wrapper {
-    background: #ffa500 !important; /* Fondo naranja */
-    color: white !important; /* Texto en blanco */
+.custom-loading .loading-wrapper {
+    background: #ffa500 !important;
+    color: white !important;
   }
   
-  ion-loading .spinner-crescent circle {
-    stroke: #ffa500 !important; /* Cambia el color del spinner a naranja */
+  .custom-loading .spinner-crescent{
+    --spinner-color: #ffffff;
   }
+
+  .custom-spinner .spinner-crescent {
+    --spinner-color: #ffa500;
+    width: 150px !important;
+    height: 150px !important;
+  }
+  
+  .custom-spinner .loading-wrapper {
+    width: 150px !important; 
+    height: 150px !important;
+    background: transparent;
+    box-shadow: none !important; 
+    border: none !important; 
+  }
+  

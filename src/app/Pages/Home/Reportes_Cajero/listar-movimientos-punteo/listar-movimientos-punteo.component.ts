@@ -42,14 +42,19 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
   modificar: any;
   restablece: any;
   visual:boolean=false;
+  listadoConvenios:any []=[];
   resultado: any[] = [];
   resultado2: any[] = [];
+  searchTerm: string = '';
+  filteredList: any[] = [];
+  conveniosSeleccionados: any[] = [];
 
   
   constructor(private recaudoService: RecaudoService, private router: Router, private cdRef: ChangeDetectorRef, private modalController: ModalController) { }
 
   ngOnInit() {
     this.listarMovimientos();
+    this.filterLista();
     this.visual=false;
   }
 
@@ -57,9 +62,32 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.arqueo !== null) {
       this.recaudoService.getListarMovimientosPunteo(Number(this.empresa),this.usuario,this.token,this.arqueo).subscribe(
         (data: any) => {
-          console.log(data);
-          this.resultado=data.FACTURAS_PENDIENTES;
-          this.resultado2=data.FACTURAS_VALIDADAS;
+          
+          if(data.COD=="200"){
+            this.resultado=data.FACTURAS_PENDIENTES;
+            this.resultado2=data.FACTURAS_VALIDADAS;
+  
+            const codigosConvenio = new Set();
+            this.listadoConvenios = this.resultado.filter((factura: any) => {
+              if (!codigosConvenio.has(factura.CODIGO_CONVENIO)) {
+                codigosConvenio.add(factura.CODIGO_CONVENIO);
+                return true;
+              }
+              return false;
+            }).map((factura: any) => {
+              return {
+                CODIGO_CONVENIO: factura.CODIGO_CONVENIO,
+                NOMBRE_CONVENIO: factura.NOMBRE_CONVENIO
+              };
+            });
+  
+            
+            this.conveniosSeleccionados = this.listadoConvenios.map((factura: any) => factura.CODIGO_CONVENIO);
+            this.filteredList = this.resultado;
+          }else{
+            alertify.warning("No hay facturas por puntear")
+          }
+         
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -70,6 +98,22 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
       console.error('El valor del tipo de empresa no existe');
     }
 
+  }
+
+  updateSelectedConvenios() {
+    // Opcionalmente, podrías realizar acciones adicionales aquí si es necesario
+    
+  }
+  
+  // Filtra los datos de resultado en función de los convenios seleccionados
+  getFilteredResultados() {
+    if (this.conveniosSeleccionados.length === 0) {
+      return this.resultado;
+    }
+  
+    return this.resultado.filter((factura: any) =>
+      this.conveniosSeleccionados.includes(factura.CODIGO_CONVENIO)
+    );
   }
 
   limpiarCampo() {
@@ -103,7 +147,39 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
   // }
 
   buscarReferencia() {
-    this.visual=true;
+    this.visual=!this.visual;
+  }
+
+  ListarConvenios(){
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getListarConvenios(Number(this.empresa),this.usuario,this.token).subscribe(
+        (data: any) => {
+          
+          this.listadoConvenios= data.CONVENIOS_ACTIVOS;
+
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+
+  }
+  
+
+  toggleConvenio(codigoConvenio: string, event: any) {
+    if (event.detail.checked) {
+      this.conveniosSeleccionados.push(codigoConvenio);
+    } else {
+      this.conveniosSeleccionados = this.conveniosSeleccionados.filter(codigo => codigo !== codigoConvenio);
+    }
+    this.filterLista();
+  }
+  
+  filterLista() {
+    this.filteredList = this.resultado.filter(item =>
+      this.conveniosSeleccionados.includes(item.CODIGO_CONVENIO)
+    );
   }
 
   modificarMovimientoPunteoBarras(){
@@ -112,14 +188,14 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
       this.modificar = data;
     if(data.COD=="200"){
         
-      console.log(data);
+      
       this.listarMovimientos();
       this.limpiarCampo();
     }
     else if(data.COD!="200")
     { 
       alertify.error(data.RESPUESTA);
-      console.log("respuesta: ",data.RESPUESTA);
+      
       this.limpiarCampo();
     }
 
@@ -139,14 +215,14 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
       this.modificar = data;
       if(data.COD=="200"){
         
-        console.log(data);
+        
         this.listarMovimientos();
         this.limpiarCampo();
       }
       else
       { 
         alertify.error(data.RESPUESTA);
-        console.log("respuesta: ",data.RESPUESTA);
+        
         this.limpiarCampo();
       }
     }, );
@@ -157,7 +233,7 @@ export class ListarMovimientosPunteoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.arqueo !== null) {
       this.recaudoService.getReestablecerMovimientosPunteo(Number(this.empresa),this.usuario,this.token,this.arqueo).subscribe(
         (data: any) => {
-          console.log(data);
+          
           this.restablece=data;
           this.listarMovimientos();
           //this.router.navigate(['/listar-movimientos-punteo']);

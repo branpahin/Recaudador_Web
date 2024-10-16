@@ -55,7 +55,6 @@ export class CrearMensajeComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -70,7 +69,6 @@ export class CrearMensajeComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarMensajes(Number(this.empresa),Number(this.datos.CODIGO_PUNTO_PAGO),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoMensajesActivos= data.MENSAJES_ACTIVOS;
           this.listadoMensajesInactivos= data.MENSAJES_INACTIVOS;
         },
@@ -117,7 +115,7 @@ export class CrearMensajeComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
   }
@@ -157,7 +155,7 @@ export class CrearMensajeComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
   }
@@ -220,7 +218,7 @@ export class CrearMensajeComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
   }
@@ -247,7 +245,7 @@ export class CrearMensajeComponent  implements OnInit {
 
       },
       error: error => {
-        console.log("Respuesta:",error);
+        console.error("Respuesta:",error);
       }
     });
     

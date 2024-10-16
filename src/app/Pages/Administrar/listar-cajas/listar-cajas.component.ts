@@ -24,7 +24,6 @@ export class ListarCajasComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarCajas(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.puntoPago_0 = data.PUNTO_PAGO_0;
           this.puntoPago_1 = data.PUNTO_PAGO_1;
           this.puntoPago_2 = data.PUNTO_PAGO_2;

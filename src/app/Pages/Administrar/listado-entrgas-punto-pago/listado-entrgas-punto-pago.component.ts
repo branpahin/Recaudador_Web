@@ -57,7 +57,6 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -143,7 +142,6 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getConsultarEntregasPunto(Number(this.empresa),this.accion,Number(this.codigo_punto_pago),this.usuario,this.token,).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
 
           if(this.accion=="1"){
             this.listadoEntregas= data.ENTREGAS_PENDIENTES;
@@ -174,7 +172,6 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
       this.recaudoService.getConsultarEntregasPuntoDet(Number(this.empresa),Number(this.codigo_punto_pago),this.arqueoSelect,this.entregaSelect,this.usuario,this.token,).subscribe(
         (data: any) => {
           this.listadoEntregasDet= data.ENTREGAS_DETALLE;
-          console.log("respuesta servicio: ",data)
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
@@ -188,7 +185,6 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postAccionEntregaPunto(this.empresa,this.codigo_punto_pago,this.arqueoSelect,this.entregaSelect,this.accionEntrega,this.observacion,this.usuario,this.token,).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             

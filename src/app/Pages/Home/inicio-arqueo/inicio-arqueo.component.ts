@@ -2,7 +2,7 @@ import { Component,OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
-import { MenuController, ModalController} from '@ionic/angular';
+import { LoadingController, MenuController, ModalController} from '@ionic/angular';
 import { interval } from 'rxjs';
 import { InformacionUsuarioComponent } from '../../Autenticacion/informacion-usuario/informacion-usuario.component';
 import { CargarArchivoOfflineComponent } from '../../Administrar/cargar-archivo-offline/cargar-archivo-offline.component';
@@ -91,11 +91,23 @@ export class InicioArqueoComponent  implements OnInit {
   mensajeCerrar:boolean=false;
   isToastOpen:boolean=false;
   intervalId: any;
+  loading:any;
+  load:boolean=false;
   
-  constructor(private recaudoService: RecaudoService, private router: Router, private menuCtrl: MenuController, private modalController: ModalController) { }
+  constructor(private recaudoService: RecaudoService, 
+    private router: Router, 
+    private menuCtrl: MenuController, 
+    private modalController: ModalController,
+    private loadingController: LoadingController) { }
 
   
-  ngOnInit() {
+  async ngOnInit() {
+    this.load=false;
+    this.loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await this.loading.present();
     
     interval(6000)
       .subscribe(() => {
@@ -104,8 +116,8 @@ export class InicioArqueoComponent  implements OnInit {
       });
 
     this.obtenerRol();
-    console.log("caja: "+this.codCaja);
-    console.log("token: "+this.token);
+    
+    
     this.EstadoTurnero();
   }
 
@@ -149,30 +161,39 @@ export class InicioArqueoComponent  implements OnInit {
     );
   }
   
-
   obtenerRol(){
     const usuario = localStorage.getItem('usuario') || '';
     const empresa = localStorage.getItem('empresaCOD') || '';
     const rol=localStorage.getItem('rol');
     
-    this.recaudoService.getObtenerRol(this.usuario, this.empresa, this.token).subscribe((data) => {
+    this.recaudoService.getObtenerRol(this.usuario, this.empresa, this.token).subscribe(async (data) => {
       this.resultado = data;
   
       if(rol!=this.resultado.IDENTIFICADOR_ROL){
-
+        await this.loading.dismiss();
+        this.load=true;
         alertify.error('¡¡El usuario cambío de Roll o expiro la sesión, se cerrara la sesión!!');
         setTimeout(() => {
           this.cerrarSesion();
         }, 5000);
 
       }else{
+        await this.loading.dismiss();
+        this.load=true;
         alertify.success('¡¡Acceso exitoso!!');
         localStorage.setItem('rol', this.resultado.IDENTIFICADOR_ROL);
         this.permisos();
         this.obtenerModulos();
       }
      
-    }, );
+    }, (error) => {
+      console.error('Error al cerrar sesión:', error);
+      alertify.alert("La sesión ha sido cerrada", () => {
+        this.cerrarSesion();
+        alertify.message('OK');
+        });
+      
+    });
 
   }
 
@@ -186,19 +207,14 @@ export class InicioArqueoComponent  implements OnInit {
     this.recaudoService.getObtenerModulo(empresa, usuario, rol, token).subscribe({
       next: data => {
         this.modulos = data.MODULOS;
-        console.log("modulos: ",this.modulos)
+        
       },
       error: error => {
-        console.log(error);
+        console.error(error);
       }
     } );
 
   }
-
-
-
-
-  
 
   cerrarMenu() {
     this.menuCtrl.close();
@@ -987,7 +1003,7 @@ export class InicioArqueoComponent  implements OnInit {
   }
 
   permisos(){
-    console.log("entrada permiso")
+    
     const rol= localStorage.getItem('rol') || '';
     
     
@@ -1038,7 +1054,7 @@ export class InicioArqueoComponent  implements OnInit {
           }
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
   }
@@ -1091,7 +1107,7 @@ export class InicioArqueoComponent  implements OnInit {
     
     this.turno=false;
     this.recaudoService.postActivarCajero(this.datosTurno).subscribe((data) => {
-      console.log(data);
+      
     }, );
 
   }
@@ -1100,7 +1116,7 @@ export class InicioArqueoComponent  implements OnInit {
     this.turno=true;
     this.datosTurno.PREFERENCIAL="0";
     this.recaudoService.postFinalizarCajero(this.datosTurno).subscribe((data) => {
-      console.log(data);
+      
     }, );
 
   }
@@ -1110,16 +1126,9 @@ export class InicioArqueoComponent  implements OnInit {
     if (this.token !== null && this.usuario!== null && this.empresa!==null) {
       this.recaudoService.postCerrarSesion(this.token,this.usuario,this.empresa).subscribe(
         (data) => {
-          localStorage.removeItem('usuario');
-          localStorage.removeItem('empresa');
-          localStorage.removeItem('empresaCOD');
-          localStorage.removeItem('rol');
-          localStorage.removeItem('token');
-          localStorage.removeItem('nombrePuntoPago');
-          localStorage.removeItem('numeroArqueo');
-          localStorage.removeItem('condigoCaja');
-          console.log('Sesión cerrada exitosamente.');
-          console.log(data);
+          localStorage.clear();
+          
+          
 
           this.router.navigate(['/login']).then(() => {
          
@@ -1129,12 +1138,16 @@ export class InicioArqueoComponent  implements OnInit {
         },
         (error) => {
           console.error('Error al cerrar sesión:', error);
+          localStorage.clear();
+          this.router.navigate(['/login']).then(() => {
+         
+            location.reload();
+            
+          });
           
         }
       );
     }
   }
-
-
 
 }

@@ -37,14 +37,12 @@ export class ReabrirArqueoComponent  implements OnInit {
     this.datosEnviar.VALOR_RECAUDADO_REPORTADO=this.datosEnviar.VALOR_RECAUDADO_REPORTADO.replace(/\./g, '');
     this.datosEnviar.NUMERO_CUPONES_REPORTADOS= this.datosEnviar.NUMERO_CUPONES_REPORTADOS.replace(/\./g, '')
 
-    console.log("datos enviar: ",this.datosEnviar)
   }
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -62,10 +60,8 @@ export class ReabrirArqueoComponent  implements OnInit {
   async ReabrirArqueo(empresa:string, codPuntoPago:string, numeroArqueo:string, numeroCupones:string, valorReportado:string){
     await this.formatoNumero();
 
-    //console.log("datos enviar: ",this.datosEnviar)
     this.recaudoService.postReabrirArqueo(this.datosEnviar).subscribe(
       (data: any) => {
-        console.log('Respuesta del servicio:', data);
         if(data.COD=="200"){
 
           alertify.success(data.RESPUESTA);
@@ -115,7 +111,6 @@ export class ReabrirArqueoComponent  implements OnInit {
     if (this.token !== null) {
       this.recaudoService.getListadoReabrirArqueo(Number(this.empresa),this.codigo_punto_pago,this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           if(data.COD!='200'){
             this.respuesta=data.RESPUESTA;
           }else{

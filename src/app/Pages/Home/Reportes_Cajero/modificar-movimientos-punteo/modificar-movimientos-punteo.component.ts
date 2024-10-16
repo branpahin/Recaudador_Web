@@ -61,7 +61,7 @@ export class ModificarMovimientosPunteoComponent  implements OnInit {
     
     this.recaudoService.postModificarMovimiento(this.datosConsulta).subscribe((data) => {
       this.resultado = data;
-      console.log(data);
+      
     }, );
 
   }
@@ -70,7 +70,7 @@ export class ModificarMovimientosPunteoComponent  implements OnInit {
     
     this.recaudoService.postModificarMovimiento(this.datosConsulta2).subscribe((data) => {
       this.resultado = data;
-      console.log(data);
+      
     }, );
 
   }

@@ -42,7 +42,7 @@
         <ion-grid >
           
             <ion-row class="header-row">
-              <ion-col *ngIf="accion=='1'">ACCIÓN</ion-col>
+              <ion-col *ngIf="accion==='1'">ACCIÓN</ion-col>
               <ion-col>EMPRESA</ion-col>
               <ion-col>PUNTO DE PAGO</ion-col>
               <ion-col>CAJA</ion-col>
@@ -61,7 +61,7 @@
           
             <div class="tabla-content" *ngFor="let respuesta1 of listadoCuadres">
               <ion-row class="data-row" slot="fixed">
-                <ion-col *ngIf="accion=='1'">
+                <ion-col *ngIf="accion==='1'">
                   <button class="btn_m" (click)="Aprobar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO)"><ion-icon class="aprobar" name="checkmark-circle" size="large"></ion-icon></button>
                   <button class="btn_m1" (click)="Rechazar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO)"><ion-icon class="rechazar" name="close-circle" size="large"></ion-icon></button>
                 </ion-col>
@@ -69,7 +69,7 @@
                 <ion-col title="{{ respuesta1.NOMBRE_PUNTO_PAGO }}">{{ respuesta1.NOMBRE_PUNTO_PAGO}}</ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_CODIGO_CAJA }}">{{ respuesta1.NOMBRE_CODIGO_CAJA }}</ion-col>
                 <ion-col title="{{ respuesta1.USUARIO }}">{{ respuesta1.USUARIO}}</ion-col>
-                <ion-col title="{{ respuesta1.NUMERO_ARQUEO }}">{{ respuesta1.NUMERO_ARQUEO }}</ion-col>
+                <ion-col title="{{ respuesta1.NUMERO_ARQUEO }}">{{ respuesta1.NUMERO_ARQUEO }} <button *ngIf="accion==='2'" class="imprimir-btn" (click)="imprimir(respuesta1)"><ion-icon class="imprimir1" name="print"></ion-icon></button></ion-col>
                 <ion-col title="{{ respuesta1.FECHA_INICIO }}">{{ respuesta1.FECHA_INICIO }}</ion-col>
                 <ion-col title="{{ respuesta1.FECHA_FIN }}">{{ respuesta1.FECHA_FIN }}</ion-col>
                 <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTOS }}">{{ respuesta1.NUMERO_MOVIMIENTOS }}</ion-col>
@@ -117,8 +117,8 @@
             <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
           </button>
         </div>   
-        <h1 *ngIf="accionCuadre=='1'">Aprobar arqueo: {{arqueoSelect}} </h1>
-        <h1 *ngIf="accionCuadre=='2'">Rechazar arqueo: {{arqueoSelect}} </h1>
+        <h1 *ngIf="accionCuadre==='1'">Aprobar arqueo: {{arqueoSelect}} </h1>
+        <h1 *ngIf="accionCuadre==='2'">Rechazar arqueo: {{arqueoSelect}} </h1>
         <ion-item>
           <ion-label position="stacked">OBSERVACION: </ion-label>
           <ion-input [(ngModel)]="observacion" (keyup.enter)="AccionCuadrePunto()"></ion-input>

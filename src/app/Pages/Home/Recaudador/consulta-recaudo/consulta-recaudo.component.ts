@@ -51,7 +51,7 @@ export class ConsultaRecaudoComponent  implements OnInit {
 
     this.recaudoService.postConsultarRecaudo(this.datos).subscribe((data) => {
       this.resultado = data;
-      console.log(data);
+      
     }, );
 
   }
@@ -61,7 +61,7 @@ export class ConsultaRecaudoComponent  implements OnInit {
 
     this.recaudoService.postConsultarRecaudo(this.datos2).subscribe((data) => {
       this.resultado = data;
-      console.log(data);
+      
     }, );
 
   }

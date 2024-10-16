@@ -228,6 +228,7 @@ export class RecaudarComponent  implements OnInit {
   mostrarDocumento:boolean=false;
   mostrarValor:boolean=false;
   recaudado:boolean=false;
+  limpia:boolean=false;
 
   @ViewChild('myInput',{static:false}) myInput:IonInput | undefined;
   @ViewChild('myInput2',{static:false}) myInput2:IonInput | undefined;
@@ -236,45 +237,52 @@ export class RecaudarComponent  implements OnInit {
 
   @HostListener('window:keyup', ['$event'])
   handleKeyUp(event: KeyboardEvent) {
-  if (event.key === 'F2' && this.confirmar==false && this.mostrarID==false && this.recaudado==false) {
-      this.limpiarYEnviar();
+    if (event.key === 'F2' && this.confirmar==false && this.mostrarID==false && this.recaudado==false) {
+        this.limpiarYEnviar();
+      }
+    else if (event.key === 'F2' && this.mostrarID==true && this.confirmar==false && this.recaudado==false) {
+      this.confirmacion();
     }
-  else if (event.key === 'F2' && this.mostrarID==true && this.confirmar==false && this.recaudado==false) {
-    this.confirmacion();
-  }
 
-  else if (event.key === 'F2' && this.confirmar==true && this.mostrarID==false && this.recaudado==false) {
-    this.recaudarFinal();
-  }
- 
-  if (event.key === 'F4') {
-    this.vistaImpresion();
+    else if (event.key === 'F2' && this.confirmar==true && this.mostrarID==false && this.recaudado==false) {
+      this.recaudarFinal();
     }
-  if (event.key === 'F9') {
-    event.preventDefault(); // Evitar la acción por defecto del navegador
-    this.setFocus2();
-  }
-
-  if (event.ctrlKey && event.key === 'B') {
-    event.preventDefault(); // Evitar la acción por defecto del navegador
-    this.setFocus2();
-  }
-
-  if (event.key === 'F8') {
-    this.limpiar();
-  }
-  if (event.ctrlKey && event.key === 'B') {
-    this.igualar();
-  }
-  if (event.ctrlKey && event.key === 'b') {
-    this.igualar();
-  }
-  if(this.confirmar_Lista==true){
-    if(event.key === 'Enter'){
-      this.agregarDetalle();
-      this.confirmar_Lista=false;
+  
+    if (event.key === 'F4') {
+      this.vistaImpresion();
+      }
+    if (event.key === 'F9') {
+      event.preventDefault(); // Evitar la acción por defecto del navegador
+      this.setFocus2();
     }
-  }
+
+    if (event.ctrlKey && event.key === 'B') {
+      event.preventDefault(); // Evitar la acción por defecto del navegador
+      this.setFocus2();
+    }
+
+    if (event.key === 'F8') {
+      this.Confirmacionlimpiar();
+    }
+    if (event.ctrlKey && event.key === 'B') {
+      this.igualar();
+    }
+    if (event.ctrlKey && event.key === 'b') {
+      this.igualar();
+    }
+    if(this.confirmar_Lista==true){
+      if(event.key === 'Enter'){
+        this.agregarDetalle();
+        this.confirmar_Lista=false;
+      }
+    }
+    if(this.limpia==true){
+      if(event.key === 'Enter'){
+        this.limpiar();
+      }else if(event.key === 'Escape'){
+        this.cerrarTabla();
+      }
+    }
   }
 
   iframeUrl= "";
@@ -287,7 +295,8 @@ export class RecaudarComponent  implements OnInit {
     private cd: ChangeDetectorRef, 
     private http: HttpClient, 
     private modalController: ModalController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    
   ) { 
     this.recaudoService.enviarAlumbrado$.subscribe((barras) => {
       if(barras){
@@ -435,11 +444,11 @@ export class RecaudarComponent  implements OnInit {
       //   // const mockEvent = { detail: { checked: true } };
       //   // this.redondeo(mockEvent);
       // }
-      console.log("ultimodetalle:",ultimoDetalle)
+      
       if (ultimoDetalle) {
         if(ultimoDetalle.CODIGO_CONVENIO === nuevoCodigoConvenio){
-          console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
-          console.log("datos: ", this.datos.FACTURAS)
+          
+          
           this.nombres_convenio.push(nuevoDetalle2);
           this.datos.FACTURAS.push(nuevoDetalle);
           this.datosConsulta.CODIGO_BARRAS="";
@@ -452,10 +461,10 @@ export class RecaudarComponent  implements OnInit {
           this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
         }else {
         alertify.error("NO SE PUEDE REALIZAR PAGOS DE CONVENIOS DIFERENTES POR ESTE MEDIO DE PAGO");
-        console.log('El nuevo CODIGO_CONVENIO es diferente al anterior2.');
+        
         } 
       }else{
-        console.log("datos: ", this.datos.FACTURAS)
+        
         this.nombres_convenio.push(nuevoDetalle2);
         this.datos.FACTURAS.push(nuevoDetalle);
         this.datosConsulta.CODIGO_BARRAS="";
@@ -473,9 +482,9 @@ export class RecaudarComponent  implements OnInit {
 
       if (nuevoCodigoConvenio == "2") {
 
-        console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
-        console.log('El nuevo CODIGO_CONVENIO es igual al anterior.');
-        console.log("datos: ", this.datos.FACTURAS)
+        
+        
+        
         this.nombres_convenio.push(nuevoDetalle2);
         this.datos.FACTURAS.push(nuevoDetalle);
         this.datosConsulta.CODIGO_BARRAS="";
@@ -488,11 +497,11 @@ export class RecaudarComponent  implements OnInit {
         this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
       } else {
         alertify.error("SOLO SE PUEDE PAGAR ENERGIA CON ESTE METODO DE PAGO");
-        console.log('El nuevo CODIGO_CONVENIO es diferente al anterior.');
+        
       }
     }
     else{
-      console.log("datos: ", this.datos.FACTURAS)
+      
       this.nombres_convenio.push(nuevoDetalle2);
       this.datos.FACTURAS.push(nuevoDetalle);
       this.datosConsulta.CODIGO_BARRAS="";
@@ -536,7 +545,7 @@ export class RecaudarComponent  implements OnInit {
     if (this.empresa !== null && this.puntoPago !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getFormaPago(Number(this.empresa),Number(this.puntoPago),this.accionpunto, this.usuario, this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.pago = data.FORMAS_PAGO;
         },
         (error) => {
@@ -593,10 +602,10 @@ export class RecaudarComponent  implements OnInit {
       }
   
       if (codigosIguales) {
-        console.log('Todos los CODIGO_CONVENIO son iguales.');
+        
       } else {
         alertify.error("NO SE PUEDE REALIZAR PAGOS DE CONVENIOS DIFERENTES POR ESTE MEDIO DE PAGO");
-        console.log('Hay CODIGO_CONVENIO diferentes en el array.');
+        
       }
     }
     if(this.datos.FORMA_PAGO=="4"){
@@ -613,10 +622,10 @@ export class RecaudarComponent  implements OnInit {
       }
   
       if (codigosIguales) {
-        console.log('Todos los CODIGO_CONVENIO son iguales.');
+        
       } else {
         alertify.error("SOLO PUEDE PAGAR ENERGIA CON ESTE METODO DE PAGO");
-        console.log('Hay CODIGO_CONVENIO diferentes en el array.');
+        
       }
     }
     this.setFocus();
@@ -637,7 +646,7 @@ export class RecaudarComponent  implements OnInit {
     
     this.turno=false;
     this.recaudoService.postActivarCajero(this.datosTurno).subscribe((data) => {
-      console.log(data);
+      
     }, );
 
   }
@@ -646,7 +655,7 @@ export class RecaudarComponent  implements OnInit {
     this.turno=true;
     this.datosTurno.PREFERENCIAL="0";
     this.recaudoService.postFinalizarCajero(this.datosTurno).subscribe((data) => {
-      console.log(data);
+      
     }, );
 
   }
@@ -694,7 +703,7 @@ export class RecaudarComponent  implements OnInit {
     this.recaudoService.postAnularTransaccionDatafono(this.datosAnulacion).subscribe({
       next: data => {
       this.resultado = data;
-      console.log("enviado: ", this.datosAnulacion)
+      
       if(data.COD=="200"){
         alertify.success(this.resultado.RESPUESTA);
         this.mostrarID=false;
@@ -708,7 +717,7 @@ export class RecaudarComponent  implements OnInit {
       }
     },
     error: error => {
-      console.log("Respuesta:",error);
+      console.error("Respuesta:",error);
     }});
   }
 
@@ -720,7 +729,8 @@ export class RecaudarComponent  implements OnInit {
   }
 
   cerrarTabla(){
-    console.log("idtrasaccion",this.IDtransaccion)
+    this.limpia=false;
+    
     this.confirmar=false;
     this.formatoNumero();
     if(this.IDtransaccion){
@@ -847,7 +857,7 @@ export class RecaudarComponent  implements OnInit {
 
       const valorRedondeadoMix = this.redondearValorMix(Number(this.datosMix.VALOR_CAMBIO));
     }
-    console.log("devueltas:",this.datosMix.VALOR_CAMBIO)
+    
     this.formatoNumero();
   }
 
@@ -931,30 +941,37 @@ export class RecaudarComponent  implements OnInit {
     else{
       this.datosConsulta.CODIGO_CONVENIO_DET="";
     }
-    console.log("enviado: ",this.datosConsulta)
+    
     this.recaudoService.postConsultarRecaudo(this.datosConsulta).subscribe(async (data) => {
       this.resultado = data;
-      console.log("Respuesta: ",data)
+      
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
       if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
+          this.detalle.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+          this.detalle.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+          this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+          this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+          this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+          this.detalle.FECHA_VENCIMIENTO=data.DIA_VENCIMIENTO+"/"+data.MES_VENCIMIENTO+"/"+data.ANO_VENCIMIENTO;
+          this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+          this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+          this.detalle2.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+          this.detalle2.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+          this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+          this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+          this.detalle2.NOMBRE_CONVENIO=data.NOMBRE_CONVENIO;
+          this.detalle2.NOMBRE_CONVENIO_DET=data.NOMBRE_CONVENIO_DET;
+          this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
+          this.agregarDetalle();
+       
+
+      }
+      else if(data.COD=="200" && !data.CODIGO_REFERENCIA){
+        alertify.error("Error al consultar la factura, verifique la forma en la que se está consultando");
+      }
+      
+      else if(data.COD!="200"){
         
-        this.detalle.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
-        this.detalle.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
-        this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-        this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-        this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
-        this.detalle.FECHA_VENCIMIENTO=data.DIA_VENCIMIENTO+"/"+data.MES_VENCIMIENTO+"/"+data.ANO_VENCIMIENTO;
-        this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
-        this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
-        this.detalle2.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
-        this.detalle2.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
-        this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-        this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-        this.detalle2.NOMBRE_CONVENIO=data.NOMBRE_CONVENIO;
-        this.detalle2.NOMBRE_CONVENIO_DET=data.NOMBRE_CONVENIO_DET;
-        this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
-        this.agregarDetalle();
-      }else if(data.COD!="200"){
         this.datosConsulta.CODIGO_BARRAS="";
        alertify.error(data.RESPUESTA);
       }else{
@@ -973,6 +990,7 @@ export class RecaudarComponent  implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Consultando Factura...',
       spinner: 'crescent',
+      cssClass: 'custom-loading'
     });
 
     await loading.present();
@@ -988,7 +1006,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosConsulta2.CODIGO_CONVENIO=CODconvenioConst;
     this.datosConsulta2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     
-    console.log("enviado:",this.datosConsulta2)
+    
     if(CODconvenioConst=="5"){
       this.datosConsulta2.REFERENCIA="0"+this.datosConsulta2.REFERENCIA;
     }
@@ -1003,7 +1021,7 @@ export class RecaudarComponent  implements OnInit {
         this.datosConsulta2.VALOR_MOVIMIENTO_DET=this.valorReferencia;
         this.datosConsulta2.REFERENCIA="060"+this.datosConsulta2.REFERENCIA;
         this.datosConsulta2.VALOR_MOVIMIENTO_DET= this.datosConsulta2.VALOR_MOVIMIENTO_DET.replace(/\./g, '')
-        console.log("valor: ",this.datosConsulta2.VALOR_MOVIMIENTO_DET)
+        
       }
       
     }
@@ -1013,34 +1031,41 @@ export class RecaudarComponent  implements OnInit {
     }
 
     
-    console.log("datos envio final: ",this.datosConsulta2)
+    
     this.recaudoService.postConsultarRecaudo(this.datosConsulta2).subscribe(async (data) => {
       this.resultado = data;
-      console.log("Respuesta: ",data)
+      
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
       if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
-        this.detalle.CODIGO_CONVENIO=CODconvenioConst;
-        this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
-        this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-        this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-        this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
-        this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
-        this.ciclo=data.CICLO;
-        this.propietario=data.PROPIETARIO;
-        this.direccion=data.DIRECCION;
-        this.detalle.BUSQUEDA_REFERENCIA="S";
-        this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
-        this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
-        this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
-        this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
-        this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-        this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-        this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
-        this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
-
-        this.confirmarList();
-        this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
-      }else if(data.COD!="200"){
+          this.detalle.CODIGO_CONVENIO=CODconvenioConst;
+          this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+          this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+          this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+          this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+          this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
+          this.ciclo=data.CICLO;
+          this.propietario=data.PROPIETARIO;
+          this.direccion=data.DIRECCION;
+          this.detalle.BUSQUEDA_REFERENCIA="S";
+          this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+          this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+          this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
+          this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+          this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+          this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+          this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
+          this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
+  
+          this.confirmarList();
+          this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
+       
+      }
+      else if(data.COD=="200" && !data.CODIGO_REFERENCIA){
+        alertify.error("Error al consultar la factura, verifique la forma en la que se está consultando");
+      }
+      
+      else if(data.COD!="200"){
+  
        alertify.error(data.RESPUESTA);
        this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
       }else{
@@ -1175,7 +1200,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
     this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
       if(this.datos.VALOR_RECIBIDO!=''){
-        console.log("this.datos.VALOR_RECIBIDO: ", this.datos.VALOR_RECIBIDO+ " this.datos.VALOR_MOVIMIENTO: ",this.datos.VALOR_MOVIMIENTO)
+        
         if(Number(this.datos.VALOR_RECIBIDO)>=Number(this.datos.VALOR_MOVIMIENTO)){
           if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
       
@@ -1201,12 +1226,12 @@ export class RecaudarComponent  implements OnInit {
             this.confirmacion();
           }
         }else{
-          alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO2")
+          alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO")
           this.formatoNumero();
         }
       }
       else{
-        alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO3")
+        alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO")
         this.formatoNumero();
       }
     
@@ -1304,7 +1329,13 @@ export class RecaudarComponent  implements OnInit {
   }
   
 
-  recaudarFinal(){
+  async recaudarFinal(){
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+
+    await loading.present();
     this.confirmar=false;
     this.datos.VALOR_MOVIMIENTO=String(this.datos.VALOR_MOVIMIENTO);
     this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
@@ -1314,9 +1345,9 @@ export class RecaudarComponent  implements OnInit {
       this.lstfacturas = this.lstfacturas.slice(0, -1);
     }
 
-    console.log("enviado:",this.datosMix)
+    
     if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
-      console.log("entro Mix")
+      
       this.datosMix.FACTURAS=this.datos.FACTURAS;
       this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
       this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
@@ -1327,7 +1358,7 @@ export class RecaudarComponent  implements OnInit {
           this.datosMix.NUMERO_DOCUMENTO="N/A";
         }
         this.recaudoService.postRecaudar(this.datosMix)
-        .subscribe((respuesta) => {
+        .subscribe(async (respuesta) => {
           this.resultado=respuesta;
           if(this.resultado.COD=='200'){
             alertify.success(this.resultado.RESPUESTA);
@@ -1335,21 +1366,25 @@ export class RecaudarComponent  implements OnInit {
             this.vistaImpresion();
             this.formatoNumero();
             this.recaudado=true;
+            await loading.dismiss();
             }
           else  {
             alertify.error(this.resultado.RESPUESTA);
+            await loading.dismiss();
             this.formatoNumero();
           }
-        }, (error) => {
+        }, async (error) => {
           this.formatoNumero();
+          await loading.dismiss();
           console.error(error);
         });
       }else{
         alertify.error("El valor recibido no puede estár en blanco");
+        await loading.dismiss();
       }
     }
     else{
-      console.log("entro normal")
+      
       if(this.datos.VALOR_RECIBIDO!=""){
         const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
         this.datos.VALOR_RECIBIDO=valorRecibido;
@@ -1360,8 +1395,8 @@ export class RecaudarComponent  implements OnInit {
           this.datos.FORMA_PAGO="3"
         }
         this.recaudoService.postRecaudar(this.datos)
-        .subscribe((respuesta) => {
-          console.log("enviado: ", this.datos);
+        .subscribe(async (respuesta) => {
+          
           this.resultado=respuesta;
           if(this.resultado.COD=='200'){
             alertify.success(this.resultado.RESPUESTA);
@@ -1369,17 +1404,21 @@ export class RecaudarComponent  implements OnInit {
             this.vistaImpresion();
             this.formatoNumero();
             this.recaudado=true;
+            await loading.dismiss();
             }
           else  {
             alertify.error(this.resultado.RESPUESTA);
             this.formatoNumero();
+            await loading.dismiss();
           }
-        }, (error) => {
+        }, async (error) => {
           this.formatoNumero();
+          await loading.dismiss();
           console.error(error);
         });
       }else{
         alertify.error("El valor recibido no puede estár en blanco");
+        await loading.dismiss();
       }
     }
     
@@ -1409,7 +1448,7 @@ export class RecaudarComponent  implements OnInit {
     this.recaudoService.getImpresiónTicket(this.empresa,this.puntoPago,this.arqueo,this.movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
     .subscribe(
       (response) => {
-        const url = 'http://172.25.2.2:18000/api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
+        const url = this.recaudoService.url+'api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
                 '&CODIGO_PUNTO_PAGO='+this.puntoPago+
                 '&NUMERO_ARQUEO='+this.arqueo+
                 '&NUMERO_MOVIMIENTO='+this.movimiento+
@@ -1456,7 +1495,7 @@ export class RecaudarComponent  implements OnInit {
           
           this.recaudos=data;
           if(this.recaudos.COD!='200'){
-            console.log(data);
+            
             alertify.error(this.recaudos.RESPUESTA);
             localStorage.setItem('numeroArqueo',this.recaudos.NUMERO_ARQUEO);
             this.arqueo=this.recaudos.NUMERO_ARQUEO;
@@ -1476,12 +1515,21 @@ export class RecaudarComponent  implements OnInit {
           this.formaPago();
         },
         error: error => {
-          console.log(error);
+          console.error(error);
         }
       });
   }
 
+  Confirmacionlimpiar(){
+    if(!this.recaudado){
+      this.limpia=true
+    }else{
+      this.limpiar();
+    }
+  }
+
   limpiar(){
+    this.limpia=false;
     this.detalle={
       CODIGO_CONVENIO: "0",
       CODIGO_CONVENIO_DET: "0",

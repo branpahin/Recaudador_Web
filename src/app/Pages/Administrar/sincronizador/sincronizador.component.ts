@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
-import { interval, takeUntil, takeWhile } from 'rxjs';
+import { interval, Subscription, takeUntil, takeWhile } from 'rxjs';
 import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sincronizador',
@@ -15,6 +16,7 @@ export class SincronizadorComponent  implements OnInit {
   token: string|null = localStorage.getItem('token');
 
   archivoSeleccionado: string | undefined;
+  intervalSubscription: Subscription | undefined;
 
   listadoConveniosSincro:any[]=[];
   lstConvenios="";
@@ -44,7 +46,7 @@ export class SincronizadorComponent  implements OnInit {
   }
 
 
-  constructor(private recaudoService: RecaudoService, private modalController: ModalController) { 
+  constructor(private recaudoService: RecaudoService, private modalController: ModalController, private router: Router, ) { 
     this.recaudoService.sincronizacionCambio.subscribe((valor: boolean) => {
       this.valorSincronizacion = valor;
     });
@@ -54,23 +56,21 @@ export class SincronizadorComponent  implements OnInit {
     this.ListarEstadoSincro();
     this.ListarConveniosSincro();
     this.PagosAgrupadosSincro();
-      interval(3000)
-      .pipe(
-        takeWhile(() => !this.valorSincronizacion),
-        
-      )
-      .subscribe(() => {
-        this.PagosAgrupadosSincro();
-        this.ListarEstadoSincro();
-      });
-
+    this.intervalSubscription = interval(3000)
+    .pipe(
+      takeWhile(() => !this.valorSincronizacion)
+    ).subscribe(() => {
+      this.PagosAgrupadosSincro();
+      this.ListarEstadoSincro();
+    });
     
   }
+
   ListarConveniosSincro(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getLisadoConveniosSincronizador(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.listadoConveniosSincro= data.CONVENIOS_SINCRONIZADOR;
         },
         (error) => {
@@ -86,10 +86,18 @@ export class SincronizadorComponent  implements OnInit {
       this.recaudoService.getEstadoSincronizador(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
           this.estadoSincro= data.ESTADO;
-          if(this.estadoSincro=='ACTIVO'){
-            this.conveniosSincronizando=data.CODIGOS_CONVENIOS;
+          if(data.COD=="200"){
+            
+            if(this.estadoSincro=='ACTIVO'){
+              this.conveniosSincronizando=data.CODIGOS_CONVENIOS;
+            }else{
+              this.conveniosSincronizando="";
+            }
           }else{
-            this.conveniosSincronizando="";
+            alertify.error('¡¡El usuario cambío de Roll o expiro la sesión, se cerrara la sesión!!');
+              setTimeout(() => {
+                this.cerrarSesion();
+              }, 5000);
           }
 
         },
@@ -118,6 +126,7 @@ export class SincronizadorComponent  implements OnInit {
   }
 
   ConvenioSincronizado(codigo: string): boolean {
+    
     const codigosSincronizados = this.conveniosSincronizando.split(',');
     if(this.conveniosSincronizando!=null && this.conveniosSincronizando!=""){
       this.lstConvenios=this.conveniosSincronizando;
@@ -138,7 +147,7 @@ export class SincronizadorComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postModificarEstadoSincronizador(this.datosModificarEstado).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -207,6 +216,35 @@ export class SincronizadorComponent  implements OnInit {
         USUARIO:this.usuario,
         TOKEN: this.token
       };
+    }
+  }
+
+  cerrarSesion() {
+    
+    if (this.token !== null && this.usuario!== null && this.empresa!==null) {
+      this.recaudoService.postCerrarSesion(this.token,this.usuario,this.empresa).subscribe(
+        (data) => {
+          localStorage.clear();
+          
+          
+
+          this.router.navigate(['/login']).then(() => {
+         
+            location.reload();
+            
+          });
+        },
+        (error) => {
+          console.error('Error al cerrar sesión:', error);
+          localStorage.clear();
+          this.router.navigate(['/login']).then(() => {
+         
+            location.reload();
+            
+          });
+          
+        }
+      );
     }
   }
 

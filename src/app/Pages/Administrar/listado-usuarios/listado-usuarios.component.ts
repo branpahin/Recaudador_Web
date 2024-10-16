@@ -127,7 +127,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoPuntos= data.PUNTOS_PAGO;
         },
         (error) => {
@@ -156,7 +155,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoUsuarios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           if(this.estado=="1"){
             this.listadoUsuarios= data.USUARIOS_ACTIVOS;
           }
@@ -178,7 +176,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoRoles(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoRoles= data.LISTADO_ROLES;
         },
         (error) => {
@@ -194,7 +191,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoEstadoUsuarios(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoEstadoUsuario= data.ESTADOS_USUARIOS;
         },
         (error) => {
@@ -209,7 +205,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoSubPuntos(Number(this.empresa),this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.listadoSubPuntos= data.LISTADO_SUB_PUNTOS_PAGO;
         },
         (error) => {
@@ -229,11 +224,9 @@ export class ListadoUsuariosComponent  implements OnInit {
   }
 
   CrearUsuario(){
-    console.log("Enviado:",this.datos)
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postCrearUsuario(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);
@@ -318,7 +311,6 @@ export class ListadoUsuariosComponent  implements OnInit {
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postModificarUsuario(this.datos).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
           this.resultado= data;
           if(this.resultado.COD=="200"){
             alertify.success(this.resultado.RESPUESTA);

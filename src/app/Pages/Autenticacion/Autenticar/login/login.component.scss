@@ -24,6 +24,16 @@ h4{
     text-align: center;
 }
 
+.custom-spinner .spinner-crescent circle {
+    stroke: #e2ded7 !important; /* Cambia el color del spinner a naranja */
+    background-color: #e48f0f;
+  }
+  
+  .custom-spinner .spinner {
+    width: 50px !important; /* Ajusta el tamaño del spinner */
+    height: 50px !important;
+  }
+
 .login {
     
     max-width: 400px;

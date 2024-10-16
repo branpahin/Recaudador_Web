@@ -73,7 +73,7 @@ export class CrearArqueoComponent  implements OnInit {
   
           },
           error: error => {
-            console.log(error);
+            console.error(error);
           }
         });
       }
@@ -85,7 +85,7 @@ export class CrearArqueoComponent  implements OnInit {
     if (this.empresa !== null && this.puntoPago!== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getCajasPuntoPago(Number(this.empresa),Number(this.puntoPago), this.usuario,this.token).subscribe(
         (data: any) => {
-          console.log('Respuesta del servicio:', data);
+          
           this.resultadoCaja = data.CAJAS;
         },
         (error) => {

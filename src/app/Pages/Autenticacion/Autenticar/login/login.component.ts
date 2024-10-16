@@ -4,7 +4,7 @@ import { Usuario, Error_Login, Obtener_Rol } from 'src/models/usuario.model';
 import { Router } from '@angular/router';
 import * as alertify from 'alertifyjs';
 import { CambiarClaveComponent } from 'src/app/Pages/General/cambiar-clave/cambiar-clave.component';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 
 
 @Component({
@@ -53,14 +53,19 @@ export class LoginComponent  implements OnInit {
     RESPUESTA:''
   };
   CODIGO_PUNTO_PAGO='';
+  loading:any;
 
   resultado!: Usuario;
   inforol!: Obtener_Rol;
   modulos: any [] = [];
-  constructor(private recaudoService: RecaudoService, private router: Router, private modalController: ModalController) {}
+  constructor(private recaudoService: RecaudoService, private router: Router, private modalController: ModalController,private loadingController: LoadingController,) {}
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    this.loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await this.loading.present();
     const miImagen = document.getElementById('miImagen') as HTMLImageElement;
     
     localStorage.removeItem('usuario');
@@ -71,8 +76,7 @@ export class LoginComponent  implements OnInit {
     localStorage.removeItem('nombrePuntoPago');
     localStorage.removeItem('numeroArqueo');
     localStorage.removeItem('condigoCaja');
-    
-    this.mostrarLoginUser=true;
+
     this.obtenerEmpresas();
     if (miImagen) {
         window.location.reload();
@@ -85,8 +89,11 @@ export class LoginComponent  implements OnInit {
   obtenerEmpresas(){
 
     this.recaudoService.getListEmpresas().subscribe(
-      (data: any) => {
-        this.listEmpresas = data.EMPRESAS; 
+      async (data: any) => {
+        this.listEmpresas = data.EMPRESAS;
+        
+        await this.loading.dismiss();
+        this.mostrarLoginUser=true;
         
       },
       (error) => {
@@ -99,7 +106,7 @@ export class LoginComponent  implements OnInit {
   guardarSeleccion() {
     if (this.usuario.EMPRESA) {
       localStorage.setItem('empresaCOD', this.usuario.EMPRESA);
-      console.log("empresa guardada: ",this.usuario.EMPRESA)
+      
       this.obtenerPuntosPago();
     }
   }
@@ -114,7 +121,7 @@ export class LoginComponent  implements OnInit {
         localStorage.setItem('CODpuntoPago',this.CODIGO_PUNTO_PAGO);
       },
       error: error => {
-        console.log(error);
+        console.error(error);
       }
     });
   }
@@ -187,7 +194,7 @@ export class LoginComponent  implements OnInit {
       this.resultado = data;
       localStorage.setItem('rol', this.resultado.IDENTIFICADOR_ROL);
       
-      console.log("Info Rol: "+this.resultado.ROL);
+      
       this.router.navigate(['/inicio-arqueo'])
     }, );
 

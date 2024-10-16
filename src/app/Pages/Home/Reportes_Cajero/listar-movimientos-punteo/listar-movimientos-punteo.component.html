@@ -34,12 +34,21 @@
             <ion-input label="" [(ngModel)]="datosConsulta2.CODIGO_CLIENTE" name="codigoBarras" type="text" ></ion-input>
           </ion-item>
         </ion-item>
+        <!-- <div class="convenios-container">
+          <ion-item *ngFor="let convenio of listadoConvenios" class="convenio-item">
+            <ion-label>{{ convenio.NOMBRE_CONVENIO }}</ion-label>
+            <ion-checkbox
+              [checked]="conveniosSeleccionados.includes(convenio.CODIGO_CONVENIO)"
+              (ionChange)="toggleConvenio(convenio.CODIGO_CONVENIO, $event)"
+            ></ion-checkbox>
+          </ion-item>
+        </div> -->
       </div>
       
     <ion-list *ngIf="resultado" class="tabla">
-
         <ion-item>
           <ion-label>Facturas pendientes: </ion-label>
+        
           <!--<ion-label *ngFor="let recaudo of recaudos">{{ recaudo.CODIGO_REFERENCIA }}</ion-label>-->
         </ion-item>
         <ion-grid >
@@ -57,8 +66,8 @@
           </ion-row>
     
           <!-- Datos de la tabla -->
-          <div class="tabla_lista" style="overflow-y: auto; max-height: 30vh;">
-            <div *ngFor="let respuesta1 of resultado" >
+          <div class="tabla_lista" style="overflow-y: auto; max-height: 50vh;">
+            <div *ngFor="let respuesta1 of filteredList" >
               <ion-row class="data-row" >
                 <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO_DET }}">{{ respuesta1.NUMERO_MOVIMIENTO_DET }}</ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_CONVENIO }}">{{ respuesta1.NOMBRE_CONVENIO }}</ion-col>
@@ -107,7 +116,7 @@
             </ion-row>
       
             <!-- Datos de la tabla -->
-            <div class="tabla_lista" style="overflow-y: auto; max-height: 30vh;">
+            <div class="tabla_lista" style="overflow-y: auto; max-height: 50vh;">
               <div class="tabla-content" *ngFor="let respuesta1 of resultado2" >
                 <ion-row class="data-row" >
                   <ion-col title="{{ respuesta1.NUMERO_MOVIMIENTO_DET }}">{{ respuesta1.NUMERO_MOVIMIENTO_DET }}</ion-col>
@@ -137,11 +146,24 @@
           <!-- Repite este patrón para cada fila de datos -->
     
           </ion-grid>
-
-        
       </ion-list>
-    
-
-    
+      <div style="position: fixed;  margin-top: 70px; margin-left: 250px;">
+        <ion-fab vertical="bottom" horizontal="end" >
+          <ion-fab-button class="custom-fab-button">
+            <ion-icon name="chevron-down-circle"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-list side="bottom">
+            <div class="convenios-list">
+              <ion-item *ngFor="let convenio of listadoConvenios" class="convenio-item">
+                <ion-label>{{ convenio.NOMBRE_CONVENIO }}</ion-label>
+                <ion-checkbox
+                  [checked]="conveniosSeleccionados.includes(convenio.CODIGO_CONVENIO)"
+                  (ionChange)="toggleConvenio(convenio.CODIGO_CONVENIO, $event)"
+                ></ion-checkbox>
+              </ion-item>
+            </div>
+          </ion-fab-list>
+        </ion-fab>
+      </div>
   </ion-card-content>
 </ion-card>

@@ -41,8 +41,8 @@
             <ion-row>
               <ion-col>
                 <ion-item>
-                  <ion-label *ngIf="facturas=='ACTIVAS'">Listado Facturas Activas: </ion-label>
-                  <ion-label *ngIf="facturas=='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
+                  <ion-label *ngIf="facturas==='ACTIVAS'">Listado Facturas Activas: </ion-label>
+                  <ion-label *ngIf="facturas==='INACTIVAS'">Listado Facturas Inactivas: </ion-label>
                   <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
                 </ion-item>
                 <ion-row class="header-row1" >
@@ -321,7 +321,7 @@
                                  
                         </div>
 
-                        <div class="fecha" *ngIf="editar && fecha!=''">
+                        <div class="fecha" *ngIf="editar && fecha!==''">
           
                           <ion-datetime-button [ngModel]="fecha" datetime="datetime"></ion-datetime-button>
               
@@ -333,7 +333,7 @@
                           </ion-modal>
                         </div>
 
-                        <div class="fecha" *ngIf="editar && fecha==''">
+                        <div class="fecha" *ngIf="editar && fecha===''">
           
                           <ion-datetime-button datetime="datetime"></ion-datetime-button>
                 
@@ -374,6 +374,16 @@
                       </div>
                     </ion-col>
                   </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-item class="barras">
+                        <ion-label position="stacked">Punteo: </ion-label>
+                        <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.PUNTEO" name="empresa" required>
+                          <ion-select-option *ngFor="let seleccion of TipoPunteo" [value]="seleccion.CAMPO">{{ seleccion.DESCRIPCION }}</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-col>
+                  </ion-row>
                 </ion-col>
               </ion-row>
             </ion-col>
@@ -392,7 +402,7 @@
                   </ion-item>
                 </ion-col>
                 <ion-col>
-                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label position="stacked">Tipo Asobancaria: </ion-label>
                     <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_ASOBANCARIA" name="empresa" required>
                       <ion-select-option *ngFor="let seleccion of TipoAsobancaria" [value]="seleccion.CODIGO">{{ seleccion.DESCRIPCION }}</ion-select-option>
@@ -402,7 +412,7 @@
               </ion-row> 
               <ion-row>
                 <ion-col>
-                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <ion-item class="barras">
                     <ion-label position="stacked">Correo: </ion-label>
                     <ion-input [(ngModel)]="datos.CORREO_ASOBANCARIA" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
                   </ion-item>
@@ -410,7 +420,7 @@
               </ion-row>
               <ion-row>
                 <ion-col>
-                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <div class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label for="seleccionador" position="stacked">Bancos: </ion-label>
                     <select id="seleccionador"class="seleccionador"[(ngModel)]="datos.BANCO" name="empresa" required>
                       <option value="" disabled selected>Seleccionar</option>
@@ -419,7 +429,7 @@
                   </div>
                 </ion-col>
                 <ion-col>
-                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <div class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label for="seleccionador" position="stacked">Tipo de Cuenta: </ion-label>
                     <select id="seleccionador" class="seleccionador" placeholder="Seleccionar" [(ngModel)]="datos.TIPO_CUENTA" name="empresa" required>
                       <option value="" disabled selected>Seleccionar</option>
@@ -428,13 +438,13 @@
                   </div>
                 </ion-col>
                 <ion-col>
-                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label for="seleccionador" position="stacked">N° Cuenta: </ion-label>
                     <ion-input [(ngModel)]="datos.NUMERO_CUENTA" type="text" required [disabled]="!datos.CODIGO_CONVENIO" name="nombre" required></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col>
-                  <div class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <div class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label for="seleccionador" position="stacked">Banco recaudador: </ion-label>
                     <select id="seleccionador" class="seleccionador " [(ngModel)]="datos.BANCO_RECAUDADOR" name="empresa" required>
                       <option value="" disabled selected>Seleccionar</option>
@@ -445,7 +455,7 @@
               </ion-row>
               <ion-row>
                 <ion-col>
-                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA=='S'">
+                  <ion-item class="barras" *ngIf="datos.ASOBANCARIA==='S'">
                     <ion-label position="stacked">Tipo Asobancaria: </ion-label>
                     <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.PAGOS_ASOBANCARIA" name="empresa" required>
                       <ion-select-option *ngFor="let seleccion of PagosAsobancaria" [value]="seleccion.CAMPO">{{ seleccion.DESCRIPCION }}</ion-select-option>

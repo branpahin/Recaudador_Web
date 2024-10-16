@@ -14,8 +14,8 @@ export class ListadoFacturasComponent  implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log("datos: ", this.datos);
-    console.log("datos nombres: ", this.nombres_convenio);
+    
+    
   
     // Combina datos con nombres_convenio para la búsqueda
     this.datos = this.datos.map((item: any) => {

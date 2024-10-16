@@ -37,13 +37,12 @@
       
     <ion-list class="tabla" *ngIf="principal">
         <ion-item>
-          <ion-label>Cuadres: </ion-label>
+          <ion-label>Entregas: </ion-label>
         </ion-item>
         <ion-grid >
           
             <ion-row class="header-row">
               <ion-col class="small-edit-column" *ngIf="accion=='1'">ACCIÓN</ion-col>
-              <ion-col>EMPRESA</ion-col>
               <ion-col>PUNTO DE PAGO</ion-col>
               <ion-col>CAJA</ion-col>
               <ion-col>USUARIO</ion-col>
@@ -53,6 +52,7 @@
               <ion-col>TIPO DE ENTREGA</ion-col>
               <ion-col>COMENTARIO</ion-col>
               <ion-col>VALOR TOTAL</ion-col>
+              <ion-col>VALOR FORMULA</ion-col>
               <ion-col class="edit small-edit-column-fin"></ion-col>
             </ion-row>
             <div class="tabla_lista" style="overflow-y: auto; height: 40vh;">
@@ -63,20 +63,21 @@
                   <button class="btn_m" (click)="Aprobar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)"><ion-icon class="aprobar" name="checkmark-circle" size="large"></ion-icon></button>
                   <button class="btn_m1" (click)="Rechazar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)"><ion-icon class="rechazar" name="close-circle" size="large"></ion-icon></button>
                 </ion-col>
-                <ion-col title="{{ respuesta1.NOMBRE_EMPRESA }}">{{ respuesta1.NOMBRE_EMPRESA }}<span class="link-text" (click)="mostrarDetalles(respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)">detalles...</span></ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_PUNTO_PAGO }}">{{ respuesta1.NOMBRE_PUNTO_PAGO}}</ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_CODIGO_CAJA }}">{{ respuesta1.NOMBRE_CODIGO_CAJA }}</ion-col>
                 <ion-col title="{{ respuesta1.USUARIO }}">{{ respuesta1.USUARIO}}</ion-col>
                 <ion-col title="{{ respuesta1.NUMERO_ARQUEO }}">{{ respuesta1.NUMERO_ARQUEO }}</ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_ESTADO_ARQUEO }}">{{ respuesta1.NOMBRE_ESTADO_ARQUEO }}</ion-col>
-                <ion-col title="{{ respuesta1.NUMERO_ENTREGA }}">{{ respuesta1.NUMERO_ENTREGA }}</ion-col>
+                <ion-col title="{{ respuesta1.NUMERO_ENTREGA }}">{{ respuesta1.NUMERO_ENTREGA }}<span class="link-text" (click)="mostrarDetalles(respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)">detalles...</span></ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_TIPO_ENTREGA }}">{{ respuesta1.NOMBRE_TIPO_ENTREGA }}</ion-col>
                 <ion-col title="{{ respuesta1.COMENTARIO }}">{{ respuesta1.COMENTARIO}}</ion-col>
                 <ion-col title="{{ respuesta1.VALOR_TOTAL | number }}">{{ respuesta1.VALOR_TOTAL | number}}</ion-col>
+                <ion-col title="{{ respuesta1.VALOR_FORMULA | number }}">{{ respuesta1.VALOR_FORMULA | number}}</ion-col>
                 <ion-col class="edit small-edit-column-fin"><span class="link-text" (click)="MostrarMas(respuesta1)">Mas Info...</span></ion-col>
               </ion-row>
               <ion-grid *ngIf="respuesta1.selected">
                 <ion-row  class="header-row-info">
+                  <ion-col>VALOR CORRESPONSALES</ion-col>
                   <ion-col>PRESTAMOS EEP</ion-col>
                   <ion-col>VALOR CHEQUES</ion-col>
                   <ion-col>DATAFONO EEP</ion-col>
@@ -87,6 +88,7 @@
                   <ion-col>ESTADO ENTREGA</ion-col>
                 </ion-row>
                 <ion-row  class="data-row">
+                  <ion-col title="{{ respuesta1.VALOR_EFECTIVO_CORRESPONSALES | number }}">{{ respuesta1.VALOR_EFECTIVO_CORRESPONSALES | number}}</ion-col>
                   <ion-col title="{{ respuesta1.PRESTAMOS_EEP | number }}">{{ respuesta1.PRESTAMOS_EEP | number}}</ion-col>
                   <ion-col title="{{ respuesta1.VALOR_CHEQUES | number }}">{{ respuesta1.VALOR_CHEQUES | number}}</ion-col>
                   <ion-col title="{{ respuesta1.DATAFONO_EEP | number }}">{{ respuesta1.DATAFONO_EEP | number}}</ion-col>
@@ -112,9 +114,9 @@
               </button>
             </div>
             
-            <ion-label>Recaudos: </ion-label>
+            <ion-label>Detalle Entrega: </ion-label>
           </ion-item>
-          <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
+          <!-- <button class="btn-filtro" type="button" (click)="filtrar()">Filtrar</button>
           <ion-row class="filtros" *ngIf="habilitarfiltrado">
             <ion-col class="filtros">
               <ion-item >
@@ -170,7 +172,7 @@
               </ion-item>
             </ion-col>
           </ion-row>
-          
+           -->
           
           <ion-grid >
             
