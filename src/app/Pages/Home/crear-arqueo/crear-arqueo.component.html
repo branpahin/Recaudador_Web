@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title>Crear Arqueo</ion-title>
@@ -17,8 +18,8 @@
         <ion-input label="" [(ngModel)]="crear_arqueo.EMPRESA" name="empresa" type="text" value="{{empresa}}" placeholder="{{nombreEmpresa}}" readonly></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="stacked">Numero de caja</ion-label>
-        <ion-input label="" [(ngModel)]="crear_arqueo.CODIGO_CAJA" name="puntoPago" type="text" value="{{caja}}" placeholder="{{caja}}" readonly></ion-input>
+        <ion-label position="stacked">Caja</ion-label>
+        <ion-input label="" [(ngModel)]="nombre_caja" name="puntoPago" type="text" value="{{nombre_caja}}" placeholder="{{nombre_caja}}" readonly></ion-input>
         
       </ion-item>
       <ion-item>

@@ -10,6 +10,7 @@ import * as alertify from 'alertifyjs';
 })
 export class InformacionUsuarioComponent  implements OnInit {
 
+  //#region Variables
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
   empresa: string|null = localStorage.getItem('empresaCOD');
@@ -35,12 +36,16 @@ export class InformacionUsuarioComponent  implements OnInit {
   modificar:boolean=false;
   modificarInfo:boolean=false;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
     this.informacionUsuario();
   }
   
+  //#region Consulta a API
+
   informacionUsuario(){
     if (this.usuario !== null && this.token !== null && this.empresa !== null) {
       this.recaudoService.getInformacionUsuario(this.empresa, this.usuario, this.token).subscribe(
@@ -65,6 +70,17 @@ export class InformacionUsuarioComponent  implements OnInit {
 
   }
 
+  consultarDocumento(){
+    if (this.usuario !== null && this.token !== null && this.empresa !== null) {
+      this.recaudoService.getTiposDocumento(Number(this.empresa), this.usuario, this.token).subscribe((data:any)=>{
+        this.documento=data.TIPOS_DOCUMENTO;
+      })
+    }
+  }
+  
+  //#endregion
+
+  //#region Modificar y enviar
   Modificar(){
     this.modificarInfo=true;
     this.consultarDocumento();
@@ -111,11 +127,6 @@ export class InformacionUsuarioComponent  implements OnInit {
     })
   }
 
-  consultarDocumento(){
-    if (this.usuario !== null && this.token !== null && this.empresa !== null) {
-      this.recaudoService.getTiposDocumento(Number(this.empresa), this.usuario, this.token).subscribe((data:any)=>{
-        this.documento=data.TIPOS_DOCUMENTO;
-      })
-    }
-  }
+  //#endregion
+
 }

@@ -9,6 +9,7 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
 })
 export class ConveniosManualWsComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token')
@@ -21,6 +22,7 @@ export class ConveniosManualWsComponent  implements OnInit {
   alumbrado:boolean=false;
   alumbrado2:boolean=false;
   alumbrados="1";
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -28,6 +30,7 @@ export class ConveniosManualWsComponent  implements OnInit {
     this.conveniosManualWS();
   }
   
+  //#region Consultas a API
   conveniosManualWS(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getConveniosManualWS(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -44,7 +47,9 @@ export class ConveniosManualWsComponent  implements OnInit {
     }
 
   }
+  //#endregion
 
+  //#region Selección y envio
   seleccionado(event:any){
 
     this.selectedConvenio=event.detail.value;
@@ -104,6 +109,7 @@ export class ConveniosManualWsComponent  implements OnInit {
     //localStorage.setItem('CODconvenioDet',this.selectedConvenioDet);
     this.recaudoService.setCodigoConvenioDet(this.selectedConvenioDet)
   }
+  //#endregion
 
 }
 

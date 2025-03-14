@@ -140,7 +140,7 @@
             </ion-item>
           </ion-col>
           <ion-col>
-            <ion-item class="barras">
+            <ion-item class="barras" (click)="ListarFacturas()">
               <ion-label position="stacked">NUMERO MOVIMIENTO DET: </ion-label>
               <ion-input [(ngModel)]="datos.NUMERO_MOVIMIENTO_DET" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>
             </ion-item>

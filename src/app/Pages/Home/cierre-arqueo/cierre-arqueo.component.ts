@@ -25,7 +25,7 @@ interface Detalle {
 
 export class CierreArqueoComponent  implements OnInit {
 
-
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD') || '';
   arqueo: string|null = localStorage.getItem('numeroArqueo') || '';
   usuario: string|null = localStorage.getItem('usuario') || '';
@@ -77,6 +77,7 @@ export class CierreArqueoComponent  implements OnInit {
   suma_facturas: number = 0 ;
   enviar:boolean=true;
 
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -92,6 +93,7 @@ export class CierreArqueoComponent  implements OnInit {
     
   }
 
+  //#region Manejo de monedas
   agregarDetalle() {
     this.mostrarbase=true;
     this.valorbaseAnterior=Number(this.detalle.VALOR);
@@ -124,67 +126,20 @@ export class CierreArqueoComponent  implements OnInit {
   }
 
 
-  // formatNumberInput(event: Event): void {
-  //   const inputElement = event.target as HTMLInputElement;
-  //   let inputValue = inputElement.value.trim();
-  
-  //   const isNegative = inputValue.startsWith('-');
-  //   if (isNegative) {
-  //     inputValue = inputValue.substring(1);
-  //   }
-  
-  //   inputValue = inputValue.replace(/\D/g, '');
-  
-  //   inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  
-  //   if (isNegative) {
-  //     inputValue = '-' + inputValue;
-  //   }
-  
-  //   this.datos.CORRESPONSAL_2 = inputValue;
-  
-  // }
-
-  // formatNumberInput2(event: Event): void {
-  //   const inputElement = event.target as HTMLInputElement;
-  //   let inputValue = inputElement.value.trim();
-  
-  //   const isNegative = inputValue.startsWith('-');
-  //   if (isNegative) {
-  //     inputValue = inputValue.substring(1);
-  //   }
-  
-  //   inputValue = inputValue.replace(/\D/g, '');
-  
-  //   inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  
-  //   if (isNegative) {
-  //     inputValue = '-' + inputValue;
-  //   }
-  
-  //   this.datos.CORRESPONSAL_1 = inputValue;
-  
-  // }
 
   formatoNumero() {
     
     let numeroFormateado = this.datos.VALOR_RECAUDADO_REPORTADO.replace(/[^\d]/g, '');
-    // let numeroFormateado2 = this.datos.CORRESPONSAL_1.replace(/[^\d]/g, '');
-    // let numeroFormateado3 = this.datos.CORRESPONSAL_2.replace(/[^\d]/g, '');
-   
-
     numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-
     this.datos.VALOR_RECAUDADO_REPORTADO= numeroFormateado;
-    // this.datos.CORRESPONSAL_1=numeroFormateado2;
-    // this.datos.CORRESPONSAL_2=numeroFormateado3;
 
     
   }
 
+  //#endregion
 
 
+  //#region Consultas a API
   tipoEntrega(event: any) {
     this.otraVariable = event.detail.value;
   
@@ -271,9 +226,10 @@ export class CierreArqueoComponent  implements OnInit {
     }
   }
 
-
+  //#endregion
   
 
+  //#region Manejo de Infomación monedas y calculo
   infoMonedas(event: any)
   {
     this.suma_facturas=0;
@@ -305,8 +261,10 @@ export class CierreArqueoComponent  implements OnInit {
     }
   }
   
+  //#endregion
 
 
+  //#region Limpieza de campos y envio
   limpiarYEnviar() {
     this.enviar=false;
     this.datos.VALOR_RECAUDADO_REPORTADO=this.datos.VALOR_RECAUDADO_REPORTADO.replace(/\./g, '');
@@ -366,5 +324,6 @@ export class CierreArqueoComponent  implements OnInit {
     
     )
   }
+  //#endregion
 
 }

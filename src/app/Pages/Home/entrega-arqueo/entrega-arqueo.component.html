@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title>Entrega</ion-title>
@@ -19,16 +20,34 @@
             <ion-item>
               <ion-label position="stacked">Accion</ion-label>
               <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.ACCION" name="accion" (ionChange)="tipoEntregaDatafono()">
-                <ion-select-option value=1>PARCIAL</ion-select-option>
+                <ion-select-option *ngIf="datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'" value=1>PARCIAL</ion-select-option>
                 <ion-select-option value=2>TRANSPORTADORA</ion-select-option>
                 <ion-select-option value=3>FINAL</ion-select-option>
               </ion-select>
             </ion-item>
-      
+            
             <ion-item >
               <ion-label position="stacked">Valor total</ion-label>
               <ion-input label="" [(ngModel)]="datos.VALOR_TOTAL" name="valor" (input)="infoMonedas($event)" placeholder="$" required appFormatoMonetario></ion-input>
+              
             </ion-item>
+            <div *ngIf="showReminder && datos.ACCION=='3' && (datos.CODIGO_PUNTO_PAGO=='7' || datos.CODIGO_PUNTO_PAGO=='8')" class="floating-reminder">
+              <ion-card class="reminder-card">
+                <div class="reminder-header">
+                  <ion-label class="reminder-text">
+                    El valor total debe ser el valor en Efectivo más punto Red si es positivo, si es negativo es menos punto Red
+                  </ion-label>
+                </div>
+              </ion-card>
+              <ion-button 
+                    fill="clear" 
+                    color="danger" 
+                    class="close-button" 
+                    (click)="closeReminder()">
+                    <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            </div>
+
       
            
       
@@ -39,22 +58,38 @@
           </ion-col>
           <ion-col *ngIf="datos.ACCION=='3'" size="7" >
             <ion-row class="Datafonos">
-              <ion-col *ngIf="datos.ACCION=='3'" class="Datafonos">
+              <ion-col *ngIf="datos.ACCION=='3' && datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'" class="Datafonos">
             
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==21">
                     <ion-label position="stacked">DESCUENTOS</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.PRESTAMOS_EEP" placeholder="$" name="comentario" (input)="formatNumberInput($event)"></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.PRESTAMOS_EEP" placeholder="$" name="comentario" (input)="formatNumberInput($event)" (input)="formatNumberInput($event)"></ion-input>
                   </ion-item>
+                  <div *ngIf="showReminder && moneda.CODIGO==21" class="floating-reminder">
+                    <ion-card class="reminder-card">
+                      <div class="reminder-header">
+                        <ion-label class="reminder-text">
+                         En descuentos debes colocar valores negativos o positivos, teniendo en cuenta si prestaste o te prestaron
+                        </ion-label>
+                      </div>
+                    </ion-card>
+                    <ion-button 
+                          fill="clear" 
+                          color="danger" 
+                          class="close-button" 
+                          (click)="closeReminder()">
+                          <ion-icon name="close-outline"></ion-icon>
+                        </ion-button>
+                  </div>
                 </ng-container>
               </ion-col>
               
-              <ion-col *ngIf="datos.ACCION=='3'" class="Datafonos">
+              <ion-col *ngIf="datos.ACCION=='3' && datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'" class="Datafonos">
                 
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==22">
                     <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.VALOR_CHEQUES" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.VALOR_CHEQUES" placeholder="$" name="comentario" appFormatoMonetario disabled ></ion-input>
                   </ion-item>
                 </ng-container>
               </ion-col>
@@ -65,7 +100,7 @@
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==23">
                     <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_EEP" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_EEP" placeholder="$" name="comentario" appFormatoMonetario disabled ></ion-input>
                   </ion-item>
                 </ng-container>
               </ion-col>
@@ -73,7 +108,7 @@
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==24">
                     <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_AGUAS" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_AGUAS" placeholder="$" name="comentario" appFormatoMonetario disabled ></ion-input>
                   </ion-item>
                 </ng-container>
               </ion-col>
@@ -81,23 +116,55 @@
                 <ng-container *ngFor="let moneda of datafono">
                   <ion-item *ngIf="moneda.CODIGO==25">
                     <ion-label position="stacked">{{ moneda.DESCRIPCION }}</ion-label>
-                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_MUNICIPIO" placeholder="$" name="comentario" appFormatoMonetario></ion-input>
+                    <ion-input label="Valor: " [(ngModel)]="datos2.DATAFONO_MUNICIPIO" placeholder="$" name="comentario" appFormatoMonetario disabled ></ion-input>
                   </ion-item>
                 </ng-container>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col>
-                <ion-item>
+                <ion-item *ngIf="datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'">
                   <ion-label position="stacked">Banco de Bogota</ion-label>
                   <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_1" name="valor" placeholder="$" (input)="formatNumberInputBogota($event)"></ion-input>
                 </ion-item>
+                <div *ngIf="showReminder && datos.ACCION=='3' && datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'" class="floating-reminder">
+                  <ion-card class="reminder-card">
+                    <div class="reminder-header">
+                      <ion-label class="reminder-text">
+                        El valor de punto red se debe colocar en negativo o positivo segun el reporte de punto red
+                      </ion-label>
+                    </div>
+                  </ion-card>
+                  <ion-button 
+                        fill="clear" 
+                        color="danger" 
+                        class="close-button" 
+                        (click)="closeReminder()">
+                        <ion-icon name="close-outline"></ion-icon>
+                      </ion-button>
+                </div>
               </ion-col>
               <ion-col>
                 <ion-item>
                   <ion-label position="stacked">Punto Red</ion-label>
                   <ion-input label="" [(ngModel)]="datos2.CORRESPONSAL_2" name="valor" placeholder="$" (input)="formatNumberInputRed($event)"></ion-input>
                 </ion-item>
+                <div *ngIf="showReminder && datos.ACCION=='3'" class="floating-reminder">
+                  <ion-card class="reminder-card">
+                    <div class="reminder-header">
+                      <ion-label class="reminder-text">
+                        El valor de punto red se debe colocar en negativo o positivo segun el reporte de punto red
+                      </ion-label>
+                    </div>
+                  </ion-card>
+                  <ion-button 
+                        fill="clear" 
+                        color="danger" 
+                        class="close-button" 
+                        (click)="closeReminder()">
+                        <ion-icon name="close-outline"></ion-icon>
+                      </ion-button>
+                </div>
               </ion-col>
       
             </ion-row>

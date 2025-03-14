@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header *ngIf="load">
   <ion-toolbar color = "mycolor">
     <ion-buttons slot="start">
@@ -33,18 +34,18 @@
         
         <div class="opcion" *ngFor="let modulo of modulos; let i = index">
          
-          <button class="btn_m" (click)="toggleContenido(i,modulo)" *ngIf="indiceModuloSeleccionado !== i">
+          <button class="btn_m" (click)="toggleContenido(i,modulo)" *ngIf="indiceModuloSeleccionado != i && !(modulo.MODULO == '9' && url()==false)">
             <ion-icon [class]="obtenerIcono(modulo.MODULO).iconClass" [name]="obtenerIcono(modulo.MODULO).iconName" size="large"></ion-icon><span>{{modulo.NOMBRE_MODULO}}</span>
           </button>
 
-          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotones && modulo.MODULO==='7'">
+          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotones && modulo.MODULO=='7'">
             <div id="lista" *ngFor="let sub_modulo of modulo.SUB_MODULOS; let j = index">
               <button class="btn_mAdmin" (click)="toggleContenido2(i, sub_modulo)" >
                 <ion-icon [class]="obtenerIcono2(sub_modulo.SUB_MODULO).iconClass" [name]="obtenerIcono2(sub_modulo.SUB_MODULO).iconName" size="large"></ion-icon><span>{{sub_modulo.NOMBRE_SUB_MODULO}}</span>
               </button>
             </div>
           </ion-list>
-          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotonesAdmin && modulo.MODULO==='8'">
+          <ion-list class="sub_modulo" *ngIf="mostrarListaDeBotonesAdmin && modulo.MODULO=='8'">
             <ion-list *ngFor="let sub_modulo of modulo.SUB_MODULOS; let k = index">
               <div id="lista">
                 <button class="btn_mAdmin" (click)="toggleContenido3(k, sub_modulo)" >
@@ -79,8 +80,9 @@
               </ion-col>
               <ion-col size="2">
                 <div id="imagen_nav">
-                  <img src="../../prueba/assets/logo/logo_energia.png">
+                  <!-- <img src="../../prueba/assets/logo/logo_energia.png"> -->
                   <!-- <img src="../../produccion/assets/logo/logo_energia.png"> -->
+                  <img [src]="recaudoService.ruteImg">
                   <!-- <img src="../../assets/logo/logo_energia.png"> -->
                 </div>
               </ion-col>
@@ -105,9 +107,10 @@
           </div>
           
           <div *ngIf="mostrarInicio" class="centered-image-container">
-            <img src="../../prueba/assets/logo/logo_energia.png" class="centered-image">
+            <!-- <img src="../../prueba/assets/logo/logo_energia.png" class="centered-image"> -->
             <!-- <img src="../../produccion/assets/logo/logo_energia.png" class="centered-image"> -->
-            <!--<img src="../../assets/logo/logo_energia.png" class="centered-image"> -->
+            <img [src]="recaudoService.ruteImg" class="centered-image">
+            <!-- <img src="../../assets/logo/logo_energia.png" class="centered-image"> -->
           </div>
           
 
@@ -207,7 +210,7 @@
 
       
     
-      <div *ngIf="Punteo===true">
+      <div *ngIf="Punteo==true">
         <button class="cerrar-btn-1" (click)="cerrarPunteo()">
           <ion-icon size="large" class="cerrar-btn" name="close-circle-sharp"></ion-icon>
         </button>

@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Facturas Rechazadas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Facturas Rechazadas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list class="tabla">
+      <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
+      <ion-grid class="tabla1">
+        <ion-row class="header-row">
+          <ion-col >Cod. Referencia</ion-col>
+          <ion-col >Cod. Barras</ion-col>
+          <ion-col >Error</ion-col>
+
+        </ion-row>
+  
+        <div class="tabla_lista">
+          <ion-row *ngFor="let detalle of filteredList" class="data-row">
+
+            <!-- Mostrar el nombre del convenio y detalle -->
+            <ion-col title="{{ detalle.REFERENCIA }}">{{ detalle.REFERENCIA }}</ion-col>
+            <ion-col title="{{ detalle.CODIGO_BARRAS }}">{{ detalle.CODIGO_BARRAS }}</ion-col>
+            
+            <!-- Mostrar el resto de los detalles -->
+            <ion-col title="{{ detalle.ERROR }}">{{ detalle.ERROR }}</ion-col>
+           
+          </ion-row>
+        </div>
+      </ion-grid>
+      
+    </ion-list>
+  </ion-card-content>
+</ion-card>

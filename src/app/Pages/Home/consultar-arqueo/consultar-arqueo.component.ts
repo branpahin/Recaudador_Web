@@ -16,7 +16,7 @@ import { HttpClient } from '@angular/common/http';
 export class ConsultarArqueoComponent  implements OnInit {
 
 
-
+//#region Variables
   consultar_arqueo:Consultar_Arqueo ={
     EMPRESA: 0,
     USUARIO: '',
@@ -61,7 +61,7 @@ export class ConsultarArqueoComponent  implements OnInit {
   fecha:string='';
   hora: string='';
   habilitarfiltrado=false;
-
+//#endregion
 
   constructor(private recaudoService: RecaudoService, private http: HttpClient) {}
 
@@ -82,7 +82,7 @@ export class ConsultarArqueoComponent  implements OnInit {
   ngOnInit() {
     this.recaudosOriginal = this.recaudos;
   }
-
+//#region Manejo de ventanas
   detallerecaudos(){
     this.detalles=true;
     this.detallesFac = true; 
@@ -102,6 +102,10 @@ export class ConsultarArqueoComponent  implements OnInit {
     this.listado=false;   
     this.consultar_arqueo_param.FECHA_MOVIMIENTO="";
   }
+
+  //#endregion
+  
+  //#region Información de detalles y filtros
   detalleSeleccionado: string | null = null;
 
   mostrarDetalles(detalle:{NUMERO_MOVIMIENTO:any,NUMERO_ARQUEO:any,CODIGO_PUNTO_PAGO:any}): void {
@@ -145,8 +149,9 @@ export class ConsultarArqueoComponent  implements OnInit {
     return this.rol === 'R_CAJERO';
   }
 
+//#endregion
 
-
+  //#region Consultar Arqueo 
   consultarArqueo(){
     if(this.consultar_arqueo_param.NUMERO_ARQUEO!=""){
       this.listado=true;
@@ -196,6 +201,9 @@ export class ConsultarArqueoComponent  implements OnInit {
     }
   }
 
+  //#endregion
+
+  //#region Manejo de impresion
   updateSelectedClientes(event: { detail: { checked: any; }; }, informacio: { CODIGO_CLIENTE: any; }) {
     
     const codigoCliente = informacio.CODIGO_CLIENTE;
@@ -286,6 +294,6 @@ export class ConsultarArqueoComponent  implements OnInit {
       }
     );
   }
-  
+  //#endregion
 
 }

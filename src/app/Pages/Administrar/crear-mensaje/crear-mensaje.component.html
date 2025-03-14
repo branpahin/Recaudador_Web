@@ -17,27 +17,35 @@
     <p>CREAR MENSAJE</p>
     <ion-grid>
       <ion-row>
-        <ion-col>
-          <ion-item class="estados">
-            <ion-label position="stacked">PUNTO DE PAGO: </ion-label>
-            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="datos.CODIGO_PUNTO_PAGO" name="empresa" (ionChange)="ListarMensajes()" required>
+        <ion-col >
+          <ion-item style="max-width: 250px;" class="estados">
+            <ion-label position="stacked">LISTAR MENSAJES: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="punto_pago" name="empresa" (ionChange)="ListarMensajes()">
               <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col style="max-width: 200px;">
           <ion-item>
             <ion-label position="stacked">TITULO: </ion-label>
-            <ion-input [(ngModel)]="datos.TITULO_MENSAJE" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>   
+            <ion-input [(ngModel)]="datos.TITULO_MENSAJE" type="text" required  name="nombre" required></ion-input>   
           </ion-item>    
         </ion-col>
         <ion-col>
           <ion-item>
             <ion-label position="stacked">MENSAJE: </ion-label>
-            <ion-input [(ngModel)]="datos.MENSAJE" type="text" required [disabled]="!datos.CODIGO_PUNTO_PAGO" name="nombre" required></ion-input>       
+            <ion-input [(ngModel)]="datos.MENSAJE" type="text" required name="nombre" required></ion-input>       
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col style="max-width: 280px;">
+          <ion-item class="estados">
+            <ion-label position="stacked">PUNTO DESTINO: </ion-label>
+            <ion-select interface="popover" placeholder="Seleccionar" name="empresa" [(ngModel)]="selectedValues" (ionChange)="guardarSeleccion()" [multiple]="true" required>
+              <ion-select-option *ngFor="let punto of listadoPuntos" [value]="punto.CODIGO_PUNTO_PAGO">{{ punto.NOMBRE }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col style="max-width: 150px;">
           <div class="div-btn" *ngIf="!editar">
             <button class="btn" expand="full" (click)="crearMensaje()"> Generar mensaje</button>
           </div>

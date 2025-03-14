@@ -4,7 +4,7 @@ import * as alertify from 'alertifyjs';
 import { formatDate } from '@angular/common';
 import { DetalleCierre } from 'src/models/usuario.model';
 import { CajasSacComponent } from '../cajas-sac/cajas-sac.component';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 
 
 
@@ -17,6 +17,8 @@ import { ModalController } from '@ionic/angular';
   
 })
 export class CierreCajaComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -44,13 +46,18 @@ export class CierreCajaComponent  implements OnInit {
     USUARIO: this.usuario,    
     TOKEN: this.token
   }
+  //#endregion
 
-  constructor(private recaudoService: RecaudoService,  private modalController: ModalController) { }
+  constructor(private recaudoService: RecaudoService,  
+    private modalController: ModalController,
+    private loadingController: LoadingController,) { }
 
   ngOnInit() 
   {
     this.ListarPuntosPago();
   }
+
+  //#region Consulta a API
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -116,18 +123,26 @@ export class CierreCajaComponent  implements OnInit {
     `;
     return await modal.present();
   }
+  //#endregion
 
-
-  CerrarCaja(){
+  //#region Envio a API
+  async CerrarCaja(){
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    
 
     if(this.datos.FECHA_CIERRE==""){
       this.datos.FECHA_CIERRE= new Date().toISOString();
       this.datos.FECHA_CIERRE= formatDate(this.datos.FECHA_CIERRE,'dd-MM-yyyy', 'en-US');
     }
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      await loading.present();
       this.recaudoService.postCierreCaja(this.datos).subscribe(
-        (data: any) => {
+        async (data: any) => {
           this.resultado= data;
+          await loading.dismiss();
           const detallecodigo = this.listado.find(detalle => detalle.ID_CAJA===this.datos.IDENTIFICADOR_PUNTO_PAGO);
           if(this.resultado.COD=="200" && detallecodigo?.ID_CAJA!=this.datos.IDENTIFICADOR_PUNTO_PAGO && detallecodigo?.FECHA!=this.datos.FECHA_CIERRE){
             alertify.success(this.resultado.RESPUESTA);
@@ -159,20 +174,24 @@ export class CierreCajaComponent  implements OnInit {
 
            
           }else if(detallecodigo?.ID_CAJA==this.datos.IDENTIFICADOR_PUNTO_PAGO && detallecodigo?.FECHA==this.datos.FECHA_CIERRE){
+            await loading.dismiss();
             alertify.error("La caja ya fue cerrada con fecha: "+this.datos.FECHA_CIERRE);
           }
           else {
+            await loading.dismiss();
             alertify.error(this.resultado.RESPUESTA);
           }
           
         },
-        (error) => {
+        async (error) => {
+          await loading.dismiss();
           console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
+          alertify.error("Problemas de conexión",error);
         }
       );
       
     }
   }
+  //#endregion
 
 }

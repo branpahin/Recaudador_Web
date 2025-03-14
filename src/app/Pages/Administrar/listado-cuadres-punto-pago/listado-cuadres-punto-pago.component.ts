@@ -11,6 +11,8 @@ import * as saveAs from 'file-saver';
   styleUrls: ['./listado-cuadres-punto-pago.component.scss'],
 })
 export class ListadoCuadresPuntoPagoComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -43,6 +45,7 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
   detallesFac: boolean=false;
   seleccion:boolean=true;
   tablas:boolean=false;
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -50,6 +53,7 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     this.ListarPuntosPago();
   }
 
+  //#region Consulta a API
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -179,6 +183,10 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Envio a API
+
   AccionCuadrePunto(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postAccionCuadrePunto(this.empresa,this.codigo_punto_pago,this.arqueoSelect,this.accionCuadre,this.observacion,this.usuario,this.token,).subscribe(
@@ -205,6 +213,6 @@ export class ListadoCuadresPuntoPagoComponent  implements OnInit {
     }
   }
 
-
+  //#endregion
 
 }

@@ -10,6 +10,7 @@ import * as alertify from 'alertifyjs';
 })
 export class CambiarClaveComponent  implements OnInit {
   
+  //#region Variables
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
   empresa: string|null = localStorage.getItem('empresaCOD');
@@ -34,6 +35,7 @@ export class CambiarClaveComponent  implements OnInit {
   documento: any[]=[];
   modificar:boolean=false;
   modificarInfo:boolean=false;
+  //#endregion
 
   constructor( private recaudoService: RecaudoService, private router: Router ) { }
 
@@ -41,6 +43,7 @@ export class CambiarClaveComponent  implements OnInit {
     this.informacionUsuario();
   }
   
+  //#region Consulta a API
   informacionUsuario(){
     if (this.usuario !== null && this.token !== null && this.empresa !== null) {
       this.recaudoService.getInformacionUsuario(this.empresa, this.usuario, this.token).subscribe(
@@ -65,6 +68,9 @@ export class CambiarClaveComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Modificaciones y envio
   modificarClave(){
     const claveRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]+$/;
       if(this.clave==this.confirmacionClave){
@@ -97,5 +103,7 @@ export class CambiarClaveComponent  implements OnInit {
       console.error('Error al llamar al servicio:', error);
     })
   }
+
+  //#endregion
 
 }

@@ -8,6 +8,8 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
   styleUrls: ['./listar-cajas.component.scss'],
 })
 export class ListarCajasComponent  implements OnInit {
+  
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -20,6 +22,7 @@ export class ListarCajasComponent  implements OnInit {
 
   ngOnInit() {}
 
+  //#region Consulta a API
   ListarCajas(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarCajas(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -35,5 +38,6 @@ export class ListarCajasComponent  implements OnInit {
     }
 
   }
+  //#endregion
 
 }

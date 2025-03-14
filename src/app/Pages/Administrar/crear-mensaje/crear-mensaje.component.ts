@@ -10,6 +10,7 @@ import * as alertify from 'alertifyjs';
 })
 export class CrearMensajeComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   arqueo: string|null = localStorage.getItem('numeroArqueo');
   usuario: string|null = localStorage.getItem('usuario');
@@ -25,6 +26,9 @@ export class CrearMensajeComponent  implements OnInit {
     MENSAJE:"",
     TOKEN:this.token
   }
+  punto_pago="";
+  selectedValues: string[] = []; // Valores seleccionados (CODIGO_PUNTO_PAGO)
+  selectedObjects: any[] = []; 
 
   datosModificar={
     EMPRESA: this.empresa,
@@ -45,11 +49,15 @@ export class CrearMensajeComponent  implements OnInit {
   listadoPuntos: any []=[];
   respuesta:any;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
     this.ListarPuntosPago();
   }
+
+  //#region Consulta a API
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -65,9 +73,16 @@ export class CrearMensajeComponent  implements OnInit {
 
   }
 
+  guardarSeleccion() {
+    this.selectedObjects = this.selectedValues.map(codigo => ({
+      CODIGO_PUNTO_PAGO: codigo,
+    }));
+    console.log('Objetos seleccionados:', this.selectedObjects);
+  }
+
   ListarMensajes(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.getListarMensajes(Number(this.empresa),Number(this.datos.CODIGO_PUNTO_PAGO),this.usuario,this.token).subscribe(
+      this.recaudoService.getListarMensajes(Number(this.empresa),Number(this.punto_pago),this.usuario,this.token).subscribe(
         (data: any) => {
           this.listadoMensajesActivos= data.MENSAJES_ACTIVOS;
           this.listadoMensajesInactivos= data.MENSAJES_INACTIVOS;
@@ -80,10 +95,14 @@ export class CrearMensajeComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Envio a API
+
   Eliminar(respuesta1:any){
     this.datosModificar={
       EMPRESA: this.empresa,
-      CODIGO_PUNTO_PAGO: this.datos.CODIGO_PUNTO_PAGO,
+      CODIGO_PUNTO_PAGO: this.punto_pago,
       ID_MENSAJE: respuesta1.ID_MENSAJE,
       ESTADO: "I",
       USUARIO:this.usuario,
@@ -123,7 +142,7 @@ export class CrearMensajeComponent  implements OnInit {
   Activar(respuesta1:any){
     this.datosModificar={
       EMPRESA: this.empresa,
-      CODIGO_PUNTO_PAGO: this.datos.CODIGO_PUNTO_PAGO,
+      CODIGO_PUNTO_PAGO: this.punto_pago,
       ID_MENSAJE: respuesta1.ID_MENSAJE,
       ESTADO: "A",
       USUARIO:this.usuario,
@@ -223,32 +242,64 @@ export class CrearMensajeComponent  implements OnInit {
     });
   }
 
-  crearMensaje(){
-    this.recaudoService.postCrearMensaje(this.datos).subscribe({
-      next: data => {
-        this.respuesta = data;
-        if(this.respuesta.COD=='200'){
-          alertify.success(this.respuesta.RESPUESTA);
-          this.datos={
-            EMPRESA: this.empresa,
-            CODIGO_PUNTO_PAGO: this.datos.CODIGO_PUNTO_PAGO,
-            USUARIO:this.usuario,
-            TITULO_MENSAJE:"",
-            MENSAJE:"",
-            TOKEN:this.token
-          }
-          this.ListarMensajes();
-          }
-        else  {
-          alertify.error(this.respuesta.RESPUESTA);
-        }
+  // crearMensaje(){
+  //   this.recaudoService.postCrearMensaje(this.datos).subscribe({
+  //     next: data => {
+  //       this.respuesta = data;
+  //       if(this.respuesta.COD=='200'){
+  //         alertify.success(this.respuesta.RESPUESTA);
+  //         this.datos={
+  //           EMPRESA: this.empresa,
+  //           CODIGO_PUNTO_PAGO: this.datos.CODIGO_PUNTO_PAGO,
+  //           USUARIO:this.usuario,
+  //           TITULO_MENSAJE:"",
+  //           MENSAJE:"",
+  //           TOKEN:this.token
+  //         }
+  //         this.ListarMensajes();
+  //         }
+  //       else  {
+  //         alertify.error(this.respuesta.RESPUESTA);
+  //       }
 
-      },
-      error: error => {
-        console.error("Respuesta:",error);
-      }
-    });
+  //     },
+  //     error: error => {
+  //       console.error("Respuesta:",error);
+  //     }
+  //   });
     
+  // }
+
+  crearMensaje() {
+    this.selectedObjects.forEach(obj => {
+      this.datos.CODIGO_PUNTO_PAGO = obj.CODIGO_PUNTO_PAGO;
+  
+      this.recaudoService.postCrearMensaje(this.datos).subscribe({
+        next: data => {
+          this.respuesta = data;
+          
+          if (this.respuesta.COD == '200') {
+            alertify.success(`Mensaje enviado al código: ${obj.CODIGO_PUNTO_PAGO}`);
+          } else {
+            alertify.error(`Error al enviar mensaje al código: ${obj.CODIGO_PUNTO_PAGO}`);
+          }
+        },
+        error: error => {
+          alertify.error(`Error al enviar mensaje al código: ${obj.CODIGO_PUNTO_PAGO}`);
+          console.error(`Error al enviar mensaje al código: ${obj.CODIGO_PUNTO_PAGO}`, error);
+        }
+      });
+    });
+    this.datos={
+      EMPRESA: this.empresa,
+      CODIGO_PUNTO_PAGO: "",
+      USUARIO:this.usuario,
+      TITULO_MENSAJE:"",
+      MENSAJE:"",
+      TOKEN:this.token
+    }
+    this.ListarMensajes();
   }
+  //#endregion
 
 }

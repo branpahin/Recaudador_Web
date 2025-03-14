@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >Generar Asobancaria</ion-title>
@@ -40,7 +41,7 @@
             <ion-label position="stacked">LISTADO CONVENIOS:
               <ion-checkbox (ionChange)="seleccionarTodo($event)" [checked]="seleccionarTodos">Seleccionar Todo</ion-checkbox>
             </ion-label>
-            <div class="tabla">
+            <div class="tabla" class="tabla_lista" id="tablaLista">
               
               <div *ngFor="let convenio of convenios">
                 <ion-row class="header-row">
@@ -49,18 +50,18 @@
                   </ion-col>
                   <ion-col>
                     <div *ngFor="let convenioDet of convenio.convenioDet">
-                        <ion-checkbox *ngIf="convenio.label!=='MUNICIPIO'" (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'')" [value]="convenioDet.value" [checked]="seleccionarTodos" labelPlacement="end">
+                        <ion-checkbox *ngIf="convenio.label!='MUNICIPIO'" (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'')" [value]="convenioDet.value" [checked]="seleccionarTodos" labelPlacement="end">
                           <p class="contenido">{{ convenioDet.label }}</p>
                         </ion-checkbox>
-                        <ion-col class="forma_pago" *ngIf="convenio.label==='MUNICIPIO'">
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
                           <p >{{ convenioDet.label }}</p>
                         </ion-col>
-                        <ion-col class="forma_pago" *ngIf="convenio.label==='MUNICIPIO'">
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
                           <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'1')">
                             <p class="contenido">E</p>
                           </ion-checkbox>
                         </ion-col>
-                        <ion-col class="forma_pago" *ngIf="convenio.label==='MUNICIPIO'">
+                        <ion-col class="forma_pago" *ngIf="convenio.label=='MUNICIPIO'">
 
                           <ion-checkbox (ionChange)="obtenerDetalleConvenio($event, convenio,convenioDet,'3')">
                             <p class="contenido">D</p>
@@ -91,7 +92,7 @@
                 </ion-col>
                 
                 <ng-container *ngFor="let detalle2 of nombre_convenios">
-                  <ng-container *ngIf="detalle2.CODIGO_CONVENIO===detalle.CODIGO_CONVENIO && detalle2.CODIGO_CONVENIO_DET===detalle.CODIGO_CONVENIO_DET && detalle2.TIPO_PAGO===detalle.TIPO_PAGO">
+                  <ng-container *ngIf="detalle2.CODIGO_CONVENIO==detalle.CODIGO_CONVENIO && detalle2.CODIGO_CONVENIO_DET==detalle.CODIGO_CONVENIO_DET && detalle2.TIPO_PAGO==detalle.TIPO_PAGO">
                     <ion-col>
                       <p>{{detalle2.NOMBRE}}</p>
                     </ion-col>

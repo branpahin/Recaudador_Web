@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >Puntos de Pago</ion-title>
@@ -194,11 +195,11 @@
                     <div class="fecha" *ngIf="editar">
                       <ion-label position="stacked"> De: </ion-label>
       
-                      <ion-datetime-button [ngModel]="horaInicio" locale="en-GB" hourCycle="h12" datetime="time1" class="time"></ion-datetime-button>
+                      <ion-datetime-button  locale="en-GB" hourCycle="h12" datetime="time1" class="time"></ion-datetime-button>
 
                       <ion-modal [keepContentsMounted]="true">
                         <ng-template>
-                          <ion-datetime id="time1" presentation="time" [ngModel]="horaInicio" locale="en-GB" hourCycle="h12" 
+                          <ion-datetime id="time1" presentation="time" [value]="horaInicio" locale="en-GB" hourCycle="h12" 
                             (ionChange)="HoraIni($event)" ></ion-datetime>
                         </ng-template>
                       </ion-modal>
@@ -220,11 +221,11 @@
                     <div class="fecha" *ngIf="editar">
                       <ion-label position="stacked"> A: </ion-label>
       
-                      <ion-datetime-button [ngModel]="HoraFin" datetime="time2" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+                      <ion-datetime-button datetime="time2" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
           
                       <ion-modal [keepContentsMounted]="true">
                         <ng-template>
-                          <ion-datetime id="time2" [ngModel]="horaFin" presentation="time" locale="en-GB" hourCycle="h12"
+                          <ion-datetime id="time2" [value]="horaFin" presentation="time" locale="en-GB" hourCycle="h12"
                           (ionChange)="HoraFin($event)" ></ion-datetime>
                         </ng-template>
                       </ion-modal>
@@ -252,11 +253,11 @@
 
                     <div class="fecha" *ngIf="editar">
           
-                      <ion-datetime-button [ngModel]="datos.HORA_MAXIMA_RECAUDO" datetime="time3" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
+                      <ion-datetime-button  datetime="time3" class="time" locale="en-GB" hourCycle="h12"></ion-datetime-button>
           
                       <ion-modal [keepContentsMounted]="true">
                         <ng-template>
-                          <ion-datetime [ngModel]="datos.HORA_MAXIMA_RECAUDO" id="time3" presentation="time" locale="en-GB" hourCycle="h12"
+                          <ion-datetime [value]="datos.HORA_MAXIMA_RECAUDO" id="time3" presentation="time" locale="en-GB" hourCycle="h12"
                           (ionChange)="Hora($event)" ></ion-datetime>
                         </ng-template>
                       </ion-modal>

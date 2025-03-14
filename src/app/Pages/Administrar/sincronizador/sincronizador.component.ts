@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./sincronizador.component.scss'],
 })
 export class SincronizadorComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -44,6 +46,7 @@ export class SincronizadorComponent  implements OnInit {
     USUARIO:this.usuario,
     TOKEN: this.token
   }
+  //#endregion
 
 
   constructor(private recaudoService: RecaudoService, private modalController: ModalController, private router: Router, ) { 
@@ -56,16 +59,17 @@ export class SincronizadorComponent  implements OnInit {
     this.ListarEstadoSincro();
     this.ListarConveniosSincro();
     this.PagosAgrupadosSincro();
-    this.intervalSubscription = interval(3000)
+    this.intervalSubscription = interval(30000)
     .pipe(
       takeWhile(() => !this.valorSincronizacion)
     ).subscribe(() => {
-      this.PagosAgrupadosSincro();
       this.ListarEstadoSincro();
+      this.PagosAgrupadosSincro();
     });
     
   }
 
+  //#region Consulta a API
   ListarConveniosSincro(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getLisadoConveniosSincronizador(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -92,6 +96,7 @@ export class SincronizadorComponent  implements OnInit {
               this.conveniosSincronizando=data.CODIGOS_CONVENIOS;
             }else{
               this.conveniosSincronizando="";
+              this.lstConvenios="";
             }
           }else{
             alertify.error('¡¡El usuario cambío de Roll o expiro la sesión, se cerrara la sesión!!');
@@ -136,6 +141,9 @@ export class SincronizadorComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Envio
 
   ModificarEstadoSincro(estado:string){
 
@@ -170,7 +178,7 @@ export class SincronizadorComponent  implements OnInit {
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
+          alertify.error('Error al modificar estado ',error);
         }
       );
       this.datosModificarEstado={
@@ -206,7 +214,7 @@ export class SincronizadorComponent  implements OnInit {
         },
         (error) => {
           console.error('Error al llamar al servicio:', error);
-          alertify.error(error);
+          alertify.error('Error al sincronizar pagos ',error);
         }
       );
       this.datosModificarEstado={
@@ -247,5 +255,7 @@ export class SincronizadorComponent  implements OnInit {
       );
     }
   }
+
+  //#endregion
 
 }

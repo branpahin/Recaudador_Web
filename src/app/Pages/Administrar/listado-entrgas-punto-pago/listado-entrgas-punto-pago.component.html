@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >Entregas punto pago</ion-title>
@@ -26,7 +27,7 @@
       <ion-item>
         <ion-label position="stacked">Entregas: </ion-label>
         <ion-select interface="popover" placeholder="Seleccionar" [(ngModel)]="accion" name="accion" (ionChange)="ListarEntregasPunto()">
-          <ion-select-option value='1'>Pendientes</ion-select-option>
+          <ion-select-option *ngIf="puntoPago!='7' && puntoPago!='8'" value='1'>Pendientes</ion-select-option>
           <ion-select-option value='2'>Validadas</ion-select-option>
           <ion-select-option value='3'>Rechazadas</ion-select-option>
         </ion-select>
@@ -43,6 +44,7 @@
           
             <ion-row class="header-row">
               <ion-col class="small-edit-column" *ngIf="accion=='1'">ACCIÓN</ion-col>
+              <ion-col class="small-edit-column" *ngIf="accion=='2' && (puntoPago=='7' || puntoPago=='8')">ACCIÓN</ion-col>
               <ion-col>PUNTO DE PAGO</ion-col>
               <ion-col>CAJA</ion-col>
               <ion-col>USUARIO</ion-col>
@@ -61,6 +63,9 @@
               <ion-row class="data-row" >
                 <ion-col class="small-edit-column" *ngIf="accion=='1'">
                   <button class="btn_m" (click)="Aprobar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)"><ion-icon class="aprobar" name="checkmark-circle" size="large"></ion-icon></button>
+                  <button class="btn_m1" (click)="Rechazar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)"><ion-icon class="rechazar" name="close-circle" size="large"></ion-icon></button>
+                </ion-col>
+                <ion-col class="small-edit-column" *ngIf="accion=='2' && (puntoPago=='7' || puntoPago=='8')">
                   <button class="btn_m1" (click)="Rechazar(respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_ENTREGA)"><ion-icon class="rechazar" name="close-circle" size="large"></ion-icon></button>
                 </ion-col>
                 <ion-col title="{{ respuesta1.NOMBRE_PUNTO_PAGO }}">{{ respuesta1.NOMBRE_PUNTO_PAGO}}</ion-col>

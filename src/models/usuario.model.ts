@@ -5,6 +5,7 @@ export interface Usuario {
     DOCUMENTO: string;
     TIPO_DOCUMENTO: string;
     NOMBRE: string;
+    NOMBRE_CAJA: string;
     DIRECCION: string;
     TELEFONO: string;
     ESTADO: string;

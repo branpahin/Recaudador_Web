@@ -11,6 +11,7 @@ import * as alertify from 'alertifyjs';
 })
 export class TrasladoFechasComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   arqueo: string|null = localStorage.getItem('numeroArqueo');
   usuario: string|null = localStorage.getItem('usuario');
@@ -29,6 +30,7 @@ export class TrasladoFechasComponent  implements OnInit {
 
   listadoPuntos: any []=[];
   respuesta:any;
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -36,6 +38,7 @@ export class TrasladoFechasComponent  implements OnInit {
     this.ListarPuntosPago();
   }
 
+  //#region Consulta a API
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -51,7 +54,9 @@ export class TrasladoFechasComponent  implements OnInit {
     }
 
   }
+  //#endregion
 
+  //#region Formato de fechas y envio
   fecha(event:any){
     this.datos.FECHA = formatDate(event.detail.value, 'dd/MM/yyyy', 'en-US');
   }
@@ -78,6 +83,6 @@ export class TrasladoFechasComponent  implements OnInit {
     });
     
   }
-
+  //#endregion
 
 }

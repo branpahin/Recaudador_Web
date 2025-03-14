@@ -1,5 +1,5 @@
 import { Component,OnInit} from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
 import { LoadingController, MenuController, ModalController} from '@ionic/angular';
@@ -7,7 +7,7 @@ import { interval } from 'rxjs';
 import { InformacionUsuarioComponent } from '../../Autenticacion/informacion-usuario/informacion-usuario.component';
 import { CargarArchivoOfflineComponent } from '../../Administrar/cargar-archivo-offline/cargar-archivo-offline.component';
 import { ReabrirArqueoComponent } from '../../Administrar/reabrir-arqueo/reabrir-arqueo.component';
-
+import { TypeRuteImg, TypeRuteImgPunto} from 'src/models/rutes';
 
 
 
@@ -20,6 +20,8 @@ import { ReabrirArqueoComponent } from '../../Administrar/reabrir-arqueo/reabrir
 
 
 export class InicioArqueoComponent  implements OnInit {
+
+  //#region Variables
   nombrePuntoPago: string|null =localStorage.getItem('nombrePuntoPago');
   puntoPago: string|null =localStorage.getItem('puntoPago');
   usuario =localStorage.getItem('usuario') ||'';
@@ -93,9 +95,11 @@ export class InicioArqueoComponent  implements OnInit {
   intervalId: any;
   loading:any;
   load:boolean=false;
+  //#endregion
   
-  constructor(private recaudoService: RecaudoService, 
+  constructor(public recaudoService: RecaudoService, 
     private router: Router, 
+    private activatedRoute: ActivatedRoute,
     private menuCtrl: MenuController, 
     private modalController: ModalController,
     private loadingController: LoadingController) { }
@@ -124,6 +128,8 @@ export class InicioArqueoComponent  implements OnInit {
   ngOnDestroy() {
     clearInterval(this.intervalId);
   }
+
+//#region Consultas iniciales
 
   calcularPosicionVertical(index: number): string {
     const alturaMensaje = 60;
@@ -160,6 +166,9 @@ export class InicioArqueoComponent  implements OnInit {
       }
     );
   }
+//#endregion
+
+//#region Obtener paramteros de modulos y permisos
   
   obtenerRol(){
     const usuario = localStorage.getItem('usuario') || '';
@@ -214,6 +223,10 @@ export class InicioArqueoComponent  implements OnInit {
       }
     } );
 
+  }
+
+  url(): boolean {
+    return  window.location.href.includes('produccion_torres') || window.location.href.includes('localhost') || window.location.href.includes('prueba'); // Retorna true si contiene alguno de los términos
   }
 
   cerrarMenu() {
@@ -1023,6 +1036,10 @@ export class InicioArqueoComponent  implements OnInit {
  
   }
 
+//#endregion
+
+//#region Parametros adicionales de vistas de modulos
+
   mostrarLista() {
     this.mostrarListaDeBotones = !this.mostrarListaDeBotones;
   }
@@ -1121,6 +1138,10 @@ export class InicioArqueoComponent  implements OnInit {
 
   }
 
+//#endregion
+
+//#region Cierre de sesion
+
   cerrarSesion() {
     
     if (this.token !== null && this.usuario!== null && this.empresa!==null) {
@@ -1149,5 +1170,7 @@ export class InicioArqueoComponent  implements OnInit {
       );
     }
   }
+
+//#endregion
 
 }

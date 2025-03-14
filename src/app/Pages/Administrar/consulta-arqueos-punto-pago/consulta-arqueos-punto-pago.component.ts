@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-consulta-arqueos-punto-pago',
@@ -10,6 +11,8 @@ import * as alertify from 'alertifyjs';
   styleUrls: ['./consulta-arqueos-punto-pago.component.scss'],
 })
 export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   puntoPago=localStorage.getItem('puntoPago')|| '';
@@ -79,11 +82,15 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
   Entregas:boolean=false;
   comentarioAnulacion:boolean=false;
 
-  constructor(private recaudoService: RecaudoService, private router: Router) { }
+  //#endregion
+
+  constructor(private recaudoService: RecaudoService, 
+    private router: Router,
+    private loadingController: LoadingController,) { }
 
   ngOnInit() {}
 
-
+  //#region Consulta a API
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -215,7 +222,8 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
     
   }
 
-  mostrarDetalles(numeroArqueo: string, codPuntoPago:string){
+  async mostrarDetalles(numeroArqueo: string, codPuntoPago:string){
+    
     this.arqueoSelect=numeroArqueo;
     this.datosAnulacion.NUMERO_ARQUEO=numeroArqueo;
     this.datosAnulacion.CODIGO_PUNTO_PAGO=codPuntoPago;
@@ -273,6 +281,32 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
 
   }
 
+  async ListarArqueosDet(){
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    this.recaudos=[];
+    this.informacionF=[];
+    await loading.present();
+    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
+      this.recaudoService.getConsultarMovimientoArqueo(Number(this.empresa),Number(this.codigo_punto_pago),this.arqueoSelect,this.usuario,this.token).subscribe(
+        async (data: any) => {
+          this.resultado= data;
+          this.recaudos=data.RECAUDOS;
+          this.informacionF=data.RECAUDOS;
+          
+          await loading.dismiss();
+        },
+        async (error) => {
+          await loading.dismiss();
+          alertify.error("Error al llamar al servicio ",error);
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
+  }
+
   Anulacion(informacion:any){
     this.datosAnulacion.NUMERO_MOVIMIENTO_DET=informacion.NUMERO_MOVIMIENTO_DET;
     this.comentarioAnulacion=true;
@@ -282,6 +316,9 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
     this.comentarioAnulacion=false;
   }
 
+  //#endregion
+
+  //#region Envio a API
   CrearAnulacion(){
     this.comentarioAnulacion=false;
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -320,20 +357,6 @@ export class ConsultaArqueosPuntoPagoComponent  implements OnInit {
     }
   }
 
-  ListarArqueosDet(){
-    if (this.empresa !== null && this.usuario !== null && this.token !== null) {
-      this.recaudoService.getConsultarMovimientoArqueo(Number(this.empresa),Number(this.codigo_punto_pago),this.arqueoSelect,this.usuario,this.token).subscribe(
-        (data: any) => {
-          this.resultado= data;
-          this.recaudos=data.RECAUDOS;
-          this.informacionF=data.RECAUDOS;
-        },
-        (error) => {
-          console.error('Error al llamar al servicio:', error);
-        }
-      );
-    }
-  }
-
+  //#endregion
 
 }

@@ -6,6 +6,7 @@ import { IonInput, LoadingController, MenuController, ModalController } from '@i
 import { formatDate } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ListadoFacturasComponent } from 'src/app/Pages/General/listado-facturas/listado-facturas.component';
+import { ListadoFacturasRechazadasComponent } from 'src/app/Pages/General/listado-facturas-rechazadas/listado-facturas-rechazadas.component';
 
 
 
@@ -47,13 +48,19 @@ interface DatosConsulta {
   TOKEN: string;
 }
 
+interface FacturaRechazada {
+  CODIGO_BARRAS?: string; 
+  REFERENCIA?: string;    
+  ERROR: string;        
+}
+
 @Component({
   selector: 'app-recaudar',
   templateUrl: './recaudar.component.html',
   styleUrls: ['./recaudar.component.scss'],
 })
 export class RecaudarComponent  implements OnInit {
-
+  //#region variables
   empresa=localStorage.getItem('empresaCOD') || '';
   nombreEmpresa=localStorage.getItem('empresa')|| '';
   usuario= localStorage.getItem('usuario')|| '';
@@ -229,14 +236,21 @@ export class RecaudarComponent  implements OnInit {
   mostrarValor:boolean=false;
   recaudado:boolean=false;
   limpia:boolean=false;
+  iframeUrl= "";
+  parcialFormaPago="";
+  facturasRechazadas:  FacturaRechazada[] = [];
 
+  imprimir=false;
+//#endregion
   @ViewChild('myInput',{static:false}) myInput:IonInput | undefined;
   @ViewChild('myInput2',{static:false}) myInput2:IonInput | undefined;
   @ViewChild('myInput3',{static:false}) myInput3:IonInput | undefined;
   @ViewChild('inputElement') inputElement: ElementRef | undefined;
 
   @HostListener('window:keyup', ['$event'])
-  handleKeyUp(event: KeyboardEvent) {
+
+  //#region Atajos de teclado
+  async handleKeyUp(event: KeyboardEvent) {
     if (event.key === 'F2' && this.confirmar==false && this.mostrarID==false && this.recaudado==false) {
         this.limpiarYEnviar();
       }
@@ -252,18 +266,28 @@ export class RecaudarComponent  implements OnInit {
       this.vistaImpresion();
       }
     if (event.key === 'F9') {
-      event.preventDefault(); // Evitar la acción por defecto del navegador
+      event.preventDefault();
       this.setFocus2();
     }
 
     if (event.ctrlKey && event.key === 'B') {
-      event.preventDefault(); // Evitar la acción por defecto del navegador
+      event.preventDefault();
       this.setFocus2();
     }
 
     if (event.key === 'F8') {
+      if (this.myInput) {
+        const inputElement = await this.myInput.getInputElement();
+        if (document.activeElement === inputElement) {
+          return; 
+        }
+      }
       this.Confirmacionlimpiar();
     }
+
+    // if (event.key === 'F8') {
+    //   this.Confirmacionlimpiar();
+    // }
     if (event.ctrlKey && event.key === 'B') {
       this.igualar();
     }
@@ -284,11 +308,7 @@ export class RecaudarComponent  implements OnInit {
       }
     }
   }
-
-  iframeUrl= "";
-
-  imprimir=false;
-
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router, 
     private menuCtrl: MenuController, 
@@ -352,7 +372,7 @@ export class RecaudarComponent  implements OnInit {
   setFocus(){
     setTimeout(() => {
       this.myInput?.setFocus();
-    }, 0);
+    }, 500);
   }
   setFocus2(){
     this.myInput2?.setFocus();
@@ -364,6 +384,45 @@ export class RecaudarComponent  implements OnInit {
   get colorValorCambio(): string {
     const valorCambioNumber = parseFloat(this.datos.VALOR_CAMBIO);
     return valorCambioNumber < 0 ? 'red' : 'green'; // Cambia a 'black' si es negativo
+  }
+
+  //#region Funciones listado de facturas
+
+  async ListarFacturas() {
+    const modal = await this.modalController.create({
+      component: ListadoFacturasComponent,
+      componentProps: {
+        datos: this.facturasInvertidas,
+        nombres_convenio:this.nombres_convenio,
+        backdropDismiss: true,
+      },
+    });
+    modal.style.cssText = `
+      --height:auto;
+      max-height: 100%;
+      --width:80%;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
+  }
+
+  async ListarFacturasRechazadas() {
+    const modal = await this.modalController.create({
+      component: ListadoFacturasRechazadasComponent,
+      componentProps: {
+        datos: this.facturasRechazadas,
+        backdropDismiss: true,
+      },
+    });
+    modal.style.cssText = `
+      --height:auto;
+      max-height: 100%;
+      --width:80%;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    return await modal.present();
   }
 
   agrupar(event: { detail: { checked: any; }; }){
@@ -420,15 +479,23 @@ export class RecaudarComponent  implements OnInit {
   }
 
 
-  eliminarFila(detalle:{ CODIGO_CLIENTE: any; VALOR_MOVIMIENTO_DET: string; }){
+  eliminarFila(detalle:{ CODIGO_CLIENTE: any; VALOR_MOVIMIENTO_DET: string; CODIGO_REFERENCIA:any;}){
     const codigoCliente = detalle.CODIGO_CLIENTE;
+    const codigoReferencia = detalle.CODIGO_REFERENCIA;
     const valorMovimientoDet = detalle.VALOR_MOVIMIENTO_DET;
-    this.datos.FACTURAS = this.datos.FACTURAS.filter(detalle => detalle.CODIGO_CLIENTE !== codigoCliente);
-    this.datos.VALOR_MOVIMIENTO = String(Number(this.datos.VALOR_MOVIMIENTO)-Number(valorMovimientoDet));
-    this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)-1);
-    this.nombres_convenio=this.nombres_convenio.filter(detalle => detalle.CODIGO_CLIENTE !==codigoCliente);
+    this.datos.FACTURAS = this.datos.FACTURAS.filter(detalle => 
+      detalle.CODIGO_CLIENTE !== codigoCliente || detalle.CODIGO_REFERENCIA !== codigoReferencia
+    );
+  
+    this.datos.VALOR_MOVIMIENTO = String(Number(this.datos.VALOR_MOVIMIENTO) - Number(valorMovimientoDet));
+    this.datos.NUMERO_CUPONES_MOVIMIENTO = String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO) - 1);
 
+    this.nombres_convenio = this.nombres_convenio.filter(detalle => 
+      detalle.CODIGO_CLIENTE !== codigoCliente || detalle.CODIGO_REFERENCIA !== codigoReferencia
+    );
+  
     this.facturasInvertidas = [...this.datos.FACTURAS].reverse();
+  
     this.calcular();
   }
 
@@ -516,9 +583,9 @@ export class RecaudarComponent  implements OnInit {
     this.calcular();
 
   }
-
+//#endregion
   
-  
+  //#region Forma de busqueda de facturas
   buscarBarras() {
     this.visual1=true;
     this.setFocus();
@@ -541,6 +608,9 @@ export class RecaudarComponent  implements OnInit {
     this.visual1=false;  
   }
 
+  //#endregion
+
+  //#region Formas de pago
   formaPago(){
     if (this.empresa !== null && this.puntoPago !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getFormaPago(Number(this.empresa),Number(this.puntoPago),this.accionpunto, this.usuario, this.token).subscribe(
@@ -629,9 +699,13 @@ export class RecaudarComponent  implements OnInit {
       }
     }
     this.setFocus();
+    this.calcular();
   
   }
 
+  //#endregion
+  
+  //#region Turnero
   preferencial(event:{ detail: { checked: any; }; } ){
     if (event.detail.checked) {
       this.datosTurno.PREFERENCIAL="1";
@@ -660,6 +734,9 @@ export class RecaudarComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Confirmaciones y verificaciones
   confirmacion(){
     if(this.datos.FORMA_PAGO=='1'){
       this.recaudarFinal();
@@ -673,52 +750,51 @@ export class RecaudarComponent  implements OnInit {
           this.desFormaPago=date.DESCRIPCION;
         }
         
-  
       });
     }
 
   }
 
-  async ListarFacturas() {
-    const modal = await this.modalController.create({
-      component: ListadoFacturasComponent,
-      componentProps: {
-        datos: this.facturasInvertidas,
-        nombres_convenio:this.nombres_convenio,
-        backdropDismiss: true,
-      },
-    });
-    modal.style.cssText = `
-      --height:auto;
-      max-height: 100%;
-      --width:80%;
-      --max-width: 90%;
-      --border-radius: 10px;
-    `;
-    return await modal.present();
-  }
-
-  Anular(){
+  async Anular(){
     this.datosAnulacion.NUMERO_TRANSACCION=this.Numero_Transaccion;
-    this.recaudoService.postAnularTransaccionDatafono(this.datosAnulacion).subscribe({
-      next: data => {
-      this.resultado = data;
-      
-      if(data.COD=="200"){
-        alertify.success(this.resultado.RESPUESTA);
-        this.mostrarID=false;
-        this.IDtransaccion=false;
-        this.Numero_Transaccion="";
-        this.formatoNumero();
-       
-      }else {
-       alertify.error(this.resultado.RESPUESTA);
-       this.formatoNumero();
-      }
-    },
-    error: error => {
-      console.error("Respuesta:",error);
-    }});
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await loading.present();
+    if(this.datos.FORMA_PAGO=="7" || this.parcialFormaPago=="6"){
+      await loading.dismiss();
+      alertify.success("Trasacción anulada");
+      this.mostrarID=false;
+      this.IDtransaccion=false;
+      this.Numero_Transaccion="";
+      this.formatoNumero();
+    }else{
+      this.recaudoService.postAnularTransaccionDatafono(this.datosAnulacion).subscribe({
+        next: async data => {
+        this.resultado = data;
+        this.resultado.RESPUESTA=""
+        if(data.COD=="200"){
+          await loading.dismiss();
+          alertify.success(this.resultado.RESPUESTA);
+          this.mostrarID=false;
+          this.IDtransaccion=false;
+          this.Numero_Transaccion="";
+          this.formatoNumero();
+         
+        }else {
+          await loading.dismiss();
+         alertify.error(this.resultado.RESPUESTA);
+         this.formatoNumero();
+        }
+        
+      },
+      error: async error => {
+        await loading.dismiss();
+        console.error("Respuesta:",error);
+        alertify.error("No hay comunicación:", error);
+      }});
+    }
   }
 
 
@@ -726,6 +802,32 @@ export class RecaudarComponent  implements OnInit {
     const valor=String(this.datos.VALOR_MOVIMIENTO)
     this.datos.VALOR_RECIBIDO=valor;
     this.formatoNumero();
+    this.calcular();
+  }
+
+  confirmarList(){
+    this.confirmar_Lista=true;
+  }
+
+  verificarValor() {
+    
+    const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
+    const valorMovimiento=this.datos.VALOR_MOVIMIENTO.replace(/\./g, '');
+    if (Number(valorRecibido) < Number(valorMovimiento)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  verificarValorMix() {
+    const valorRecibido=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '');
+    const valorEfectivo=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '');
+    if (Number(valorRecibido) < Number(valorEfectivo)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   cerrarTabla(){
@@ -761,7 +863,9 @@ export class RecaudarComponent  implements OnInit {
     this.detalle2.NOMBRE_CONVENIO="";
     this.detalle2.NOMBRE_CONVENIO_DET="";
   }
+  //#endregion
 
+  //#region Calculo y redondeo de valores
   formatoNumero() {
     let numeroFormateado = this.datos.VALOR_RECIBIDO.replace(/[^\d]/g, '');
     numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -902,37 +1006,21 @@ export class RecaudarComponent  implements OnInit {
 
     this.formatoNumero();
   }
+  //#endregion
 
-  verificarValor() {
-    
-    const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
-    const valorMovimiento=this.datos.VALOR_MOVIMIENTO.replace(/\./g, '');
-    if (Number(valorRecibido) < Number(valorMovimiento)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  verificarValorMix() {
-    const valorRecibido=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '');
-    const valorEfectivo=this.datosMix.VALOR_EFECTIVO.replace(/\./g, '');
-    if (Number(valorRecibido) < Number(valorEfectivo)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   fechaManual(event: any){
     this.fecha = formatDate(event.detail.value, 'dd/MM/yyyy', 'en-US');
     this.detalle.FECHA_VENCIMIENTO=this.fecha;
   }
 
-
-
+  //#region Consulta de facturas
   async consultarRecaudoBarras(){
-
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await loading.present();
     const CODconvenioDetConst=this.recaudoService.getCodigoConvenioDet() || '';
     if(this.mostrarSoloBarra){
 
@@ -947,6 +1035,7 @@ export class RecaudarComponent  implements OnInit {
       
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
       if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
+          
           this.detalle.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
           this.detalle.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
           this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
@@ -962,26 +1051,89 @@ export class RecaudarComponent  implements OnInit {
           this.detalle2.NOMBRE_CONVENIO=data.NOMBRE_CONVENIO;
           this.detalle2.NOMBRE_CONVENIO_DET=data.NOMBRE_CONVENIO_DET;
           this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
+          await loading.dismiss();
           this.agregarDetalle();
        
 
       }
+      else if(data.COD=="200" && data.CODIGO_REFERENCIA==detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
+          
+        this.detalle.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+        this.detalle.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+        this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+        this.detalle.FECHA_VENCIMIENTO=data.DIA_VENCIMIENTO+"/"+data.MES_VENCIMIENTO+"/"+data.ANO_VENCIMIENTO;
+        this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+        this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+        this.detalle2.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+        this.detalle2.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+        this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle2.NOMBRE_CONVENIO=data.NOMBRE_CONVENIO;
+        this.detalle2.NOMBRE_CONVENIO_DET=data.NOMBRE_CONVENIO_DET;
+        this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
+        await loading.dismiss();
+        this.agregarDetalle();
+     
+
+      }
+      else if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE==detallecodigo?.CODIGO_CLIENTE){
+          
+        this.detalle.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+        this.detalle.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+        this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+        this.detalle.FECHA_VENCIMIENTO=data.DIA_VENCIMIENTO+"/"+data.MES_VENCIMIENTO+"/"+data.ANO_VENCIMIENTO;
+        this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+        this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+        this.detalle2.CODIGO_CONVENIO=String(data.CODIGO_CONVENIO);
+        this.detalle2.CODIGO_CONVENIO_DET=String(data.CODIGO_CONVENIO_DET);
+        this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle2.NOMBRE_CONVENIO=data.NOMBRE_CONVENIO;
+        this.detalle2.NOMBRE_CONVENIO_DET=data.NOMBRE_CONVENIO_DET;
+        this.detalle.CODIGO_BARRAS=this.datosConsulta.CODIGO_BARRAS;
+        await loading.dismiss();
+        this.agregarDetalle();
+     
+      }
       else if(data.COD=="200" && !data.CODIGO_REFERENCIA){
         alertify.error("Error al consultar la factura, verifique la forma en la que se está consultando");
+        await loading.dismiss();
       }
       
       else if(data.COD!="200"){
-        
+        const exists = this.facturasRechazadas.some(item =>
+          item.CODIGO_BARRAS === this.datosConsulta.CODIGO_BARRAS
+        );
+      
+        if (!exists) {
+          this.facturasRechazadas.push({
+            CODIGO_BARRAS: this.datosConsulta.CODIGO_BARRAS || '',
+            ERROR: data.RESPUESTA
+          });
+        }
         this.datosConsulta.CODIGO_BARRAS="";
+        await loading.dismiss();
        alertify.error(data.RESPUESTA);
       }else{
+        await loading.dismiss();
         this.datosConsulta.CODIGO_BARRAS="";
         alertify.error("La factura ya se encuentra en la lista ");
+        
       }
-      
+      this.setFocus()
       
     },async (error) => {
       console.error(error);
+      this.facturasRechazadas.push({
+        CODIGO_BARRAS: this.datosConsulta.CODIGO_BARRAS || '',
+        ERROR: 'No hay comunicación'
+      });
+      alertify.error("No hay comunicación: ",error);
+      await loading.dismiss();
     });
     
   }
@@ -1006,7 +1158,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosConsulta2.CODIGO_CONVENIO=CODconvenioConst;
     this.datosConsulta2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     
-    
+    const referenciaParcial= this.datosConsulta2.REFERENCIA;
     if(CODconvenioConst=="5"){
       this.datosConsulta2.REFERENCIA="0"+this.datosConsulta2.REFERENCIA;
     }
@@ -1029,53 +1181,117 @@ export class RecaudarComponent  implements OnInit {
     else if(CODconvenioConst=="3" && CODconvenioDetConst=="10"){
       this.datosConsulta2.DOCUMENTO_IDENTIDAD = "";
     }
-
-    
     
     this.recaudoService.postConsultarRecaudo(this.datosConsulta2).subscribe(async (data) => {
       this.resultado = data;
       
       const detallecodigo = this.datos.FACTURAS.find(detalle => detalle.CODIGO_REFERENCIA===data.CODIGO_REFERENCIA);
       if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
-          this.detalle.CODIGO_CONVENIO=CODconvenioConst;
-          this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
-          this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-          this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-          this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
-          this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
-          this.ciclo=data.CICLO;
-          this.propietario=data.PROPIETARIO;
-          this.direccion=data.DIRECCION;
-          this.detalle.BUSQUEDA_REFERENCIA="S";
-          this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
-          this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
-          this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
-          this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
-          this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
-          this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
-          this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
-          this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
-  
-          this.confirmarList();
-          this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
-       
-      }
+        this.detalle.CODIGO_CONVENIO=CODconvenioConst;
+        this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+        this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+        this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
+        this.ciclo=data.CICLO;
+        this.propietario=data.PROPIETARIO;
+        this.direccion=data.DIRECCION;
+        this.detalle.BUSQUEDA_REFERENCIA="S";
+        this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+        this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+        this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
+        this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+        this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+        this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+        this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
+        this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
+        await loading.dismiss();
+        this.confirmarList();
+     
+
+    }
+    else if(data.COD=="200" && data.CODIGO_REFERENCIA==detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE!=detallecodigo?.CODIGO_CLIENTE){
+        
+      this.detalle.CODIGO_CONVENIO=CODconvenioConst;
+      this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+      this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+      this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+      this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+      this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
+      this.ciclo=data.CICLO;
+      this.propietario=data.PROPIETARIO;
+      this.direccion=data.DIRECCION;
+      this.detalle.BUSQUEDA_REFERENCIA="S";
+      this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+      this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+      this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
+      this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+      this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+      this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+      this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
+      this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
+      await loading.dismiss();
+      this.confirmarList();
+   
+
+    }
+    else if(data.COD=="200" && data.CODIGO_REFERENCIA!=detallecodigo?.CODIGO_REFERENCIA && data.CODIGO_CLIENTE==detallecodigo?.CODIGO_CLIENTE){
+        
+      this.detalle.CODIGO_CONVENIO=CODconvenioConst;
+      this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+      this.detalle.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+      this.detalle.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+      this.detalle.VALOR_MOVIMIENTO_DET=String(data.VALOR_MOVIMIENTO_DET);
+      this.detalle.FECHA_VENCIMIENTO=data.FECHA_VENCIMIENTO;
+      this.ciclo=data.CICLO;
+      this.propietario=data.PROPIETARIO;
+      this.direccion=data.DIRECCION;
+      this.detalle.BUSQUEDA_REFERENCIA="S";
+      this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(data.VALOR_MOVIMIENTO_DET));
+      this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);
+      this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
+      this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
+      this.detalle2.CODIGO_CLIENTE=data.CODIGO_CLIENTE;
+      this.detalle2.CODIGO_REFERENCIA=data.CODIGO_REFERENCIA;
+      this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
+      this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
+      await loading.dismiss();
+      this.confirmarList();
+   
+    }
       else if(data.COD=="200" && !data.CODIGO_REFERENCIA){
         alertify.error("Error al consultar la factura, verifique la forma en la que se está consultando");
+        await loading.dismiss();
       }
       
       else if(data.COD!="200"){
-  
-       alertify.error(data.RESPUESTA);
-       this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
+        const exists = this.facturasRechazadas.some(item =>
+          item.REFERENCIA === referenciaParcial
+        );
+      
+        if (!exists) {
+          this.facturasRechazadas.push({
+            REFERENCIA: referenciaParcial || '',
+            ERROR: data.RESPUESTA
+          });
+        }
+        await loading.dismiss();
+        alertify.error(data.RESPUESTA);
+        this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
       }else{
+        await loading.dismiss();
         alertify.error(data.RESPUESTA);
         this.datosConsulta2.VALOR_MOVIMIENTO_DET="";
         alertify.error("La factura ya se encuentra en la lista ");
       }
-      await loading.dismiss();
+      this.setFocus()
     },async (error) => {
       console.error(error);
+      this.facturasRechazadas.push({
+        REFERENCIA: referenciaParcial || '',
+        ERROR: 'No hay comunicación'
+      });
+      alertify.error("No hay comunicación: ",error);
       await loading.dismiss();
     });
     this.datosConsulta2.REFERENCIA = "";
@@ -1083,22 +1299,10 @@ export class RecaudarComponent  implements OnInit {
     this.detalle.CODIGO_REFERENCIA="";
     this.detalle.VALOR_MOVIMIENTO_DET="";
   }
+  //#endregion
 
-  confirmarList(){
-    this.confirmar_Lista=true;
-    
-  }
-  
-
-  limpiarCampo() {
-    
-    this.datosConsulta2.NIT = '';
-    this.datosConsulta2.REFERENCIA = '';
-  }
-  
-
+  //#region Funciones adicionales de teclado e Inputs
   onInputChange(event: any) {
-
     if ( this.mostrarBarra && event.key === 'Enter') {
       this.contadorEnter++;
       if (this.contadorEnter === 2) {
@@ -1127,7 +1331,6 @@ export class RecaudarComponent  implements OnInit {
         this.desagrupar=true;
       }, 100);
     }
-   
   }
 
   onEnterKey2(event: any) {
@@ -1137,7 +1340,6 @@ export class RecaudarComponent  implements OnInit {
     this.referencia =true;
     this.visual2=false;
     
-  
   }
 
   onEnterKey3(event: any) {
@@ -1171,13 +1373,18 @@ export class RecaudarComponent  implements OnInit {
     this.referencia =true;
     this.visual2=false;
 
-      
       this.agregarDetalle();
       this.setFocus3();
       this.desagrupar=true;
-      
    
-   
+  }
+  //#endregion
+
+  //#region Limpiesa de campos
+  limpiarCampo() {
+    
+    this.datosConsulta2.NIT = '';
+    this.datosConsulta2.REFERENCIA = '';
   }
 
   limpiarYEnviar() {
@@ -1200,7 +1407,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosMix.VALOR_RECIBIDO=this.datosMix.VALOR_RECIBIDO.replace(/\./g, '')
     this.datosMix.VALOR_TARJETA=this.datosMix.VALOR_TARJETA.replace(/\./g, '')
       if(this.datos.VALOR_RECIBIDO!=''){
-        
+        console.log("entro normal")
         if(Number(this.datos.VALOR_RECIBIDO)>=Number(this.datos.VALOR_MOVIMIENTO)){
           if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
       
@@ -1216,7 +1423,7 @@ export class RecaudarComponent  implements OnInit {
         }
       }
       else if(this.datosMix.VALOR_RECIBIDO!=''){
-        if(Number(this.datosMix.VALOR_RECIBIDO)>=Number(this.datosMix.VALOR_MOVIMIENTO)){
+        if(Number(this.datosMix.VALOR_RECIBIDO)>=Number(this.datosMix.VALOR_EFECTIVO)){
           if(this.datos.FORMA_PAGO=="3" || this.datos.FORMA_PAGO=="4" || this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="6" || this.datos.FORMA_PAGO=="7"){
       
          
@@ -1226,7 +1433,7 @@ export class RecaudarComponent  implements OnInit {
             this.confirmacion();
           }
         }else{
-          alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO")
+          alertify.error("VALOR RECIBIDO no puede ser menor que el VALOR EFECTIVO")
           this.formatoNumero();
         }
       }
@@ -1234,290 +1441,6 @@ export class RecaudarComponent  implements OnInit {
         alertify.error("VALOR EFECTIVO no puede ser menor que el VALOR DEL MOVIMIENTO")
         this.formatoNumero();
       }
-    
-
-
-  }
-
-  recaudar(){
-    this.datos.VALOR_MOVIMIENTO=String(this.datos.VALOR_MOVIMIENTO);
-    if (this.lstfacturas.lastIndexOf(',') !== -1) {
-      this.lstfacturas = this.lstfacturas.slice(0, -1);
-    }
-    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
-      this.datosMix.FACTURAS=this.datos.FACTURAS;
-      this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
-      this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
-      if(this.datosMix.VALOR_EFECTIVO!="" && this.datosMix.VALOR_TARJETA!=""){
-        if(this.datosMix.NUMERO_DOCUMENTO==""){
-          this.datosMix.NUMERO_DOCUMENTO="N/A";
-        }
-        if(this.Numero_Transaccion==""){
-          if(this.datos.FORMA_PAGO=="7"){
-            this.datos.NUMERO_TRANSACCION="0"
-            this.datosMix.NUMERO_TRANSACCION="0"
-            this.Numero_Transaccion="0"
-            this.vistaIdTransaccion();
-          }else{
-            this.recaudoService.postTrasaccionDatafono(this.datosMix)
-            .subscribe((respuesta) => {
-              this.resultado=respuesta;
-              if(this.resultado.COD=='200'){
-                alertify.success(this.resultado.RESPUESTA);
-                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
-                this.vistaIdTransaccion();
-                }
-              else  {
-                this.formatoNumero();
-                alertify.error(this.resultado.RESPUESTA);
-              }
-            }, (error) => {
-              this.formatoNumero();
-              console.error(error);
-            });
-          }
-
-        }
-        
-      }else{
-        alertify.error("El valor recibido no puede estár en blanco");
-      }
-    }
-    else{
-      if(this.datos.VALOR_RECIBIDO!=""){
-        const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
-        this.datos.VALOR_RECIBIDO=valorRecibido;
-        if(this.datos.NUMERO_DOCUMENTO==""){
-          this.datos.NUMERO_DOCUMENTO="N/A";
-        }
-        if(this.Numero_Transaccion==""){
-          if(this.datos.FORMA_PAGO=="6"){
-            this.datos.FORMA_PAGO="3"
-            this.datos.NUMERO_TRANSACCION="0"
-            this.datosMix.NUMERO_TRANSACCION="0"
-            this.Numero_Transaccion="0"
-            this.vistaIdTransaccion();
-          }
-          else{
-            this.recaudoService.postTrasaccionDatafono(this.datos)
-            .subscribe((respuesta) => {
-              this.resultado=respuesta;
-              if(this.resultado.COD=='200'){
-                alertify.success(this.resultado.RESPUESTA);
-                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
-                this.vistaIdTransaccion();
-                }
-              else  {
-                this.formatoNumero();
-                alertify.error(this.resultado.RESPUESTA);
-              }
-            }, (error) => {
-              this.formatoNumero();
-              console.error(error);
-            });
-          }
-        }
-      }else{
-        alertify.error("El valor recibido no puede estár en blanco");
-      }
-    }
-    
-  }
-
-  vistaIdTransaccion(){
-    this.mostrarID=true;
-  }
-  
-
-  async recaudarFinal(){
-    const loading = await this.loadingController.create({
-      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
-      cssClass: 'custom-spinner' // Clase opcional para personalización
-    });
-
-    await loading.present();
-    this.confirmar=false;
-    this.datos.VALOR_MOVIMIENTO=String(this.datos.VALOR_MOVIMIENTO);
-    this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-    this.datosMix.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-    this.datos.NUMERO_TRANSACCION=this.Numero_Transaccion;
-    if (this.lstfacturas.lastIndexOf(',') !== -1) {
-      this.lstfacturas = this.lstfacturas.slice(0, -1);
-    }
-
-    
-    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
-      
-      this.datosMix.FACTURAS=this.datos.FACTURAS;
-      this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
-      this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
-      this.datosMix.NUMERO_TRANSACCION=this.Numero_Transaccion;
-      this.datosMix.FORMA_PAGO="5"
-      if(this.datosMix.VALOR_EFECTIVO!="" && this.datosMix.VALOR_TARJETA!=""){
-        if(this.datosMix.NUMERO_DOCUMENTO==""){
-          this.datosMix.NUMERO_DOCUMENTO="N/A";
-        }
-        this.recaudoService.postRecaudar(this.datosMix)
-        .subscribe(async (respuesta) => {
-          this.resultado=respuesta;
-          if(this.resultado.COD=='200'){
-            alertify.success(this.resultado.RESPUESTA);
-            this.movimiento=this.resultado.NUMERO_MOVIMIENTO;
-            this.vistaImpresion();
-            this.formatoNumero();
-            this.recaudado=true;
-            await loading.dismiss();
-            }
-          else  {
-            alertify.error(this.resultado.RESPUESTA);
-            await loading.dismiss();
-            this.formatoNumero();
-          }
-        }, async (error) => {
-          this.formatoNumero();
-          await loading.dismiss();
-          console.error(error);
-        });
-      }else{
-        alertify.error("El valor recibido no puede estár en blanco");
-        await loading.dismiss();
-      }
-    }
-    else{
-      
-      if(this.datos.VALOR_RECIBIDO!=""){
-        const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
-        this.datos.VALOR_RECIBIDO=valorRecibido;
-        if(this.datos.NUMERO_DOCUMENTO==""){
-          this.datos.NUMERO_DOCUMENTO="N/A";
-        }
-        if(this.datos.FORMA_PAGO=="6"){
-          this.datos.FORMA_PAGO="3"
-        }
-        this.recaudoService.postRecaudar(this.datos)
-        .subscribe(async (respuesta) => {
-          
-          this.resultado=respuesta;
-          if(this.resultado.COD=='200'){
-            alertify.success(this.resultado.RESPUESTA);
-            this.movimiento=this.resultado.NUMERO_MOVIMIENTO;
-            this.vistaImpresion();
-            this.formatoNumero();
-            this.recaudado=true;
-            await loading.dismiss();
-            }
-          else  {
-            alertify.error(this.resultado.RESPUESTA);
-            this.formatoNumero();
-            await loading.dismiss();
-          }
-        }, async (error) => {
-          this.formatoNumero();
-          await loading.dismiss();
-          console.error(error);
-        });
-      }else{
-        alertify.error("El valor recibido no puede estár en blanco");
-        await loading.dismiss();
-      }
-    }
-    
-    
-  }
-
-  cerrarImp(){
-    const iframe = document.querySelector('iframe');
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.window.close();
-    }
-    this.imprimir = false;
-    this.imprimirTikect();
-  
-  }
-
-  vistaImpresion(){
-    this.imprimir=true;
-    this.imprimirTikect();
-  }
-
-  imprimirTikect(){
-
-    if(this.lstfacturas==""){
-      this.lstfacturas="0";
-    }
-    this.recaudoService.getImpresiónTicket(this.empresa,this.puntoPago,this.arqueo,this.movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
-    .subscribe(
-      (response) => {
-        const url = this.recaudoService.url+'api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
-                '&CODIGO_PUNTO_PAGO='+this.puntoPago+
-                '&NUMERO_ARQUEO='+this.arqueo+
-                '&NUMERO_MOVIMIENTO='+this.movimiento+
-                '&USUARIO='+this.usuario+
-                '&LSTFACTURAS='+this.lstfacturas+
-                '&AGRUPADO='+this.agrupado+
-                '&TOKEN='+this.token;
-        this.http.get(url, { responseType: 'blob' }).subscribe(
-          (response: Blob) => {
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const url = window.URL.createObjectURL(blob);
-
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-
-            document.body.appendChild(iframe);
-
-            iframe.src = url;
-
-            iframe.onload = () => {
-              iframe.contentWindow?.focus();
-              iframe.contentWindow?.print();
-
-            };
-          },
-          error => {
-            console.error('Error al imprimir el ticket:', error);
-          }
-        );
-      },
-      (error) => {
-        console.error('Error al obtener el archivo PDF', error);
-      }
-    );
-
-  }
-
-  consultarArqueo(){
-    const token = localStorage.getItem('token') || '';
-    const puntoPago= localStorage.getItem('puntoPago')|| '';
-    const usuario= localStorage.getItem('usuario')|| '';
-      this.recaudoService.postConsultarArqueo(this.datos.EMPRESA, usuario, "1", puntoPago, token).subscribe({
-        next: data => {
-          
-          this.recaudos=data;
-          if(this.recaudos.COD!='200'){
-            
-            alertify.error(this.recaudos.RESPUESTA);
-            localStorage.setItem('numeroArqueo',this.recaudos.NUMERO_ARQUEO);
-            this.arqueo=this.recaudos.NUMERO_ARQUEO;
-            this.datosConsulta.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datosConsulta2.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datosAnulacion.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-          }
-          else{
-            this.arqueo=this.recaudos.NUMERO_ARQUEO;
-            this.datosConsulta.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datosConsulta2.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            this.datosAnulacion.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
-            localStorage.setItem('numeroArqueo',this.recaudos.NUMERO_ARQUEO);
-          }
-          this.formaPago();
-        },
-        error: error => {
-          console.error(error);
-        }
-      });
   }
 
   Confirmacionlimpiar(){
@@ -1550,6 +1473,8 @@ export class RecaudarComponent  implements OnInit {
       CODIGO_CONVENIO_DET: "",
       NOMBRE_CONVENIO_DET: ""
     };
+
+    this.facturasRechazadas=[];
     
     this.nombres_convenio= [] as Detalle2[];
     this.facturasInvertidas =[];
@@ -1661,6 +1586,323 @@ export class RecaudarComponent  implements OnInit {
     this.barraManual(mockEvent);
 
   }
+  //#endregion
 
+  //#region  Recaudo de factura
+  async recaudar(){
+    this.recaudado=true;
+    this.datos.VALOR_MOVIMIENTO=String(this.datos.VALOR_MOVIMIENTO);
+    if (this.lstfacturas.lastIndexOf(',') !== -1) {
+      this.lstfacturas = this.lstfacturas.slice(0, -1);
+    }
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await loading.present();
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
+      this.datosMix.FACTURAS=this.datos.FACTURAS;
+      this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
+      this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
+      if(this.datosMix.VALOR_EFECTIVO!="" && this.datosMix.VALOR_TARJETA!=""){
+        if(this.datosMix.NUMERO_DOCUMENTO==""){
+          this.datosMix.NUMERO_DOCUMENTO="N/A";
+        }
+        if(this.Numero_Transaccion==""){
+          if(this.datos.FORMA_PAGO=="7"){
+            await loading.dismiss();
+            this.datos.NUMERO_TRANSACCION="0"
+            this.datosMix.NUMERO_TRANSACCION="0"
+            this.Numero_Transaccion="0"
+            this.vistaIdTransaccion();
+          }else{
+            this.recaudoService.postTrasaccionDatafono(this.datosMix)
+            .subscribe(async (respuesta) => {
+              this.resultado=respuesta;
+              if(this.resultado.COD=='200'){
+                await loading.dismiss();
+                alertify.success(this.resultado.RESPUESTA);
+                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+                this.vistaIdTransaccion();
+                }
+              else  {
+                this.recaudado=false;
+                await loading.dismiss();
+                this.formatoNumero();
+                alertify.error(this.resultado.RESPUESTA);
+              }
+            }, async (error) => {
+              this.recaudado=false;
+              await loading.dismiss();
+              this.formatoNumero();
+              alertify.error("No hay comunicación: ",error);
+            });
+          }
+
+        }
+        
+      }else{
+        alertify.error("El valor recibido no puede estár en blanco");
+      }
+    }
+    else{
+      if(this.datos.VALOR_RECIBIDO!=""){
+        const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
+        this.datos.VALOR_RECIBIDO=valorRecibido;
+        if(this.datos.NUMERO_DOCUMENTO==""){
+          this.datos.NUMERO_DOCUMENTO="N/A";
+        }
+        if(this.Numero_Transaccion==""){
+          if(this.datos.FORMA_PAGO=="6"){
+            await loading.dismiss();
+            this.parcialFormaPago=this.datos.FORMA_PAGO;
+            this.datos.FORMA_PAGO="3"
+            this.datos.NUMERO_TRANSACCION="0"
+            this.datosMix.NUMERO_TRANSACCION="0"
+            this.Numero_Transaccion="0"
+            this.vistaIdTransaccion();
+          }
+          else{
+            this.recaudoService.postTrasaccionDatafono(this.datos)
+            .subscribe(async (respuesta) => {
+              this.resultado=respuesta;
+              if(this.resultado.COD=='200'){
+                await loading.dismiss();
+                alertify.success(this.resultado.RESPUESTA);
+                this.Numero_Transaccion=this.resultado.ID_TRANSACCION;
+                this.vistaIdTransaccion();
+                }
+              else  {
+                this.recaudado=false;
+                await loading.dismiss();
+                this.formatoNumero();
+                alertify.error(this.resultado.RESPUESTA);
+              }
+            }, async (error) => {
+              this.recaudado=false;
+              await loading.dismiss();
+              this.formatoNumero();
+              alertify.error("No hay comunicación: ",error);
+              console.error(error);
+            });
+          }
+        }
+      }else{
+        alertify.error("El valor recibido no puede estár en blanco");
+      }
+    }
+    
+  }
+
+  async vistaIdTransaccion(){
+    this.recaudado=false;
+    this.mostrarID=true;
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+    await loading.dismiss();
+  }
+  
+
+  async recaudarFinal(){
+    this.recaudado=true;
+    const loading = await this.loadingController.create({
+      spinner: 'crescent', // Puedes cambiar el tipo de spinner ('bubbles', 'dots', 'lines', etc.)
+      cssClass: 'custom-spinner' // Clase opcional para personalización
+    });
+
+    await loading.present();
+    this.confirmar=false;
+    this.datos.VALOR_MOVIMIENTO=String(this.datos.VALOR_MOVIMIENTO);
+    this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+    this.datosMix.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+    this.datos.NUMERO_TRANSACCION=this.Numero_Transaccion;
+    if (this.lstfacturas.lastIndexOf(',') !== -1) {
+      this.lstfacturas = this.lstfacturas.slice(0, -1);
+    }
+
+    
+    if(this.datos.FORMA_PAGO=="5" || this.datos.FORMA_PAGO=="7"){
+      
+      this.datosMix.FACTURAS=this.datos.FACTURAS;
+      this.datosMix.VALOR_MOVIMIENTO=this.datos.VALOR_MOVIMIENTO;
+      this.datosMix.NUMERO_CUPONES_MOVIMIENTO=this.datos.NUMERO_CUPONES_MOVIMIENTO;
+      this.datosMix.NUMERO_TRANSACCION=this.Numero_Transaccion;
+      this.datosMix.FORMA_PAGO="5"
+      if(this.datosMix.VALOR_EFECTIVO!="" && this.datosMix.VALOR_TARJETA!=""){
+        if(this.datosMix.NUMERO_DOCUMENTO==""){
+          this.datosMix.NUMERO_DOCUMENTO="N/A";
+        }
+        this.recaudoService.postRecaudar(this.datosMix)
+        .subscribe(async (respuesta) => {
+          this.resultado=respuesta;
+          if(this.resultado.COD=='200'){
+            await loading.dismiss();
+            alertify.success(this.resultado.RESPUESTA);
+            this.movimiento=this.resultado.NUMERO_MOVIMIENTO;
+            this.vistaImpresion();
+            this.formatoNumero();
+            
+            }
+          else  {
+            alertify.error(this.resultado.RESPUESTA);
+            await loading.dismiss();
+            this.formatoNumero();
+          }
+        }, async (error) => {
+          this.formatoNumero();
+          await loading.dismiss();
+          alertify.error("No hay comunicación: ",error);
+          console.error(error);
+        });
+      }else{
+        await loading.dismiss();
+        alertify.error("El valor recibido no puede estár en blanco");
+      }
+    }
+    else{
+      
+      if(this.datos.VALOR_RECIBIDO!=""){
+        const valorRecibido=this.datos.VALOR_RECIBIDO.replace(/\./g, '');
+        this.datos.VALOR_RECIBIDO=valorRecibido;
+        if(this.datos.NUMERO_DOCUMENTO==""){
+          this.datos.NUMERO_DOCUMENTO="N/A";
+        }
+        if(this.datos.FORMA_PAGO=="6"){
+          this.datos.FORMA_PAGO="3"
+        }
+        this.recaudoService.postRecaudar(this.datos)
+        .subscribe(async (respuesta) => {
+          
+          this.resultado=respuesta;
+          if(this.resultado.COD=='200'){
+            await loading.dismiss();
+            alertify.success(this.resultado.RESPUESTA);
+            this.movimiento=this.resultado.NUMERO_MOVIMIENTO;
+            this.vistaImpresion();
+            this.formatoNumero();
+            }
+          else  {
+            alertify.error(this.resultado.RESPUESTA);
+            this.formatoNumero();
+            await loading.dismiss();
+          }
+        }, async (error) => {
+          this.formatoNumero();
+          await loading.dismiss();
+          alertify.error("No hay comunicación: ",error);
+          console.error(error);
+        });
+      }else{
+        alertify.error("El valor recibido no puede estár en blanco");
+        await loading.dismiss();
+      }
+    }
+    
+    
+  }
+  //#endregion
+
+  //#region Impresion
+  cerrarImp(){
+    const iframe = document.querySelector('iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.window.close();
+    }
+    this.imprimir = false;
+    this.imprimirTikect();
+  
+  }
+
+  vistaImpresion(){
+    this.imprimir=true;
+    this.imprimirTikect();
+  }
+
+  imprimirTikect(){
+
+    if(this.lstfacturas==""){
+      this.lstfacturas="0";
+    }
+    this.recaudoService.getImpresiónTicket(this.empresa,this.puntoPago,this.arqueo,this.movimiento,this.usuario,this.lstfacturas,this.agrupado,this.token)
+    .subscribe(
+      (response) => {
+        const url = this.recaudoService.url+'api/Recaudo/Impresion_Ticket?EMPRESA='+this.empresa+
+                '&CODIGO_PUNTO_PAGO='+this.puntoPago+
+                '&NUMERO_ARQUEO='+this.arqueo+
+                '&NUMERO_MOVIMIENTO='+this.movimiento+
+                '&USUARIO='+this.usuario+
+                '&LSTFACTURAS='+this.lstfacturas+
+                '&AGRUPADO='+this.agrupado+
+                '&TOKEN='+this.token;
+        this.http.get(url, { responseType: 'blob' }).subscribe(
+          (response: Blob) => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+
+            document.body.appendChild(iframe);
+
+            iframe.src = url;
+
+            iframe.onload = () => {
+              iframe.contentWindow?.focus();
+              iframe.contentWindow?.print();
+
+            };
+          },
+          error => {
+            console.error('Error al imprimir el ticket:', error);
+            alertify.error("Error al imprimir el ticket: ",error);
+          }
+        );
+      },
+      (error) => {
+        console.error('Error al obtener el archivo PDF', error);
+        alertify.error("Error al obtener el archivo PDF: ",error);
+      }
+    );
+  }
+  //#endregion
+
+  //#region Consultas de arqueo
+  consultarArqueo(){
+    const token = localStorage.getItem('token') || '';
+    const puntoPago= localStorage.getItem('puntoPago')|| '';
+    const usuario= localStorage.getItem('usuario')|| '';
+      this.recaudoService.postConsultarArqueo(this.datos.EMPRESA, usuario, "1", puntoPago, token).subscribe({
+        next: data => {
+          
+          this.recaudos=data;
+          if(this.recaudos.COD!='200'){
+            
+            alertify.error(this.recaudos.RESPUESTA);
+            localStorage.setItem('numeroArqueo',this.recaudos.NUMERO_ARQUEO);
+            this.arqueo=this.recaudos.NUMERO_ARQUEO;
+            this.datosConsulta.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datosConsulta2.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datosAnulacion.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+          }
+          else{
+            this.arqueo=this.recaudos.NUMERO_ARQUEO;
+            this.datosConsulta.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datosConsulta2.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datos.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            this.datosAnulacion.NUMERO_ARQUEO=this.recaudos.NUMERO_ARQUEO;
+            localStorage.setItem('numeroArqueo',this.recaudos.NUMERO_ARQUEO);
+          }
+          this.formaPago();
+        },
+        error: error => {
+          alertify.error("No hay comunicación: ",error);
+          console.error(error);
+        }
+      });
+  }
+  //#endregion
 
 }

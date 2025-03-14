@@ -46,6 +46,7 @@ interface Detalle2{
 })
 export class AsobancariaComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   arqueo: string|null = localStorage.getItem('numeroArqueo');
   usuario: string|null = localStorage.getItem('usuario');
@@ -55,6 +56,9 @@ export class AsobancariaComponent  implements OnInit {
 
   listadoAsobancaria:any;
   listadoConveniosDet:any[]=[];
+  generadosConvenio:any[]=[];
+  convenios:any[]=[];
+  nombre_convenios= [] as Detalle2[];
 
   listadoConvenios={
     ASOBANCARIA:"",
@@ -67,8 +71,6 @@ export class AsobancariaComponent  implements OnInit {
     PAGOS_ASOBANCARIA:""
   };
 
-  nombre_convenios= [] as Detalle2[];
-
   listadoConveniosNom={
     CODIGO_CONVENIO: "",
     CODIGO_CONVENIO_DET: "",     
@@ -77,9 +79,6 @@ export class AsobancariaComponent  implements OnInit {
     ASOBANCARIA:"",
     TIPO_PAGO: ""
   };
-
-
-
 
   asobancaria={
     EMPRESA:this.empresa,
@@ -90,14 +89,11 @@ export class AsobancariaComponent  implements OnInit {
   };
 
   asobancariaGenerado=this.asobancaria;
-
   generado:boolean=false;
   respuesta:any;
-  generadosConvenio:any[]=[];
   //seleccion:boolean=false;
   seleccionarTodos:boolean=false;
-
-  convenios:any[]=[];
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router,
     private loadingController: LoadingController
@@ -121,6 +117,7 @@ export class AsobancariaComponent  implements OnInit {
     }
   }
 
+  //#region Consultas iniciales
   listarAsobancaria() {
 
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.puntoPago!==null) {
@@ -163,7 +160,9 @@ export class AsobancariaComponent  implements OnInit {
 
   return convenios;
   }
+  //#endregion
 
+  //#region Seleccion de convenios y parametros
   seleccionarTodo(event:{ detail: { checked: any; }; } ){
     if (event.detail.checked) {
       this.seleccionarTodos = event.detail.checked;
@@ -286,7 +285,9 @@ export class AsobancariaComponent  implements OnInit {
   fecha(event:any){
     this.asobancaria.FECHA_ASOBANCARIA = formatDate(event.detail.value, 'dd/MM/yyyy', 'en-US');
   }
+  //#endregion
 
+  //#region Generación de asobancaria
   async generarAsobancaria(){
     const loading = await this.loadingController.create({
       message: 'Generando Asobancaria...',
@@ -326,6 +327,7 @@ export class AsobancariaComponent  implements OnInit {
     });
     
   }
+  //#endregion
   
 }
 

@@ -15,6 +15,7 @@ import { LoadingController, ModalController } from '@ionic/angular';
 
 export class LoginComponent  implements OnInit {
 
+  //#region Variables
   mostrarLoginUser: boolean = false;
   errorMessage: string = '';
   listEmpresas: any[] = [];
@@ -28,6 +29,7 @@ export class LoginComponent  implements OnInit {
     DOCUMENTO: '',
     TIPO_DOCUMENTO: '',
     NOMBRE: '',
+    NOMBRE_CAJA: '',
     DIRECCION: '',
     TELEFONO: '',
     ESTADO: '',
@@ -58,6 +60,9 @@ export class LoginComponent  implements OnInit {
   resultado!: Usuario;
   inforol!: Obtener_Rol;
   modulos: any [] = [];
+
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router, private modalController: ModalController,private loadingController: LoadingController,) {}
 
   async ngOnInit() {
@@ -76,15 +81,16 @@ export class LoginComponent  implements OnInit {
     localStorage.removeItem('nombrePuntoPago');
     localStorage.removeItem('numeroArqueo');
     localStorage.removeItem('condigoCaja');
+    localStorage.removeItem('CODpuntoPago');
+    
 
     this.obtenerEmpresas();
     if (miImagen) {
         window.location.reload();
-      
     }
-  
-    
   }
+
+  //#region Consulta a API
   
   obtenerEmpresas(){
 
@@ -97,6 +103,7 @@ export class LoginComponent  implements OnInit {
         
       },
       (error) => {
+        this.obtenerEmpresas();
         console.error('Error al obtener empresas:', error);
       }
     );
@@ -126,7 +133,9 @@ export class LoginComponent  implements OnInit {
     });
   }
 
+  //#endregion
 
+  //#region Autenticación
   autenticarUsuario() {
     
       this.recaudoService.postAutenticarUsuario(this.usuario.USUARIO, this.usuario.PASSWORD, this.usuario.EMPRESA, this.CODIGO_PUNTO_PAGO).subscribe((data) => {
@@ -143,7 +152,7 @@ export class LoginComponent  implements OnInit {
         } else {
           console.error('No se encontró un punto de pago con el código:', this.CODIGO_PUNTO_PAGO);
         }
-
+        localStorage.setItem('nombre_caja', this.resultado.NOMBRE_CAJA);
         localStorage.setItem('usuario', this.resultado.USUARIO);
         localStorage.setItem('condigoCaja', this.resultado.CAJA_ASIGNADA);
         localStorage.setItem('empresaCOD', this.usuario.EMPRESA);
@@ -169,6 +178,10 @@ export class LoginComponent  implements OnInit {
       }
       );
   }
+
+  //#endregion
+
+  //#region Cambio de clave
 
   async cambiarClave() {
     const modal = await this.modalController.create({
@@ -205,6 +218,7 @@ export class LoginComponent  implements OnInit {
     alertify.error(this.errorLogin.RESPUESTA);
   }
 
+  //#endregion
 
 }
 

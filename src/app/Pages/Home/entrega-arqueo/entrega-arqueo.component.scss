@@ -24,6 +24,50 @@ ion-title{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+
+  
+.floating-reminder {
+    position: absolute; /* Posición flotante */
+    top: 10%; /* Ajusta según el lugar deseado */
+    right: 5%; /* Separación del borde derecho */
+    z-index: 1000; /* Asegura que se muestre encima */
+    max-width: 300px; /* Ajusta el ancho según tu necesidad */
+  }
+  
+  .reminder-card {
+    padding: 10px 15px 10px 10px; /* Espacio interno */
+    background-color: #fff3cd; /* Fondo amarillo claro */
+    border-left: 5px solid #ffc107; /* Borde amarillo */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+    border-radius: 8px; /* Bordes redondeados */
+    position: relative; /* Para posicionar el botón */
+  }
+  
+  .reminder-text {
+    font-size: 14px;
+    color: #856404; /* Texto marrón oscuro */
+    margin-right: 40px; /* Espacio para evitar que el texto se sobreponga al botón */
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+   
+    border-radius: 50%; /* Botón circular */
+    color: #aa1a1a; /* Color del ícono */
+  }
+  .reminder-header {
+    //display: flex; /* Flexbox para organizar el texto y el botón */
+    justify-content: space-between; /* Espacio entre el texto y el botón */
+    align-items: center; /* Alinea verticalmente el texto y el botón */
+  }
+  
+  .close-button ion-icon {
+    //font-size: 20px; /* Tamaño del ícono */
+    color: #aa1a1a; /* Color del ícono */
+  }
+
 .Datafonos{
     background-color: #fae9cf;
 }

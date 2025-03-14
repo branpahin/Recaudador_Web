@@ -220,7 +220,10 @@ ion-card-content{
     background-color: #e48f0f;
 }
 .referencia{
-    width: 70%;
+    background-color: #FFEDD5; /* Naranja claro */
+    border-radius: 8px; /* Opcional: para esquinas redondeadas */
+    padding: 10px; /* Opcional: agrega espacio interno */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega una sombra ligera */
 }
 
 .small-edit-column-fin {

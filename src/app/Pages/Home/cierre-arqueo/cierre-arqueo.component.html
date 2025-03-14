@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title>Cuadre</ion-title>
@@ -115,7 +116,7 @@
       </div>
     </div>
 
-    <button class="btn-base" type="button" (click)="agregarDetalle()">Agregar Base</button>
+    <button *ngIf="datos.CODIGO_PUNTO_PAGO!='7' && datos.CODIGO_PUNTO_PAGO!='8'"  class="btn-base" type="button" (click)="agregarDetalle()">Agregar Base</button>
     <br>
     <button class="btn" expand="full" [disabled]="!enviar || datos.VALOR_RECAUDADO_REPORTADO==''" (click)="limpiarYEnviar()">Enviar</button>
     <br>

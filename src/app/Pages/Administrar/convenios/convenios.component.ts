@@ -11,6 +11,7 @@ import * as alertify from 'alertifyjs';
 })
 export class ConveniosComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   arqueo: string|null = localStorage.getItem('numeroArqueo');
   usuario: string|null = localStorage.getItem('usuario');
@@ -46,6 +47,7 @@ export class ConveniosComponent  implements OnInit {
 
   listadoPuntos: any []=[];
   respuesta:any;
+  //#endregion
 
   constructor(private recaudoService: RecaudoService) { }
 
@@ -54,6 +56,7 @@ export class ConveniosComponent  implements OnInit {
     this.ListarPuntosPago();
   }
 
+  //#region Consultas a API
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -86,6 +89,10 @@ export class ConveniosComponent  implements OnInit {
     }
 
   }
+
+  //#endregion
+
+  //#region Envio a API
 
   Eliminar(respuesta1:any){
     this.datosModificar={
@@ -259,6 +266,6 @@ export class ConveniosComponent  implements OnInit {
     });
     
   }
-
+  //#endregion
 
 }

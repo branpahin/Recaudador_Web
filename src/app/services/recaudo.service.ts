@@ -2,7 +2,8 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable} from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
-
+import { TypeUrlProduccion, TypeUrlPruebas, TypePuerto, TypePuertoPunto} from 'src/models/sites';
+import { TypeRuteImg, TypeRuteImgPunto} from 'src/models/rutes';
 
 
 
@@ -18,17 +19,21 @@ export class RecaudoService {
 //private myAppUrl = 'http://localhost:36920/';
 
 //#PRUEBAS
-  private myAppUrl = 'http://172.25.2.2:16000/';
+  // private myAppUrl = TypeUrlPruebas.PRUEBAS + TypePuerto.PRUEBAS;
 
 //#PRODUCCION
-    // private myAppUrl = 'http://172.25.2.2:18000/';
+  private myAppUrl = TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_CARTAGO_MOVIL;
 
 //#PRODUCCION HTTPS
-  // private myAppUrl = 'http://172.25.2.2:19000/';
+  // private myAppUrl = TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuerto.PROD_PRIVADO_HTTPS;
+
+//#PRODUCCION PUBLICA
+  // private myAppUrl = TypeUrlProduccion.PROD_PUBLICO + TypePuerto.PROD_PUBLICO;
 
   url=this.myAppUrl;
+  ruteImg="";
 
-//Servicios Autenticacion
+//#region Servicios Autenticacion
   private myApiUrlEmpresas = 'api/Autenticacion/Empresas';
     private empresasSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
     empresas$: Observable<any[]> = this.empresasSubject.asObservable();
@@ -39,8 +44,9 @@ export class RecaudoService {
   private myApiUrlInformacionUsuario = 'api/Autenticacion/Informacion_Usuario';
   private myApiUrlModificarInformacion = 'api/Autenticacion/Modificar_Informacion_Usuario';
   private myApiUrlCerrarSesion = 'api/Autenticacion/Cerrar_sesion';
+//#endregion
 
-//Servicios General
+//#region Servicios General
   private myApiUrlObtenerRol = 'api/General/Obtener_Rol';
   private myApiUrlObtenerModulos = 'api/General/Obtener_modulos';
   private myApiUrlTipoEntregas = 'api/General/Tipo_Entregas';
@@ -62,9 +68,10 @@ export class RecaudoService {
   private myApiUrlListadoConsultaTablas= 'api/General/Listado_Consulta_Tablas';
   private myApiUrlListadoPagosAsobancaria= 'api/General/Listado_Pagos_Asobancaria'; 
   private myApiUrlListadoTipoPunteo= 'api/General/Listado_Tipo_Punteo'; 
+  private myApiUrlListarFacturasAnular= 'api/Administrador/Consultar_Facturas_Movimiento';
+//#endregion
 
-
-//Servicios Arqueo
+//#region Servicios Arqueo
   private myApiUrl = 'api/Arqueo/';
   private myApiUrlCrearArqueo='api/Arqueo/Crear_Arqueo';
   private myApiUrlConsultarArqueo='api/Arqueo/Consultar_Arqueo';
@@ -72,8 +79,10 @@ export class RecaudoService {
   private myApiUrlEntregaArqueo='api/Arqueo/Entregas_Arqueo';
   private myApiUrlCierreArqueo='api/Arqueo/Cerrar_Arqueo';
   private myApiUrlValorCierre='api/Arqueo/Valor_Cierre_Arqueo';
+  private myApiUrlValorEntregaFinal='api/Arqueo/Valores_Entrega_Final';
+//#endregion
 
-//Servicios Recaudo
+//#region Servicios Recaudo
   private myApiUrlConsultaRecaudo = 'api/Recaudo/Consulta_Recaudo';
   private myApiUrlRecaudar = 'api/Recaudo/Recaudar';
   private myApiUrlImpresionTicket = 'api/Recaudo/Impresion_Ticket';
@@ -81,23 +90,20 @@ export class RecaudoService {
   private myApiUrlFinalizarCajero = 'api/Recaudo/Finalizar_Cajero_Disponible';
   private myApiUrlTransaccionDatafono = 'api/Recaudo/Transaccion_Datafono';
   private myApiUrlAnularTransaccionDatafono = 'api/Recaudo/Anular_Transaccion_Datafono';
-  
+//#endregion
 
-
-//Servicios Reportes Cajero
-
+//#region Servicios Reportes Cajero
   private myApiUrlListarMovimientosPunteo = 'api/Punteo/Listar_movimientos_punteo';
   private myApiUrlReestablecerMovimientosPunteo = 'api/Punteo/Restablecer_punteo';
-  private myApiUrlReporteMovimientosCajero = 'api/Punteo/Reporte_Total_Diario_Movimientos';
-  private myApiUrlReporteDiarioEmpresas = 'api/Punteo/Reporte_Total_Diario_Empresas';
   private myApiUrlModificarMovimientosPunteo = 'api/Punteo/Validar_Punteo';
+//#endregion
 
-//Servicios Reportes Admin
+//#region Servicios Reportes Admin
   private myApiUrlListarAsobancaria = 'api/Administrador/Listado_Asobancaria_Excel_Convenios';
   private myApiUrlGenerarAsobancaria = 'api/Administrador/Generar_Asobancarias_Excel';
+//#endregion
 
-//Administrar
-
+//#region Servicios Administrar
   private myApiUrlListarCajas = 'api/CajeroEncargado/Listar_Cajas_Punto_Pago';
   private myApiUrlListarUsuariosSinAsignar = 'api/CajeroEncargado/Cajeros_Sin_Asignar';
   private myApiUrlListarPuntosPago = 'api/CajeroEncargado/Listado_Puntos_Pago_Encargado';
@@ -152,17 +158,17 @@ export class RecaudoService {
   private myApiUrlListarReabrirArqueo='api/Administrador/Listado_Reabrir_Arqueos';
   private myApiUrlReabrirArqueo='api/Administrador/Modificar_Reabrir_Arqueo';
   private myApiUrlImpresionCuadre='api/Administrador/Impresion_Cuadre_Arqueo';
+//#endregion  
   
-  
-
-//Reporteador
+//#region Servicios Reporteador
   private myApiUrlListadoReportesReporteador= 'api/Reporteador/Listado_Reportes_Reporteador';
   private myApiUrlListadoParametrosReporte= 'api/Reporteador/Listado_Parametros_Reporte';
   private myApiUrlGenerarReporteExcel= 'api/Reporteador/Generar_Reporte_Excel';
   private myApiUrlModificarEstadoReporte= 'api/Reporteador/Modificar_Estado_Reporte';
   private myApiUrlListadoFacturas= 'api/Reporteador/Listado_Facturas';
+//#endregion
 
-//Desarrolador
+//#region Servicios Desarrolador
   private myApiUrlListadoFacturasBarras= 'api/Desarrollador/Listado_Facturas_Barras';
   private myApiUrlCrearFacturaBarra= 'api/Desarrollador/Crear_Factura_Barra';
   private myApiUrlModificarFacturaBarra= 'api/Desarrollador/Modificar_Factura_Barra';
@@ -172,13 +178,57 @@ export class RecaudoService {
   private myApiUrlCrearAsignacionReporte= 'api/Desarrollador/Crear_Asignaciones_Reporte';
   private myApiUrlEliminarAsignacionReporte= 'api/Desarrollador/Eliminar_Asignacion_Reporte';
   private myApiUrlEliminarFacturaBarra= 'api/Desarrollador/Eliminar_Factura_Barra';
-  
+//#endregion 
   
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    switch (this.url) {
+      case TypeUrlPruebas.PRUEBAS + TypePuerto.PRUEBAS:
+        this.ruteImg = TypeRuteImg.PRUEBAS;
+        break;
+    
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuerto.PROD_PRIVADO:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuerto.PROD_PRIVADO_HTTPS:
+        this.ruteImg = TypeRuteImg.PROD_PRIVADO;
+        break;
+    
+      case TypeUrlProduccion.PROD_PUBLICO + TypePuerto.PROD_PUBLICO:
+        this.ruteImg = TypeRuteImg.PROD_PUBLICO;
+        break;
+
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_CIRCUNVALAR:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuertoPunto.PROD_PRIVADO_CIRCUNVALAR_HTTPS: 
+        this.ruteImg = TypeRuteImgPunto.PROD_PRIVADO_CIRCUNVALAR;
+        break;
+
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_CUBA:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuertoPunto.PROD_PRIVADO_CUBA_HTTPS: 
+        this.ruteImg = TypeRuteImgPunto.PROD_PRIVADO_CUBA;
+        break;
+
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_CARTAGO_MOVIL:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuertoPunto.PROD_PRIVADO_CARTAGO_MOVIL_HTTPS: 
+        this.ruteImg = TypeRuteImgPunto.PROD_PRIVADO_CARTAGO_MOVIL;
+        break;
+
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_TORRES:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuertoPunto.PROD_PRIVADO_TORRES_HTTPS: 
+        this.ruteImg = TypeRuteImgPunto.PROD_PRIVADO_TORRES;
+        break;
+
+      case TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_EXTERNOS:
+      case TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuertoPunto.PROD_PRIVADO_EXTERNOS_HTTPS: 
+        this.ruteImg = TypeRuteImgPunto.PROD_PRIVADO_EXTERNOS;
+        break;
+    
+      default:
+        console.error('URL no reconocida:', this.url);
+        break;
+    }
+   }
 
  
-//Autenticacion
+//#region Autenticacion
   getListEmpresas(): Observable<any>{
     return this.http.get(this.myAppUrl + this.myApiUrlEmpresas);    
   }
@@ -214,10 +264,16 @@ export class RecaudoService {
   getContraseña(){
     return this.contraseña
   }
+//#endregion
 
+//#region General
+  private enviarAlumbrado = new BehaviorSubject<boolean>(false);
+  private enviarManual = new BehaviorSubject<boolean>(false);
+  private CodConvenioDet = new BehaviorSubject<boolean>(false);
+  public enviarAlumbrado$ = this.enviarAlumbrado.asObservable();
+  public enviarManual$ = this.enviarManual.asObservable();
+  public CodConvenioDet$ = this.CodConvenioDet.asObservable();
 
-
-//General
   getObtenerRol(USUARIO: string, EMPRESA: string, TOKEN: string): Observable<any> {
     return this.http.get(this.myAppUrl + this.myApiUrlObtenerRol+"?EMPRESA="+EMPRESA+"&USUARIO="+USUARIO+"&TOKEN="+ TOKEN);
   }
@@ -292,23 +348,16 @@ export class RecaudoService {
   getListadoPagosAsobancaria(empresa: number, usuario: string, token:string): Observable<any> {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoPagosAsobancaria+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
+
   getListadoTipoPunteo(empresa: number, usuario: string, token:string): Observable<any> {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoTipoPunteo+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
-
-
-
-  private enviarAlumbrado = new BehaviorSubject<boolean>(false);
-  private enviarManual = new BehaviorSubject<boolean>(false);
-  private CodConvenioDet = new BehaviorSubject<boolean>(false);
-  public enviarAlumbrado$ = this.enviarAlumbrado.asObservable();
-  public enviarManual$ = this.enviarManual.asObservable();
-  public CodConvenioDet$ = this.CodConvenioDet.asObservable();
 
   enviarEstadoAlumbrado(barras: boolean, manual:boolean) {
     this.enviarAlumbrado.next(barras);
     this.enviarManual.next(manual);
   }
+  
   enviarConConvenioDet(codConvenioDet: boolean) {
     this.CodConvenioDet.next(codConvenioDet);
   }
@@ -317,7 +366,20 @@ export class RecaudoService {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoConveniosSincronizador+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
 
-//Arqueo
+  postListarFac(datos:any):  Observable<any> {
+    const body = { EMPRESA: datos.EMPRESA,
+                  CODIGO_PUNTO_PAGO: datos.CODIGO_PUNTO_PAGO, 
+                  NUMERO_ARQUEO:datos.NUMERO_ARQUEO,
+                  NUMERO_MOVIMIENTO:datos.NUMERO_MOVIMIENTO,
+                  USUARIO: datos.USUARIO,
+                  TOKEN: datos.TOKEN 
+                 };
+
+    return this.http.post(this.myAppUrl+this.myApiUrlListarFacturasAnular, body);
+  }
+//#endregion
+
+//#region Arqueo
   getListarEmpresas(): Observable<any>{
     return this.http.get(this.myAppUrl + this.myApiUrl);
   }
@@ -379,9 +441,12 @@ export class RecaudoService {
     return this.http.post(this.myAppUrl + this.myApiUrlValorCierre, datos);
   }
 
+  postValorEntregaFinal(datos: any): Observable<any> {
+    return this.http.post(this.myAppUrl + this.myApiUrlValorEntregaFinal, datos);
+  }
+//#endregion
 
-
-//Recaudar
+//#region Recaudar
   postConsultarRecaudo(datos: any): Observable<any>{
 
     return this.http.post(this.myAppUrl+this.myApiUrlConsultaRecaudo,datos);
@@ -440,11 +505,9 @@ export class RecaudoService {
     return this.http.post(this.myAppUrl+this.myApiUrlFinalizarCajero,datos);
   };
 
+//#endregion
   
-
-
-
-//Reportes Cajero
+//#region Reportes Cajero
   getListarMovimientosPunteo(empresa: number, usuario: string, token: string, numero_arqueo: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListarMovimientosPunteo+'?empresa='+empresa+'&usuario='+usuario+'&token='+token+'&numero_arqueo='+numero_arqueo);
   }
@@ -452,21 +515,12 @@ export class RecaudoService {
     return this.http.get(this.myAppUrl + this.myApiUrlReestablecerMovimientosPunteo+'?empresa='+empresa+'&usuario='+usuario+'&token='+token+'&numero_arqueo='+numero_arqueo);
   }
 
-  getReporteMovimientosCajero(empresa: number, usuario: string, token: string, numero_arqueo: string){
-    return this.http.get(this.myAppUrl + this.myApiUrlReporteMovimientosCajero+'?empresa='+empresa+'&usuario='+usuario+'&token='+token+'&numero_arqueo='+numero_arqueo);
-  }
-
-  getReporteDiarioEmpresas(empresa: number, usuario: string, token: string, numero_arqueo: string){
-    return this.http.get(this.myAppUrl + this.myApiUrlReporteDiarioEmpresas+'?empresa='+empresa+'&usuario='+usuario+'&token='+token+'&numero_arqueo='+numero_arqueo);
-  }
-
   postModificarMovimiento(datos: any): Observable<any>{
     return this.http.post(this.myAppUrl+this.myApiUrlModificarMovimientosPunteo,datos);
   };
+//#endregion
 
-
-
-//Reportes Admin
+//#region Reportes Admin
   getListarAsobancaria(empresa: number, codigo_punto_pago:string, usuario: string, token: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListarAsobancaria+'?empresa='+empresa+'&CODIGO_PUNTO_PAGO='+codigo_punto_pago+'&USUARIO='+usuario+'&token='+token);
   }
@@ -474,10 +528,9 @@ export class RecaudoService {
   postGenerarAsobancaria(datos:any): Observable<any> {
     return this.http.post(this.myAppUrl + this.myApiUrlGenerarAsobancaria, datos);
   }
-
+//#endregion
   
-
-//Administrar
+//#region Administrar
 
   getListarCajas(empresa: number, usuario: string, token: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListarCajas+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
@@ -531,9 +584,10 @@ export class RecaudoService {
     return this.http.post(this.myAppUrl + this.myApiUrlReestablecerCajas, body);
   }
 
-  postEliminarAsignacionCajas(empresa:string,usuario:string,empresa_Asignada:string,codigo_caja:string, token:string): Observable<any> {
+  postEliminarAsignacionCajas(empresa:string,usuario:string,usuario_asignado:string, empresa_Asignada:string,codigo_caja:string, token:string): Observable<any> {
     const body = { EMPRESA:empresa,    
       USUARIO: usuario,
+      USUARIO_ASIGNADO: usuario_asignado,
       CODIGO_PUNTO_PAGO:empresa_Asignada,
       CODIGO_CAJA:codigo_caja,
       TOKEN: token
@@ -732,10 +786,9 @@ export class RecaudoService {
   postReabrirArqueo(datos: any): Observable<any>{
     return this.http.post(this.myAppUrl+this.myApiUrlReabrirArqueo,datos);
   };
+//#endregion
 
-
-
-//Reporteador
+//#region Reporteador
 
   getReportesReporteador(empresa: number, usuario: string, token: string){
     return this.http.get(this.myAppUrl + this.myApiUrlListadoReportesReporteador+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
@@ -757,9 +810,9 @@ export class RecaudoService {
   postModificarEstadoReporte(datos:any): Observable<any> {
     return this.http.post(this.myAppUrl + this.myApiUrlModificarEstadoReporte, datos);
   }
+//#endregion
 
-
-//Desarrollador
+//#region Desarrollador
   getListadoFacturasBarras(empresa: number, usuario: string, token:string): Observable<any> {
     return this.http.get(this.myAppUrl + this.myApiUrlListadoFacturasBarras+'?empresa='+empresa+'&usuario='+usuario+'&token='+token);
   }
@@ -787,6 +840,7 @@ export class RecaudoService {
   postEliminarFacturaBarra(datos: any): Observable<any> {
     return this.http.post(this.myAppUrl + this.myApiUrlEliminarFacturaBarra, datos);
   }
+//#endregion 
   
 }
 

@@ -12,17 +12,20 @@ import { LoadingController } from '@ionic/angular';
 })
 export class CargarArchivoOfflineComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
 
   selectedFile: File | null = null;
   respuesta:any
+  //#endregion
 
   constructor(private recaudoService: RecaudoService,private loadingController: LoadingController) { }
 
   ngOnInit() {}
 
+  //#region envio a API
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
@@ -60,5 +63,6 @@ export class CargarArchivoOfflineComponent  implements OnInit {
       console.error('Todos los campos son requeridos');
     }
   }
+  //#endregion
 
 }

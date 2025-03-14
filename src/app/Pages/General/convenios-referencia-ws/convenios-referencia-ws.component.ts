@@ -9,6 +9,8 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
   styleUrls: ['./convenios-referencia-ws.component.scss'],
 })
 export class ConveniosReferenciaWSComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token')
@@ -31,8 +33,6 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
 
   }
 
-  
-
   accion = 0; 
   resultado: any[] = [];
   selectedConvenio: any;
@@ -41,6 +41,7 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
   alumbrado2:boolean=false;
   alumbrados="1";
 
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router, private popoverController: PopoverController) { }
 
@@ -51,6 +52,7 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
     this.conveniosReferenciaWS();
   }
   
+  //#region Consultas a API
   conveniosReferenciaWS(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getConveniosReferenciaWS(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -66,11 +68,11 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
       console.error('El valor del tipo de empresa no existe');
     }
 
-  
-
   }
 
-  
+  //#endregion
+
+  //#region Seleccion y envio
   seleccionado(event:any){
 
     this.selectedConvenio=event.detail.value;
@@ -128,6 +130,8 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
                                        
                 }       
   }
+
+
   Alumbrado(event: { detail: { checked: any; }; }){
     if (event.detail.checked) {
       this.alumbrados="2";
@@ -138,5 +142,7 @@ export class ConveniosReferenciaWSComponent  implements OnInit {
     }
     localStorage.setItem('alumbrado',this.alumbrados);
   }
+
+  //#endregion
   
 }

@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title>Consultar Arqueo</ion-title>
@@ -126,6 +127,8 @@
     <ion-item *ngIf="rol!='R_CAJERO'">
       <ion-label class="titulo">Valor movimientos detalle: </ion-label>
       <ion-label>$ {{ resultado.VALOR_MOVIMIENTOS_DET | number }}</ion-label>
+      <!-- <ion-label *ngIf="resultado.CODIGO_PUNTO_PAGO!='7' && resultado.CODIGO_PUNTO_PAGO!='8'">$ {{ resultado.VALOR_MOVIMIENTOS_DET | number }}</ion-label>
+      <ion-label *ngIf="resultado.CODIGO_PUNTO_PAGO=='7' || resultado.CODIGO_PUNTO_PAGO=='8'">$ {{ resultado.VALOR_MOVIMIENTOS_DET_EXTERNOS | number }}</ion-label> -->
     </ion-item>
     <div class="btn-container">
       <button class="btn" expand="full" (click)="detallerecaudos()"> Detalles Recaudos</button>
@@ -229,6 +232,7 @@
             <ion-col>Valor Movimiento</ion-col>
             <ion-col>Valor Cambio</ion-col>
             <ion-col>Numero Cupones</ion-col>
+            <ion-col>Punto de pago</ion-col>
       
           </ion-row>
 
@@ -245,7 +249,7 @@
             <ion-col title="{{ recaudo.VALOR_MOVIMIENTO }}">{{ recaudo.VALOR_MOVIMIENTO | number}}</ion-col>
             <ion-col title="{{ recaudo.VALOR_CAMBIO }}">{{ recaudo.VALOR_CAMBIO | number}}</ion-col>
             <ion-col title="{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}">{{ recaudo.NUMERO_CUPONES_MOVIMIENTO }}</ion-col>
-            
+            <ion-col title="{{ recaudo.PUNTO_PAGO }}">{{ recaudo.PUNTO_PAGO }}</ion-col>
           </ion-row>
   
   
@@ -267,6 +271,7 @@
       <ion-grid>
         <ion-row class="header-row">
           <ion-col class="edit small-edit-column"><button class="imprimir-btn" (click)="vistaImpresionDes()"><ion-icon class="imprimir1" name="print-outline" size="lage"></ion-icon></button></ion-col>
+          <ion-col>Cajero</ion-col>
           <ion-col>N° Movimiento factura</ion-col>
           <ion-col>Nombre Convenio</ion-col>
           <ion-col>Factura Convenio</ion-col>
@@ -285,6 +290,7 @@
             <ion-col class="edit small-edit-column">
               <ion-checkbox (ionChange)="updateSelectedClientes($event, informacio)"></ion-checkbox>
             </ion-col>
+            <ion-col title="{{ informacio.USUARIO }}">{{ informacio.USUARIO }}</ion-col>
             <ion-col title="{{ informacio.NUMERO_MOVIMIENTO_DET }}">{{ informacio.NUMERO_MOVIMIENTO_DET }}</ion-col>
             <ion-col title="{{ informacio.NOMBRE_CONVENIO }}">{{ informacio.NOMBRE_CONVENIO }}</ion-col>
             <ion-col title="{{ informacio.FACTURA_CONVENIO }}">{{ informacio.FACTURA_CONVENIO }}</ion-col>

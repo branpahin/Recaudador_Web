@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >REPORTEADOR</ion-title>
@@ -81,7 +82,6 @@
 
               <ion-row class="data-row" slot="fixed">
                 <ion-col class="edit accion">
-                  <button title="PARAMETROS" class="btn_m" (click)="Parametros(respuesta1)"><ion-icon class="editar" name="options-outline"></ion-icon></button>
                   <button title="ACTIVAR" class="btn_m" (click)="Activar(respuesta1)"><ion-icon class="aprobar" name="checkmark-circle-outline"></ion-icon></button>
                 </ion-col>
                 <ion-col class="id" title="{{ respuesta1.ID_REPORTE }}">{{ respuesta1.ID_REPORTE}}</ion-col>
@@ -118,25 +118,25 @@
         <div class="tabla_lista" style="overflow-y: auto; height: 40vh;" >
         
           <div *ngFor="let key of parametrosKeys">
-            <ion-row *ngIf="key!=='ID_REPORTE' && key!=='TOKEN'" class="data-row" slot="fixed">
+            <ion-row *ngIf="key!='ID_REPORTE' && key!='TOKEN'" class="data-row" slot="fixed">
               <ion-col title="{{ key }}">{{ key }} 
-                <ion-item *ngIf="key === 'USUARIO' && rol==='R_CAJERO_ENC' || key === 'USUARIO' && rol==='R_ADMINISTRADOR'">
+                <ion-item *ngIf="key == 'USUARIO' && rol=='R_CAJERO_ENC' || key == 'USUARIO' && rol=='R_ADMINISTRADOR'">
                   <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm3" (input)="filterList3()" (ionClear)="clearSearch3()"></ion-searchbar>
                 </ion-item>
               </ion-col>    
               <ion-col [ngSwitch]="parametross[key]?.NOMBRE_TIPO">
                 
-                <ion-select aria-label="Empresa" *ngIf="key === 'EMPRESA'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]"required label-placement="stacked">
+                <ion-select aria-label="Empresa" *ngIf="key == 'EMPRESA'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]"required label-placement="stacked">
                   <ion-select-option *ngFor="let empresa of listEmpresas; let i = index" [value]="empresa.CODIGO" >{{ empresa.DESCRIPCION }}</ion-select-option>
                 </ion-select>
-                <ion-select aria-label="Punto Pago" *ngIf="key === 'CODIGO_PUNTO_PAGO' && reporteSeleccionado!=='1' && reporteSeleccionado!=='9'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]" (ionChange)="guardarPuntopago($event)" required label-placement="stacked">
+                <ion-select aria-label="Punto Pago" *ngIf="key == 'CODIGO_PUNTO_PAGO' && reporteSeleccionado!='1' && reporteSeleccionado!='9'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]" (ionChange)="guardarPuntopago($event)" required label-placement="stacked">
                   <ion-select-option *ngFor="let puntopago of listadoPuntosPago let i = index" [value]="puntopago.CODIGO" >{{ puntopago.NOMBRE }}</ion-select-option>
                 </ion-select>
-                <ion-select aria-label="Punto Pago" *ngIf="key === 'USUARIO' && rol!=='R_CAJERO_ENC' && rol!=='R_ADMINISTRADOR'" interface="popover" placeholder="Seleccionar" [(ngModel)]="usuario"name="{{ key }}" disabled required label-placement="stacked">
+                <ion-select aria-label="Punto Pago" *ngIf="key == 'USUARIO' && rol!='R_CAJERO_ENC' && rol!='R_ADMINISTRADOR'" interface="popover" placeholder="Seleccionar" [(ngModel)]="usuario"name="{{ key }}" disabled required label-placement="stacked">
                   <ion-select-option [value]="usuario" >{{ usuario }}</ion-select-option>
                 </ion-select>
                 
-                <div *ngIf="key === 'USUARIO' && rol==='R_CAJERO_ENC' || key === 'USUARIO' && rol==='R_ADMINISTRADOR'">
+                <div *ngIf="key == 'USUARIO' && rol=='R_CAJERO_ENC' || key == 'USUARIO' && rol=='R_ADMINISTRADOR'">
                   <ion-item>
                     <ion-label>Seleccionar todos</ion-label>
                     <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
@@ -147,7 +147,7 @@
                   </ion-item>
                 </div>
 
-                <div *ngIf="key === 'CODIGO_PUNTO_PAGO' && reporteSeleccionado==='1'">
+                <div *ngIf="key == 'CODIGO_PUNTO_PAGO' && reporteSeleccionado=='1'">
                   <ion-item>
                     <ion-label>Seleccionar todos</ion-label>
                     <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
@@ -158,7 +158,7 @@
                   </ion-item>
                 </div>
 
-                <div *ngIf="key === 'CODIGO_CONVENIO' && reporteSeleccionado==='9'">
+                <div *ngIf="key == 'CODIGO_CONVENIO' && (reporteSeleccionado=='9' || reporteSeleccionado=='39' || reporteSeleccionado=='31')">
                   <ion-item>
                     <ion-label>Seleccionar todos</ion-label>
                     <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
@@ -168,14 +168,14 @@
                     <ion-checkbox [value]="convenio.CODIGO_CONVENIO" [(ngModel)]="checkboxEstado[convenio.CODIGO_CONVENIO]"  (ionChange)="togglePuntoPago(convenio.CODIGO_CONVENIO, convenio.NOMBRE_CONVENIO, $event.detail.checked)">{{ convenio.NOMBRE_CONVENIO }}</ion-checkbox>
                   </ion-item>
                 </div>
-                <div *ngIf="key === 'CODIGO_CONVENIO'">
+                <div *ngIf="key == 'CODIGO_CONVENIO'">
 
-                  <ion-select aria-label="Convenio"  *ngIf="key === 'CODIGO_CONVENIO' && reporteSeleccionado!=='1' && reporteSeleccionado!=='9'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]" (ionChange)="guardarConvenio($event)" required label-placement="stacked">
+                  <ion-select aria-label="Convenio"  *ngIf="key == 'CODIGO_CONVENIO' && reporteSeleccionado!='1' && reporteSeleccionado!='9' && reporteSeleccionado!='39' && reporteSeleccionado!='31'" interface="popover" placeholder="Seleccionar" [(ngModel)]="parametross[key]"name="{{ key }}" [disabled]="deshabiltarCampo[key]" (ionChange)="guardarConvenio($event)" required label-placement="stacked">
                     <ion-select-option *ngFor="let convenio of listadoConvenios let i = index" [value]="convenio.CODIGO_CONVENIO" >{{ convenio.NOMBRE_CONVENIO }}</ion-select-option>
                   </ion-select>
                 </div>
 
-                <div *ngIf="key === 'CODIGO_FACTURA'">
+                <div *ngIf="key == 'CODIGO_FACTURA'">
                   <ion-item>
                     <ion-label>Seleccionar todos</ion-label>
                     <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
@@ -186,7 +186,7 @@
                   </ion-item>
                 </div>
 
-                <div *ngIf="key === 'SUB_PUNTO_PAGO'">
+                <div *ngIf="key == 'SUB_PUNTO_PAGO'">
                   <ion-item>
                     <ion-label>Seleccionar todos</ion-label>
                     <ion-checkbox [(ngModel)]="seleccionarTodos" (ionChange)="toggleSeleccionTodos($event.detail.checked)"></ion-checkbox>
@@ -197,7 +197,7 @@
                   </ion-item>
                 </div>
 
-                <ion-datetime-button *ngIf="key === 'FECHA_INI'" datetime="datetime"></ion-datetime-button>
+                <ion-datetime-button *ngIf="key == 'FECHA_INI'" datetime="datetime"></ion-datetime-button>
   
                     <ion-modal [keepContentsMounted]="true">
                       <ng-template>
@@ -205,7 +205,7 @@
                         (ionChange)="fechaIni($event)"></ion-datetime>
                       </ng-template>
                     </ion-modal>
-                <ion-datetime-button *ngIf="key === 'FECHA_FIN'"  datetime="datetime1"></ion-datetime-button>
+                <ion-datetime-button *ngIf="key == 'FECHA_FIN'"  datetime="datetime1"></ion-datetime-button>
   
                     <ion-modal [keepContentsMounted]="true">
                       <ng-template>
@@ -214,7 +214,7 @@
                       </ng-template>
                     </ion-modal>
   
-                <ion-datetime-button *ngIf="key === 'FECHA'"  datetime="datetime2"></ion-datetime-button>
+                <ion-datetime-button *ngIf="key == 'FECHA'"  datetime="datetime2"></ion-datetime-button>
   
                     <ion-modal [keepContentsMounted]="true">
                       <ng-template>
@@ -229,6 +229,10 @@
           </div>
         </div>
       </ion-grid>
+      <ion-title *ngIf="reporteSeleccionado=='27' && reporteLink">Copiar y pegar en una ventana nueva: </ion-title>
+      <a *ngIf="reporteSeleccionado=='27' && reporteLink" target="_blank">
+        \{{reporteLink}}
+      </a>
       <div class="div-btn">
         <button class="btn" expand="full" (click)="GenerarReporte()"> Crear Reporte</button>
       </div>

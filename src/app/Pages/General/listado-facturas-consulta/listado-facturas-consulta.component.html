@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color = "mycolor">
+    <ion-title >Listado Facturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-header collapse="condense">
+  <ion-toolbar>
+    <ion-title size="large">Listado Facturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-card class="login">
+  <ion-card-content>
+    <ion-list class="tabla_lista">
+      <ion-item>
+        <ion-searchbar class="buscador" placeholder="Buscar" [(ngModel)]="searchTerm" (input)="filterList()" (ionClear)="clearSearch()"></ion-searchbar>
+      </ion-item>
+      <ion-grid>
+        <ion-row *ngFor="let dato of filteredList" class="tabla1" (click)="seleccionar(dato)">
+          <ion-col>
+              <ion-item>
+                <ion-label position="stacked">
+                  TIPO DE PAGO
+                </ion-label>
+                {{dato.TIPO_PAGO}}
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked">
+                  CONVENIO
+                </ion-label>
+                {{dato.CONVENIO}}
+              </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="stacked">
+                CLIENTE
+              </ion-label>
+              {{dato.CODIGO_CLIENTE}}
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">
+                REFERENCIA
+              </ion-label>
+              {{dato.CODIGO_REFERENCIA}}
+            </ion-item>
+        </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="stacked">
+                VALOR
+              </ion-label>
+              {{dato.VALOR_MOVIMIENTO_DET | number}}
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">
+                MIGRADO
+              </ion-label>
+              {{dato.MIGRADO}}
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+          
+      <p *ngIf="respuesta">{{respuesta}}</p>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

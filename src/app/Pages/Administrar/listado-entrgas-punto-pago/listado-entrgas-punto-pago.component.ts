@@ -10,9 +10,12 @@ import * as alertify from 'alertifyjs';
   styleUrls: ['./listado-entrgas-punto-pago.component.scss'],
 })
 export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
+  puntoPago=localStorage.getItem('puntoPago')|| '';
 
   principal:boolean=false;
   codigo_punto_pago="";
@@ -45,6 +48,8 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
   tablas:boolean=false;
   confirmacion:boolean=false;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
@@ -52,6 +57,7 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
     this.principal=true; 
   }
 
+  //#region Consulta a API y filtros
 
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -181,6 +187,10 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Envio a API
+
   AccionEntregaPunto(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.postAccionEntregaPunto(this.empresa,this.codigo_punto_pago,this.arqueoSelect,this.entregaSelect,this.accionEntrega,this.observacion,this.usuario,this.token,).subscribe(
@@ -206,4 +216,7 @@ export class ListadoEntrgasPuntoPagoComponent  implements OnInit {
       );
     }
   }
+
+  //#endregion
+  
 }

@@ -37,6 +37,8 @@ interface DatosSupPunto{
 })
 export class ListadoPuntosPagoComponent  implements OnInit {
 
+  //#region Variables
+
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -100,9 +102,19 @@ export class ListadoPuntosPagoComponent  implements OnInit {
   modificarHoraIni:boolean=false;
   modificarHoraFin:boolean=false;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
+    this.crear=false;
+    this.crearSubpunto=false;
+    this.editar=false;
+    this.subPunto=false;
+    this.modificaFormaPago=false;
+    this.modificarHoraMax=false;
+    this.modificarHoraIni=false;
+    this.modificarHoraFin=false;
     this.ListarPuntosPago();
     this.ListarConvenios();
     this.horaInicio="";
@@ -114,6 +126,8 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     this.ListarPuntosPago();
     this.filterList();
   }
+
+  //#region Filtrado y formatos
 
   filterList() {
     if (!this.searchTerm.trim()) {
@@ -184,6 +198,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     return fechaActual;
 
   }
+
   HoraFin(event: CustomEvent<DatetimeChangeEventDetail>): Date {
     const hora: string = (event.detail.value as string) || '';
 
@@ -205,10 +220,15 @@ export class ListadoPuntosPagoComponent  implements OnInit {
    
       this.horaFin = formatDate(hora, 'hh:mm a', 'en-US');
     }
+    console.log("datos fecha: ",this.datos)
 
     return fechaActual;
  
   }
+
+  //#endregion
+
+  //#region Consulta a API
 
   Crear(){
 
@@ -411,7 +431,9 @@ export class ListadoPuntosPagoComponent  implements OnInit {
    
   }
 
+  //#endregion
 
+  //#region Envio a API
 
   updateSelectedClientes(event: { detail: { checked: any; }; }, pagos: { CODIGO: any; }) {
     this.modificaFormaPago=true;
@@ -527,7 +549,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
         ENCARGADO:respuesta1.ENCARGADO,
         TOKEN:this.token
       };
-
+      
      
 
 
@@ -588,7 +610,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
         this.arrayFormaPago.push(numero.trim());
       }
     });
-
+    console.log("datos: ",this.datos)
       this.ListarPuntosPago();
       this.formaPago();
       this.ListarTipoPuntoPago();
@@ -664,6 +686,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
   }
 
   ModificarPuntoPago(){
+
     if(this.lstFormaPago!=this.datos.FORMA_PAGO){
       this.lstFormaPago=this.lstFormaPago+";";
     }
@@ -675,6 +698,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     if(this.modificaFormaPago){
       this.datos.FORMA_PAGO=this.lstFormaPago;
     }
+    console.log("modigicar: ", this.datos)
     if(!this.modificarHoraIni){
       const hora: string = (this.horaInicio) || '';
 
@@ -744,5 +768,7 @@ export class ListadoPuntosPagoComponent  implements OnInit {
     }
     
   }
+
+  //#endregion
 
 }

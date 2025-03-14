@@ -11,6 +11,7 @@ import * as alertify from 'alertifyjs';
 })
 export class CrearArqueoComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   nombreEmpresa: string|null=localStorage.getItem('empresa');
   usuario: string|null =localStorage.getItem('usuario');
@@ -18,8 +19,7 @@ export class CrearArqueoComponent  implements OnInit {
   nombrePuntoPago: string|null =localStorage.getItem('nombrePuntoPago');
   token: string|null = localStorage.getItem('token');
   caja: string|null=localStorage.getItem('condigoCaja');
-
-
+  nombre_caja: string|null=localStorage.getItem('nombre_caja');
 
   crear_arqueo:Crear_Arqueo ={
     EMPRESA: "",
@@ -31,7 +31,7 @@ export class CrearArqueoComponent  implements OnInit {
 
   resultado: any;
   resultadoCaja: any [] = [];
-
+ //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -42,11 +42,16 @@ export class CrearArqueoComponent  implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if(this.caja=="No tiene caja asignada"){
+      this.nombre_caja="No tiene caja asignada"
+    }
+  }
   
   crearArqueo(){
     if (this.empresa !== null && this.usuario!== null && this.token!== null && this.puntoPago!==null && this.caja!==null) {
       if(this.caja=="No tiene caja asignada"){
+        this.nombre_caja="No tiene caja asignada"
         alertify.error("No se puede crear arqueo, No tiene caja asignada");
       }else{
         this.recaudoService.postCrearArqueo(this.empresa, this.caja, this.puntoPago, this.usuario, this.token).subscribe({

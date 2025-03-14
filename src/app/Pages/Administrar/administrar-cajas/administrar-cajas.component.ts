@@ -19,6 +19,8 @@ interface Datos{
   styleUrls: ['./administrar-cajas.component.scss'],
 })
 export class AdministrarCajasComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -55,6 +57,7 @@ export class AdministrarCajasComponent  implements OnInit {
 
   crear:boolean=false;
   editar:boolean=false;
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -89,6 +92,7 @@ export class AdministrarCajasComponent  implements OnInit {
     this.ListarCajas();
   }
 
+  //#region Consulta a API
 //Consultar puntos de pago
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -185,8 +189,9 @@ export class AdministrarCajasComponent  implements OnInit {
       })
     }
   }
+  //#endregion
 
-
+  //#region Envio a API
 //Crear caja
   CrearCaja(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -273,4 +278,6 @@ export class AdministrarCajasComponent  implements OnInit {
       );
     }
   }
+  //#endregion
+
 }

@@ -8,18 +8,20 @@ import { RecaudoService } from 'src/app/services/recaudo.service';
   styleUrls: ['./cajas-sac.component.scss'],
 })
 export class CajasSacComponent  implements OnInit {
+
+  //#region Variables
   token: string|null =localStorage.getItem('token');
   fechas="";
   currentDateTime="";
   respuesta="";
   datos:any;
+  //#endregion
+
   constructor(private recaudoService: RecaudoService) { }
 
   ngOnInit() {
     const now = new Date();
-    
     this.currentDateTime = now.toISOString();
-    
     this.fecha(this.currentDateTime);
   }
 
@@ -27,6 +29,8 @@ export class CajasSacComponent  implements OnInit {
     this.fechas = formatDate(event, 'dd/MM/yyyy', 'en-US');
     this.ListarCajasActivasSac()
   }
+
+  //#region Consulta a API
 
   ListarCajasActivasSac(){
     if (this.token !== null) {
@@ -45,6 +49,6 @@ export class CajasSacComponent  implements OnInit {
     }
 
   }
-
+  //#endregion
 
 }

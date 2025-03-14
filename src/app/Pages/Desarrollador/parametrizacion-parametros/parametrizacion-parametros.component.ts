@@ -18,6 +18,7 @@ interface Datos{
 })
 export class ParametrizacionParametrosComponent  implements OnInit {
 
+  //#region Variables
   empresa=localStorage.getItem('empresaCOD') || '';
   usuario= localStorage.getItem('usuario')|| '';
   token=localStorage.getItem('token')|| '';
@@ -41,6 +42,8 @@ export class ParametrizacionParametrosComponent  implements OnInit {
   mostrarMas:boolean=false;
   mostrarModificar:boolean=false;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {}
@@ -49,6 +52,8 @@ export class ParametrizacionParametrosComponent  implements OnInit {
     this.ConsultarInfo();
     this.filterList();
   }
+
+  //#region Filtrado
 
   filterList() {
     if (!this.searchTerm.trim()) {
@@ -65,6 +70,9 @@ export class ParametrizacionParametrosComponent  implements OnInit {
     this.filteredList = this.informacionConsulta;
   }
 
+  //#endregion
+
+  //#region Consultas a API
   ListarParametros(){
     this.informacionConsulta=[];
     this.filteredList=[];
@@ -158,5 +166,7 @@ export class ParametrizacionParametrosComponent  implements OnInit {
       
     }
   }
+
+  //#endregion
 
 }

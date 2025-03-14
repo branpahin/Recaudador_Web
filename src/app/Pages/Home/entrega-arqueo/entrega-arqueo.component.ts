@@ -1,7 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
+import { IonPopover } from '@ionic/angular';
 
 
 
@@ -21,6 +22,7 @@ interface Detalle {
 
 export class EntregaArqueoComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null =localStorage.getItem('empresaCOD');
   arqueo: string|null = localStorage.getItem('numeroArqueo');
   usuario: string|null = localStorage.getItem('usuario');
@@ -28,9 +30,16 @@ export class EntregaArqueoComponent  implements OnInit {
   puntoPago: string|null =localStorage.getItem('puntoPago');
   token: string|null =localStorage.getItem('token');
 
- 
   valorfajo = 0;
   cantidad:string|undefined;
+
+  datos_consulta={
+    EMPRESA: this.empresa,
+    NUMERO_ARQUEO: this.arqueo,
+    CODIGO_PUNTO_PAGO: this.puntoPago,
+    USUARIO: this.usuario,
+    TOKEN: this.token
+  }
 
   detalle={
     CODIGO_MONEDA: "",
@@ -47,7 +56,6 @@ export class EntregaArqueoComponent  implements OnInit {
     VALOR: "",
     TIPO:""
   };
-
 
   datos = {
     ACCION: "",
@@ -85,6 +93,7 @@ export class EntregaArqueoComponent  implements OnInit {
   otraVariable: string = ''; 
   otraVariable2: string = ''; 
   mostrartabla:boolean=false;
+  showReminder: boolean = true;
   enviar:boolean=true;
   suma_facturas: number = 0 ;
   totalDetalles=0
@@ -92,9 +101,9 @@ export class EntregaArqueoComponent  implements OnInit {
  
   monedas: any[] = [];
   datafono: any[] = [];
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
-
   @HostListener('window:keyup', ['$event'])
   handleKeyUp(event: KeyboardEvent) {
   if (event.key === 'Enter') {
@@ -102,11 +111,45 @@ export class EntregaArqueoComponent  implements OnInit {
     }
   }
 
-  ngOnInit() {
-   
+  ngOnInit() { 
+    this.valorEntregaFinal();
   }
-  
+  //#regin Consultar Api
+  valorEntregaFinal(){
 
+    if (this.empresa) {
+      this.recaudoService.postValorEntregaFinal(this.datos_consulta).subscribe({
+        next: data => {
+
+          if(data.COD=='200'){
+            let numeroFormateado = data.CHEQUE.replace(/[^\d]/g, '');
+            let numeroFormateado2 = data.DATAFONO_AGUAS.replace(/[^\d]/g, '');
+            let numeroFormateado3 = data.DATAFONO_EEP.replace(/[^\d]/g, '');
+            let numeroFormateado4 = data.DATAFONO_MUNICIPIO.replace(/[^\d]/g, '');
+            numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            numeroFormateado2 = numeroFormateado2.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            numeroFormateado3 = numeroFormateado3.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            numeroFormateado4 = numeroFormateado4.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            this.datos2.VALOR_CHEQUES=numeroFormateado
+            this.datos2.DATAFONO_AGUAS=numeroFormateado2
+            this.datos2.DATAFONO_EEP=numeroFormateado3
+            this.datos2.DATAFONO_MUNICIPIO=numeroFormateado4
+
+          }
+          else{
+            alertify.error(data.RESPUESTA);
+          }
+        },
+        error: error => {
+          console.error(error);
+        }
+      });
+    }
+  }
+  //#endregion
+
+  //#region Detalle de entraga
   agregarDetalle() {
     this.mostrartabla=true
 
@@ -126,6 +169,10 @@ export class EntregaArqueoComponent  implements OnInit {
     };
     this.tipoEntrega({ detail: { value: this.detalle.CODIGO_MONEDA } });
 
+  }
+
+  closeReminder() {
+    this.showReminder = false;
   }
 
   eliminarFila(detalle:{ CODIGO_MONEDA: any; TIPO: string; CANTIDAD:string; VALOR_UNITARIO:string; VALOR:string}){
@@ -158,24 +205,11 @@ export class EntregaArqueoComponent  implements OnInit {
     }
    return deshabilitar
   }
+  //#endregion
 
-  calcular(){
-    if(this.detalle.TIPO=="FAJO")
-    {
-      this.datos.ENTREGAS_DET.forEach(detalle => {
-        detalle.VALOR = String((this.valorfajo * 100) * Number(this.cantidad)); 
-      });
-    }
-    else if(this.detalle.TIPO=="REMANENTE"){
-      this.datos.ENTREGAS_DET.forEach(detalle => {
-        detalle.VALOR = String((this.valorfajo) * Number(this.cantidad)); 
-      });
-    }
-
-
-  }
+  //#region Tipo de entrega
   tipoEntregaDatafono() {
-
+    this.mostrartabla=false
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       
       this.recaudoService.getTipoEntregas(Number(this.empresa), Number(this.datos.ACCION), this.usuario, this.token).subscribe(
@@ -266,47 +300,37 @@ export class EntregaArqueoComponent  implements OnInit {
       console.error('El valor del tipo de empresa no existe');
     }
   }
+  //#endregion
 
-
-
-
+  //#region Monedas y formato de valores
   infoMonedas(event: any)
   {
     this.suma_facturas=0;
     this.otraVariable2=event.detail.value; 
     const detalleEspecifico = this.datos.ENTREGAS_DET;
 
+    for (let i=0; i<=detalleEspecifico.length-1; i++)
+    {         
 
-      for (let i=0; i<=detalleEspecifico.length-1; i++)
-      {         
+      if(Number(detalleEspecifico[i].CODIGO_MONEDA)<=5 || detalleEspecifico[i].TIPO=="REMANENTE"){
+        detalleEspecifico[i].VALOR=String(Number(detalleEspecifico[i].VALOR_UNITARIO)*Number(detalleEspecifico[i].CANTIDAD));
+        this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);    
+        this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
 
-        if(Number(detalleEspecifico[i].CODIGO_MONEDA)<=5 || detalleEspecifico[i].TIPO=="REMANENTE"){
-          detalleEspecifico[i].VALOR=String(Number(detalleEspecifico[i].VALOR_UNITARIO)*Number(detalleEspecifico[i].CANTIDAD));
-          this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);    
-          this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
+      }else{
+        detalleEspecifico[i].VALOR=String((Number(detalleEspecifico[i].VALOR_UNITARIO)*100)*Number(detalleEspecifico[i].CANTIDAD));
+        this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);     
+        this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
 
-        }else{
-          detalleEspecifico[i].VALOR=String((Number(detalleEspecifico[i].VALOR_UNITARIO)*100)*Number(detalleEspecifico[i].CANTIDAD));
-          this.suma_facturas = this.suma_facturas+Number(detalleEspecifico[i].VALOR);     
-          this.totalDetallesFal=Number(this.datos.VALOR_TOTAL.replace(/\./g, ''))-this.suma_facturas;
-
-        }                         
-      }     
+      }                         
+    }     
            
-    }
+  }
 
-
-
-
-
-  formatoNumero() {
-    
+  formatoNumero() { 
     let numeroFormateado = this.datos.VALOR_TOTAL.replace(/[^\d]/g, '');
     numeroFormateado = numeroFormateado.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    this.datos.VALOR_TOTAL= numeroFormateado;
-   
-
-    
+    this.datos.VALOR_TOTAL= numeroFormateado;  
   }
 
   formatNumberInput(event: Event): void {
@@ -372,7 +396,21 @@ export class EntregaArqueoComponent  implements OnInit {
   
   }
 
+  calcular(){
+    if(this.detalle.TIPO=="FAJO")
+    {
+      this.datos.ENTREGAS_DET.forEach(detalle => {
+        detalle.VALOR = String((this.valorfajo * 100) * Number(this.cantidad)); 
+      });
+    }
+    else if(this.detalle.TIPO=="REMANENTE"){
+      this.datos.ENTREGAS_DET.forEach(detalle => {
+        detalle.VALOR = String((this.valorfajo) * Number(this.cantidad)); 
+      });
+    }
 
+
+  }
   
   limpiarYEnviar() {
     this.enviar=false;
@@ -384,20 +422,22 @@ export class EntregaArqueoComponent  implements OnInit {
     this.datos2.CORRESPONSAL_1=this.datos2.CORRESPONSAL_1.replace(/\./g, '');
     this.datos2.CORRESPONSAL_2=this.datos2.CORRESPONSAL_2.replace(/\./g, '');
     this.datos2.VALOR_CHEQUES=this.datos2.VALOR_CHEQUES.replace(/\./g, '');
-    
-    
-    
-    
-    
     this.entregaArqueo();
   }
+  //#endregion
 
-
+  //#region Ejecución de entrega
   entregaArqueo(){
     
     if(this.datos.ACCION=="3"){
       this.datos2.VALOR_TOTAL=this.datos.VALOR_TOTAL;
       this.datos2.ENTREGAS_DET=this.datos.ENTREGAS_DET;
+
+      if(this.datos.CODIGO_PUNTO_PAGO==='7' || this.datos.CODIGO_PUNTO_PAGO==='8'){
+        this.datos2.PRESTAMOS_EEP='0';
+        this.datos2.VALOR_CHEQUES='0';
+        this.datos2.CORRESPONSAL_1='0';
+      }
       
       this.recaudoService.postEntregaArqueo(this.datos2)
       .subscribe((respuesta) => {
@@ -509,5 +549,6 @@ export class EntregaArqueoComponent  implements OnInit {
     }
     
   }
+  //#endregion
 
 }

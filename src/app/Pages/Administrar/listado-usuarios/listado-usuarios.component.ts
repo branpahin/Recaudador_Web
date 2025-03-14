@@ -10,6 +10,7 @@ import * as alertify from 'alertifyjs';
 })
 export class ListadoUsuariosComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -56,6 +57,8 @@ export class ListadoUsuariosComponent  implements OnInit {
   crear:boolean=false;
   editar:boolean=false;
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
   ngOnInit() {
@@ -70,6 +73,8 @@ export class ListadoUsuariosComponent  implements OnInit {
     this.ListarUsuarios();
     this.filterList();
   }
+
+  //#region Creaciones inciales y manejo de ventanas - filtros
 
   Crear(){
     this.crear=true;
@@ -123,6 +128,9 @@ export class ListadoUsuariosComponent  implements OnInit {
     this.filteredList = this.listadoUsuarios;
   }
 
+  //#endregion
+
+  //#region Consulta a API
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPagoAdmin(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -222,6 +230,10 @@ export class ListadoUsuariosComponent  implements OnInit {
       })
     }
   }
+
+  //#endregion
+
+  //#region Envio a API
 
   CrearUsuario(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -328,5 +340,7 @@ export class ListadoUsuariosComponent  implements OnInit {
       );
     }
   }
+
+  //#endregion
 
 }

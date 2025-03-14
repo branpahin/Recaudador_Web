@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header *ngIf="seleccion" [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >Consultar</ion-title>
@@ -26,10 +27,10 @@
 <ion-card class="principal" *ngIf="seleccion">
   <ion-card-content>
     <ion-list class="principal-content">
-      <div class="btn-i">
+      <div *ngIf="puntoPago!='7' && puntoPago!='8'" class="btn-i">
         <button class="btn" expand="full" (click)="ConsultarArq()">Consultar Arqueo</button>
       </div>
-      <div class="btn-i">
+      <div *ngIf="puntoPago!='7' && puntoPago!='8'" class="btn-i">
         <button class="btn" expand="full" (click)="ConsultarCuadres()">Consultar Cuadres</button>
       </div>
       <div class="btn-i">
@@ -389,7 +390,7 @@
             </ion-row>
       
             <div *ngFor="let informacion of informacionF" >
-              <div  *ngIf="detalleSeleccionado === informacion.NUMERO_MOVIMIENTO">
+              <div  *ngIf="detalleSeleccionado == informacion.NUMERO_MOVIMIENTO">
               <ion-row class="data-row" class="data-row" *ngFor="let informacio of informacion.INFORMACION_FACTURA | filterByColumn: filtroNumeroMovimientoDet: 'NUMERO_MOVIMIENTO_DET' | filterByColumn: filtroNombreConvenio: 'NOMBRE_CONVENIO' | filterByColumn: filtroFacturaConvenio: 'FACTURA_CONVENIO' | filterByColumn: filtroCodigoCliente: 'CODIGO_CLIENTE' | filterByColumn: filtroCodigoReferencia: 'CODIGO_REFERENCIA' | filterByColumn: filtroFechaVencimiento: 'FECHA_VENCIMIENTO' | filterByColumn: filtroValorMovimientoDet: 'VALOR_MOVIMIENTO_DET' | filterByColumn: filtroFormaPago: 'FORMA_PAGO' | filterByColumn: filtroMigrado: 'MIGRADO'">
                 <ion-col *ngIf="rol=='R_ADMINISTRADOR'" class="edit small-edit-column"><button title="Anular" class="anular-btn" (click)="Anulacion(informacio)"><ion-icon class="anular" name="trash-bin-outline"></ion-icon></button></ion-col>
                 <ion-col title="{{ informacio.NUMERO_MOVIMIENTO_DET }}">{{ informacio.NUMERO_MOVIMIENTO_DET }}</ion-col>

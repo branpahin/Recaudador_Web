@@ -29,6 +29,7 @@ interface CampoSelec{
 })
 export class ParametrizacionBarrasComponent  implements OnInit {
 
+  //#region Variables
   empresa=localStorage.getItem('empresaCOD') || '';
   usuario= localStorage.getItem('usuario')|| '';
   token=localStorage.getItem('token')|| '';
@@ -92,6 +93,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
   mostrarModificar:boolean=false;
   mostrarCamposAgregar:boolean=false;
   
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router) { }
 
@@ -104,6 +106,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     this.filterList();
   }
 
+  //#region Filtrado
   filterList() {
     if (!this.searchTerm.trim()) {
       this.filteredList = this.FacturasBarras;
@@ -120,7 +123,9 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     this.filteredList = this.FacturasBarras;
   }
 
+  //#endregion
 
+  //#region Consultas a API
   ListarCamposBarras(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoCamposBarra(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -158,6 +163,9 @@ export class ParametrizacionBarrasComponent  implements OnInit {
 
   }
 
+  //#endregion
+
+  //#region Manejo de ventanas
   cerrarTabla(){
     this.crear=false;
     this.editar=false;
@@ -170,6 +178,9 @@ export class ParametrizacionBarrasComponent  implements OnInit {
     respuesta.selected = !respuesta.selected;
   }
 
+  //#endregion
+
+  //#region Agrgar o quitar campos
   agregarCampo(){
     if(this.mostrarModificar){
       this.mostrarCamposAgregar=true;
@@ -271,6 +282,9 @@ export class ParametrizacionBarrasComponent  implements OnInit {
    
   }
 
+  //#endregion
+
+  //#region Envio a API
   ModificarFacturaBarras(){
     if(this.mostrarCamposAgregar){
       this.datosNuevos.EMPRESA= this.empresa,
@@ -347,5 +361,7 @@ export class ParametrizacionBarrasComponent  implements OnInit {
       }
     }
   }
+
+  //#endregion
 
 }

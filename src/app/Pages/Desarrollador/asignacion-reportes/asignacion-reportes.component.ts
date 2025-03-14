@@ -20,6 +20,7 @@ interface Detalle{
 })
 export class AsignacionReportesComponent  implements OnInit {
   
+  //#region Variables
   empresa=localStorage.getItem('empresaCOD') || '';
   usuario= localStorage.getItem('usuario')|| '';
   token=localStorage.getItem('token')|| '';
@@ -48,6 +49,8 @@ export class AsignacionReportesComponent  implements OnInit {
   checkboxEstado: { [key: string]: boolean } = {};
   role: { roles: string; }[] = [];
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService) { }
 
   ngOnInit() {
@@ -71,6 +74,7 @@ export class AsignacionReportesComponent  implements OnInit {
     this.filterList();
   }
 
+  //#region Filtrado
   filterList() {
     if (!this.searchTerm.trim()) {
       this.filteredList = this.listadoReportesAsignados;
@@ -86,6 +90,9 @@ export class AsignacionReportesComponent  implements OnInit {
     this.filteredList = this.listadoReportesAsignados;
   }
 
+  //#endregion
+
+  //#region Consulta a API
   ListarRoles(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListadoRoles(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -135,11 +142,14 @@ export class AsignacionReportesComponent  implements OnInit {
     }
   }
 
+  //#endregion
+
+  //#region Selección y editar
+
   isConvenioSelected(codigoConvenioDet: string): boolean {
     const conveniosBloqueados = this.listadoRolesSelec.split(', ').filter(det => det !== '');
     return conveniosBloqueados.includes(codigoConvenioDet);
   }
-
   
 
   Editar(respuesta1: any){
@@ -182,6 +192,10 @@ export class AsignacionReportesComponent  implements OnInit {
       }
     }
   }
+
+  //#endregion
+
+  //#region Envio a API
 
   ModificarAsignacion(){
     
@@ -233,4 +247,7 @@ export class AsignacionReportesComponent  implements OnInit {
         
       })
   }
+
+  //#endregion
+
 }

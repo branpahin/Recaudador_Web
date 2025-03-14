@@ -8,6 +8,8 @@ import * as alertify from 'alertifyjs';
   styleUrls: ['./reabrir-arqueo.component.scss'],
 })
 export class ReabrirArqueoComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario = localStorage.getItem('usuario') || '';
   token: string|null = localStorage.getItem('token');
@@ -27,12 +29,15 @@ export class ReabrirArqueoComponent  implements OnInit {
     USUARIO:this.usuario,
     TOKEN:this.token
   }
+  //#endregion
+
   constructor(private recaudoService: RecaudoService) { }
 
   ngOnInit() {
     this.ListarPuntosPago()
   }
 
+  //#region Formato numerico y Consultas a API
   async formatoNumero() {
     this.datosEnviar.VALOR_RECAUDADO_REPORTADO=this.datosEnviar.VALOR_RECAUDADO_REPORTADO.replace(/\./g, '');
     this.datosEnviar.NUMERO_CUPONES_REPORTADOS= this.datosEnviar.NUMERO_CUPONES_REPORTADOS.replace(/\./g, '')
@@ -56,7 +61,29 @@ export class ReabrirArqueoComponent  implements OnInit {
   MostrarMas(respuesta: any) {
     respuesta.selected = !respuesta.selected;
   }
+  
+  ListarReabrirArqueo(){
+    if (this.token !== null) {
+      this.recaudoService.getListadoReabrirArqueo(Number(this.empresa),this.codigo_punto_pago,this.usuario,this.token).subscribe(
+        (data: any) => {
+          if(data.COD!='200'){
+            this.respuesta=data.RESPUESTA;
+          }else{
+            this.datos=data.REABRIR_ARQUEOS;
+            this.respuesta=""
+          }
+        },
+        (error) => {
+          console.error('Error al llamar al servicio:', error);
+        }
+      );
+    }
 
+  }
+
+  //#endregion
+
+  //#region Envio a API
   async ReabrirArqueo(empresa:string, codPuntoPago:string, numeroArqueo:string, numeroCupones:string, valorReportado:string){
     await this.formatoNumero();
 
@@ -107,23 +134,6 @@ export class ReabrirArqueoComponent  implements OnInit {
 
   }
 
-  ListarReabrirArqueo(){
-    if (this.token !== null) {
-      this.recaudoService.getListadoReabrirArqueo(Number(this.empresa),this.codigo_punto_pago,this.usuario,this.token).subscribe(
-        (data: any) => {
-          if(data.COD!='200'){
-            this.respuesta=data.RESPUESTA;
-          }else{
-            this.datos=data.REABRIR_ARQUEOS;
-            this.respuesta=""
-          }
-        },
-        (error) => {
-          console.error('Error al llamar al servicio:', error);
-        }
-      );
-    }
-
-  }
+  //#endregion
 
 }

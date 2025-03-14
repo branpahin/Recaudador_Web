@@ -1,7 +1,8 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
   <ion-title>Recaudo</ion-title>
-  <div *ngIf="puntoPago=='1'" id="LlamaTurno" class="contenedor" slot="end" >
+  <div *ngIf="puntoPago !='8' && puntoPago !='7'" id="LlamaTurno" class="contenedor" slot="end" >
     <button *ngIf="turno"class="btn" expand="full" (click)="activarCajaTurno()">Llamar</button>
     <button *ngIf="!turno"class="btn" expand="full" (click)="finalizarCajaTurno()">Finalizar</button>
     <div class="checkbox-container">
@@ -21,8 +22,8 @@
 <div class="nav">
   <div class="ion-text-center ion-align-items-center buttons-nav">
     <button class="btn-nav" id="btn-nav1" expand="full" (click)="buscarBarras()" [disabled]="recaudado">Codigo Barras</button>
-    <button class="btn-nav" expand="full" (click)="buscarReferencia()" [disabled]="recaudado"> Buscardor Referencia</button>
-    <button class="btn-nav" id="btn-nav2" expand="full" (click)="buscarManual()" [disabled]="recaudado">Buscardor Manual</button>
+    <button class="btn-nav" expand="full" (click)="buscarReferencia()" [disabled]="recaudado"> Buscador Referencia</button>
+    <button class="btn-nav" id="btn-nav2" expand="full" (click)="buscarManual()" [disabled]="recaudado">Buscador Manual</button>
   </div>
 </div>
 <ion-card class="contenido">
@@ -148,8 +149,10 @@
       <ion-checkbox class="checkBarra" (ionChange)="barraManual($event)" [(ngModel)]="mostrarBarra" [disabled]="recaudado">Editable</ion-checkbox>
       <ion-item style="flex: 1;">
         <ion-label position="stacked">Codigo de Barras</ion-label>
-        <ion-input *ngIf="!mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" (input)="onInputChange($event)" autofocus #myInput [disabled]="recaudado"></ion-input>
-        <ion-input *ngIf="mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" class="barras" name="codigoBarras" type="text" (keyup.enter)="onInputChange($event)" [disabled]="recaudado"></ion-input>
+        <div class="barras" (keydown)="handleKeyUp($event)">
+          <ion-input *ngIf="!mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS"  name="codigoBarras" type="text" (input)="onInputChange($event)" autofocus #myInput [disabled]="recaudado"></ion-input>
+          <ion-input *ngIf="mostrarBarra" [(ngModel)]="datosConsulta.CODIGO_BARRAS" name="codigoBarras" type="text" (keyup.enter)="onInputChange($event)" [disabled]="recaudado"></ion-input>
+        </div>
       </ion-item> 
     </div>
 
@@ -224,7 +227,8 @@
     <div class="tabla">
       <div >
         <ion-checkbox (ionChange)="agrupar($event)" [disabled]="!desagrupar" [(ngModel)]="estadoCheckbox">Desagrupar</ion-checkbox>
-        <button class="btn_ver" (click)="ListarFacturas()"><ion-icon size="large" class="ver" name="eye" style="color: blue;"></ion-icon></button>
+        <button class="btn_ver" (click)="ListarFacturas()"><ion-icon size="large" name="eye" style="color: blue;"></ion-icon></button>
+        <button style="  position: fixed; margin-left: 5%; background-color: transparent; color: rgb(255, 0, 0);" (click)="ListarFacturasRechazadas()"><ion-icon size="large" name="eye"></ion-icon></button>
         <ion-grid class="tabla1">
           <ion-row class="header-row">
             <ion-col class="edit small-edit-column data-row" >

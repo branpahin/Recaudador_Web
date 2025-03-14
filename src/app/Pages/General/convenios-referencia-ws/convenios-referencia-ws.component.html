@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-grid>
   <ion-row class="data-row">
     <ion-col>
@@ -9,7 +10,7 @@
     <ion-col>
       
       <ng-container *ngFor="let moneda of resultado">
-        <ng-container *ngIf="selectedConvenio === moneda.CODIGO_CONVENIO">
+        <ng-container *ngIf="selectedConvenio == moneda.CODIGO_CONVENIO">
           <ion-label >Convenio Det</ion-label>
           <ion-select interface="action-sheet" placeholder="Seleccionar" [(ngModel)]="selectedConvenioDet" name="moneda" required (ionChange)="seleccionadoDet($event)">
             <ion-select-option *ngFor="let convenio of moneda.CONVENIOS_DETALLE;" [value]="convenio.CODIGO_CONVENIO_DET">{{ convenio.NOMRE_CONVENIO_DET }}</ion-select-option>

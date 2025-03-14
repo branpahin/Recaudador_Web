@@ -45,6 +45,9 @@ interface Datos{
   styleUrls: ['./factutas-convenio.component.scss'],
 })
 export class FactutasConvenioComponent  implements OnInit {
+
+  //#region Variables
+
   empresa=localStorage.getItem('empresaCOD') || '';
   usuario= localStorage.getItem('usuario')|| '';
   token=localStorage.getItem('token')|| '';
@@ -159,6 +162,7 @@ export class FactutasConvenioComponent  implements OnInit {
   editar:boolean=false;
   mostrarMas:boolean=false;
   
+  //#endregion
 
   constructor(private recaudoService: RecaudoService, private router: Router,private loadingController: LoadingController,) { }
 
@@ -176,6 +180,8 @@ export class FactutasConvenioComponent  implements OnInit {
     this.ListarFacturasConvenio();
     this.filterList();
   }
+
+  //#region Filtrado y consultas API
 
   filterList() {
     if (!this.searchTerm.trim()) {
@@ -325,6 +331,10 @@ export class FactutasConvenioComponent  implements OnInit {
     this.fecha="";
     this.ListarFacturasConvenio();
   }
+
+  //#endregion
+
+  //#region Envio a API
 
   CrearFacturaConvenio(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -635,5 +645,7 @@ filtro(event: any){
     const width = baseWidth + text.length;
     return `${width}px`;
   }
+
+  //#endregion
 
 }

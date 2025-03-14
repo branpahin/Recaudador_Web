@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecaudoService } from 'src/app/services/recaudo.service';
 import * as alertify from 'alertifyjs';
+import { ModalController } from '@ionic/angular';
+import { ListadoFacturasConsultaComponent } from '../../General/listado-facturas-consulta/listado-facturas-consulta.component';
 
 @Component({
   selector: 'app-anulacion-pagos',
@@ -10,6 +12,7 @@ import * as alertify from 'alertifyjs';
 })
 export class AnulacionPagosComponent  implements OnInit {
 
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -46,9 +49,11 @@ export class AnulacionPagosComponent  implements OnInit {
   filteredList: any[] = [];
   searchTerm: string = '';
 
+  //#endregion
 
-
-  constructor(private recaudoService: RecaudoService, private router: Router) { }
+  constructor(private recaudoService: RecaudoService, 
+    private router: Router,
+    private modalController: ModalController,) { }
 
   ngOnInit() {
     this.ListarPuntosPago();
@@ -61,6 +66,7 @@ export class AnulacionPagosComponent  implements OnInit {
     this.ListarAnulaciones();
   }
 
+  //#region Filtrado
   filterList() {
     if (!this.searchTerm.trim()) {
       this.filteredList = this.listadoAnulaciones;
@@ -83,8 +89,9 @@ export class AnulacionPagosComponent  implements OnInit {
   clearSearch() {
     this.filteredList = this.listadoAnulaciones;
   }
+  //#endregion
 
-
+  //#region Consulta a API
 //Consultar puntos de pago
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
@@ -100,7 +107,6 @@ export class AnulacionPagosComponent  implements OnInit {
     }
 
   }
-
 
 //consultar anulaciones realizadas
   ListarAnulaciones(){
@@ -120,13 +126,14 @@ export class AnulacionPagosComponent  implements OnInit {
 
   }
 
-
 //Mostrar mas información del listado 
   MostrarMas(respuesta: any) {
     respuesta.selected = !respuesta.selected;
   }
 
+  //#endregion
 
+  //#region Envio a API
 //Mostrar vista para creación de anulación  
   Crear(){
 
@@ -146,6 +153,30 @@ export class AnulacionPagosComponent  implements OnInit {
     this.ListarAnulaciones();
  
 }
+ async ListarFacturas() {
+    const modal = await this.modalController.create({
+      component: ListadoFacturasConsultaComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        datos: this.datos,
+        backdropDismiss: true,
+      }
+    });
+    modal.style.cssText = `
+      --height:auto;
+      --max-height: 80%;
+      --width:auto;
+      --max-width: 90%;
+      --border-radius: 10px;
+    `;
+    modal.onDidDismiss().then((data: any) => {
+      console.log("datos: ",data)
+      if (data.data != '') {
+        this.datos.NUMERO_MOVIMIENTO_DET=data.data.datos.NUMERO_MOVIMIENTO_DET;
+      }
+    });
+    await modal.present();
+  }
 
 //Eliminar anulación
   Eliminar(respuesta1:any){
@@ -220,6 +251,6 @@ export class AnulacionPagosComponent  implements OnInit {
       
     }
   }
-
+  //#endregion
 
 }

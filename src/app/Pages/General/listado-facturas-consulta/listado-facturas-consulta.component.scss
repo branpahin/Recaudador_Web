@@ -1,0 +1,52 @@
+ion-toolbar{
+    background-color: var(--ion-color-mycolor);
+    color:white;
+}
+
+ion-header{
+    max-width: 100%;
+    margin: 0 auto; 
+}
+
+ion-title{
+    font-weight: bold;
+}
+
+ion-card-content{
+    width: 100%;
+    align-items: center;  
+    text-align: center;
+}
+
+.tabla_lista {
+    overflow-y: auto;
+    max-height: 70vh;
+    transition: width 0.3s ease;
+  }
+.tabla_lista::-webkit-scrollbar {
+    width: 5px;
+  }
+
+.tabla_lista::-webkit-scrollbar-thumb {
+    background: rgb(243, 125, 47); /* Color de la barra de desplazamiento */
+    border-radius: 10px;
+  }
+  
+  .tabla_lista::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+.tabla1 {
+    margin-top: 1%;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 10); 
+}
+
+.tabla1:hover {
+    background-color: #e7e5e5;
+}
+
+.fecha{
+    height: 10%;
+    float: left;
+}

@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title >Modificar Arqueo</ion-title>
@@ -69,11 +70,11 @@
               <ion-col>DIFERENCIA DE CUPONES</ion-col>
             </ion-row>
             <ion-row  class="data-row">
-              <ion-col [ngClass]="{ 'diferente': respuesta1.NUMERO_CUPONES_REPORTADOS !== respuesta1.NUMERO_CUPONES }"
+              <ion-col [ngClass]="{ 'diferente': respuesta1.NUMERO_CUPONES_REPORTADOS != respuesta1.NUMERO_CUPONES }"
               title="{{ respuesta1.NUMERO_CUPONES_REPORTADOS }}">
                 <ion-input appFormatoMonetario (input)="editar(respuesta1.EMPRESA,respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_CUPONES_REPORTADOS,respuesta1.VALOR_RECAUDADO_REPORTADO)" [(ngModel)]="numero_cupones" value="{{respuesta1.NUMERO_CUPONES_REPORTADOS}}" placeholder="{{respuesta1.NUMERO_CUPONES_REPORTADOS }}"></ion-input>
               </ion-col>
-              <ion-col [ngClass]="{ 'diferente': respuesta1.VALOR_RECAUDADO_REPORTADO !== respuesta1.VALOR_RECAUDADO }"
+              <ion-col [ngClass]="{ 'diferente': respuesta1.VALOR_RECAUDADO_REPORTADO != respuesta1.VALOR_RECAUDADO }"
                         title="{{ respuesta1.VALOR_RECAUDADO_REPORTADO | number }}">
                 
                 <ion-input appFormatoMonetario (input)="editar(respuesta1.EMPRESA,respuesta1.CODIGO_PUNTO_PAGO,respuesta1.NUMERO_ARQUEO,respuesta1.NUMERO_CUPONES_REPORTADOS,respuesta1.VALOR_RECAUDADO_REPORTADO)" [(ngModel)]="valor_reportado" value="{{respuesta1.VALOR_RECAUDADO_REPORTADO}}" placeholder="{{respuesta1.VALOR_RECAUDADO_REPORTADO | number}}"></ion-input>

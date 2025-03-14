@@ -56,6 +56,8 @@ import { CajasSacComponent } from './Pages/Administrar/cajas-sac/cajas-sac.compo
 import { CambiarClaveComponent } from './Pages/General/cambiar-clave/cambiar-clave.component';
 import { ReabrirArqueoComponent } from './Pages/Administrar/reabrir-arqueo/reabrir-arqueo.component';
 import { ListadoFacturasComponent } from './Pages/General/listado-facturas/listado-facturas.component';
+import { ListadoFacturasRechazadasComponent } from './Pages/General/listado-facturas-rechazadas/listado-facturas-rechazadas.component';
+import { ListadoFacturasConsultaComponent } from './Pages/General/listado-facturas-consulta/listado-facturas-consulta.component';
 
 
 
@@ -117,7 +119,9 @@ const routes: Routes = [
                 CajasSacComponent,
                 CambiarClaveComponent,
                 ReabrirArqueoComponent,
-                ListadoFacturasComponent
+                ListadoFacturasComponent,
+                ListadoFacturasRechazadasComponent,
+                ListadoFacturasConsultaComponent
               ],
 
   imports: [BrowserModule, AgGridModule,

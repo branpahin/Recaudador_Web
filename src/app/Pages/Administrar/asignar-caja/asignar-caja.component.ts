@@ -35,6 +35,8 @@ interface Detalle2{
 
 
 export class AsignarCajaComponent  implements OnInit {
+
+  //#region Variables
   empresa: string|null = localStorage.getItem('empresaCOD');
   usuario: string|null = localStorage.getItem('usuario');
   token: string|null = localStorage.getItem('token');
@@ -76,6 +78,8 @@ export class AsignarCajaComponent  implements OnInit {
   selectedCodigoCaja="";
   seleccionadas: { [codigoCaja: string]: boolean } = {};
 
+  //#endregion
+
   constructor(private recaudoService: RecaudoService) { }
 
   ngOnInit() {
@@ -86,8 +90,8 @@ export class AsignarCajaComponent  implements OnInit {
     this.ListarUsuariosGeneral();
   }
 
+  //#region Manejo de detalles
 
-//Agregar usuarios a la asignación
   agregarDetalle(event: any, codigoCaja:string) {
     this.otraVariable = event.detail.value;
     this.detalle2.USUARIO = this.otraVariable;
@@ -115,7 +119,9 @@ export class AsignarCajaComponent  implements OnInit {
     return this.modificar.CAJAS_ASIGNADAS.some(item => item.USUARIO_ASIGNADO === campo);
   }
 
+  //#endregion
 
+  //#region Consulta a API
   ListarPuntosPago(){
     if (this.empresa !== null && this.usuario !== null && this.token !== null) {
       this.recaudoService.getListarPuntosPago(Number(this.empresa),this.usuario,this.token).subscribe(
@@ -210,9 +216,9 @@ export class AsignarCajaComponent  implements OnInit {
 
   }
 
-
+  //#endregion
   
-
+  //#region Envio a API
   ModificarCaja(){
     
     this.recaudoService.postModificarCajas(this.modificar)
@@ -242,14 +248,18 @@ export class AsignarCajaComponent  implements OnInit {
     
   }
 
-  Eliminar(codigoCaja:string) {
+  Eliminar(data:any) {
     if (this.empresa !== null && this.usuario !== null && this.token !== null){
-      this.recaudoService.postEliminarAsignacionCajas(this.empresa,this.usuario,this.empresa_Asignada,codigoCaja,this.token)
+      this.recaudoService.postEliminarAsignacionCajas(this.empresa,this.usuario,data.USUARIO, this.empresa_Asignada,data.CODIGO_CAJA,this.token)
         .subscribe((respuesta) => {
           this.guardar=true;
           this.resultado=respuesta;
-          alertify.success(this.resultado.RESPUESTA);
-          this.actualizar();
+          if(respuesta.COD=='200'){
+            alertify.success(this.resultado.RESPUESTA);
+            this.actualizar();
+          }else{
+            alertify.error(this.resultado.RESPUESTA);
+          }
           
     },(error) =>{
       console.error(error);
@@ -281,4 +291,7 @@ export class AsignarCajaComponent  implements OnInit {
 
     this.ngOnInit();
   }
+
+  //#endregion
+  
 }

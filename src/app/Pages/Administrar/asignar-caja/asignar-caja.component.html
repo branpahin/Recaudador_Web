@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ion-header [translucent]="true">
   <ion-toolbar color = "mycolor">
     <ion-title>Asignar Caja</ion-title>
@@ -84,7 +85,7 @@
             <div *ngFor="let respuesta1 of cajasAsignadas">
                 <ion-row class="data-row" >
                   <ion-col >
-                    <button class="btn_m" (click)="Eliminar(respuesta1.CODIGO_CAJA)"><ion-icon class="eliminar" name="person-remove" ></ion-icon></button>
+                    <button class="btn_m" (click)="Eliminar(respuesta1)"><ion-icon class="eliminar" name="person-remove" ></ion-icon></button>
                     {{ respuesta1.CODIGO_CAJA }}
                   </ion-col>
                   <ion-col >{{ respuesta1.NOMBRE_CAJA}}</ion-col>
