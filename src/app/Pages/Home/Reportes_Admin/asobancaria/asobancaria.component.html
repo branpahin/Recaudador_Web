@@ -16,6 +16,13 @@
 <ion-card class="login">
   <ion-card-content>
     <div class="container">
+        <ion-item >
+          <ion-select label="Puntos de Pago" label-placement="floating" placeholder="Punto de Pago" fill="solid" [multiple]="true" [(ngModel)]="puntosSeleccionados">
+            <ion-select-option *ngFor="let puntopago of listadoPuntosPago" [value]="puntopago.CODIGO">
+              {{ puntopago.NOMBRE }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
       <div class="fecha">
         <ion-datetime-button class="btn-fecha" datetime="datetime"></ion-datetime-button>
   
@@ -29,7 +36,6 @@
       </div>
   
       <div class="div-btn">
-  
         <button class="btn" (click)="generarAsobancaria()"> Generar </button>
       </div>
     </div>

@@ -1157,7 +1157,7 @@ export class RecaudarComponent  implements OnInit {
     this.datosConsulta2.NIT= NITConvenio;
     this.datosConsulta2.CODIGO_CONVENIO=CODconvenioConst;
     this.datosConsulta2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
-    
+    this.datosConsulta2.REFERENCIA=String(this.datosConsulta2.REFERENCIA)
     const referenciaParcial= this.datosConsulta2.REFERENCIA;
     if(CODconvenioConst=="5"){
       this.datosConsulta2.REFERENCIA="0"+this.datosConsulta2.REFERENCIA;
@@ -1361,12 +1361,13 @@ export class RecaudarComponent  implements OnInit {
     this.detalle.CODIGO_CONVENIO=CODconvenioConst;
     this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     this.detalle.FECHA_VENCIMIENTO = new Date().toISOString();
+    this.detalle.CODIGO_REFERENCIA = this.detalle.CODIGO_REFERENCIA.replace(/\D/g, '');
     this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
     this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     this.detalle2.NOMBRE_CONVENIO=NombreConvenio;
     this.detalle2.NOMBRE_CONVENIO_DET=NombreConvenioDet;
     this.detalle2.CODIGO_CLIENTE = this.detalle.CODIGO_CLIENTE;
-    this.detalle2.CODIGO_REFERENCIA=this.detalle.CODIGO_REFERENCIA;
+    this.detalle2.CODIGO_REFERENCIA=String(this.detalle.CODIGO_REFERENCIA);
     this.detalle.VALOR_MOVIMIENTO_DET=this.detalle.VALOR_MOVIMIENTO_DET.replace(/\./g, '')
     this.datos.VALOR_MOVIMIENTO=String(Number(this.datos.VALOR_MOVIMIENTO)+Number(this.detalle.VALOR_MOVIMIENTO_DET));
     this.datos.NUMERO_CUPONES_MOVIMIENTO=String(Number(this.datos.NUMERO_CUPONES_MOVIMIENTO)+1);

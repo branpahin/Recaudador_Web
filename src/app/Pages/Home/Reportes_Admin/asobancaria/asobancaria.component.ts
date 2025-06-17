@@ -56,9 +56,14 @@ export class AsobancariaComponent  implements OnInit {
 
   listadoAsobancaria:any;
   listadoConveniosDet:any[]=[];
+  listadoPuntosPago: any[] = [];
   generadosConvenio:any[]=[];
+  
+  puntosSeleccionados: string[] = [];
+  puntos:string=""
   convenios:any[]=[];
   nombre_convenios= [] as Detalle2[];
+  checkboxEstado: { [key: string]: boolean } = {};
 
   listadoConvenios={
     ASOBANCARIA:"",
@@ -85,6 +90,7 @@ export class AsobancariaComponent  implements OnInit {
     FECHA_ASOBANCARIA:"",
     LISTADO_CONVENIOS: [] as Detalle[],
     USUARIO:this.usuario,
+    PUNTOS_PAGO:this.puntos,
     TOKEN:this.token
   };
 
@@ -101,6 +107,7 @@ export class AsobancariaComponent  implements OnInit {
 
   ngOnInit() {
     this.listarAsobancaria();
+    this.obtenerPuntosPago();
   }
 
   ngAfterViewInit() {
@@ -118,6 +125,16 @@ export class AsobancariaComponent  implements OnInit {
   }
 
   //#region Consultas iniciales
+
+imprimirSeleccion() {
+  console.log('Seleccionados:', this.puntosSeleccionados);
+  // Si quieres imprimir los nombres también:
+  const seleccionNombres = this.listadoPuntosPago
+    .filter(p => this.puntosSeleccionados.includes(p.CODIGO))
+    .map(p => p.NOMBRE);
+
+  console.log('Nombres seleccionados:', seleccionNombres);
+}
   listarAsobancaria() {
 
     if (this.empresa !== null && this.usuario !== null && this.token !== null && this.puntoPago!==null) {
@@ -137,6 +154,20 @@ export class AsobancariaComponent  implements OnInit {
     } else {
       console.error('El valor del tipo de empresa no existe');
     }
+  }
+
+  obtenerPuntosPago() {
+    var empresa: string|null =localStorage.getItem('empresaCOD');
+
+    this.recaudoService.getListPuntosPago(Number(empresa)).subscribe({
+      next: data => {
+        this.listadoPuntosPago = data.PUNTOS_PAGO;
+        this.puntosSeleccionados = this.listadoPuntosPago.map(p => p.CODIGO); 
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
   }
 
   obtenerConvenio(): any[] {
@@ -297,7 +328,7 @@ export class AsobancariaComponent  implements OnInit {
 
     await loading.present();
     
-    
+    this.asobancaria.PUNTOS_PAGO = this.puntosSeleccionados.join(',');
     this.recaudoService.postGenerarAsobancaria(this.asobancaria).subscribe({
       next: async data => {
         
