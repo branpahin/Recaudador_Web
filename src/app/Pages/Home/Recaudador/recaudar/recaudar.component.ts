@@ -1361,7 +1361,11 @@ export class RecaudarComponent  implements OnInit {
     this.detalle.CODIGO_CONVENIO=CODconvenioConst;
     this.detalle.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     this.detalle.FECHA_VENCIMIENTO = new Date().toISOString();
-    this.detalle.CODIGO_REFERENCIA = this.detalle.CODIGO_REFERENCIA.replace(/\D/g, '');
+    console.log('Original CODIGO_REFERENCIA:', this.detalle.CODIGO_REFERENCIA);
+
+this.detalle.CODIGO_REFERENCIA = String(this.detalle.CODIGO_REFERENCIA || '').replace(/\D/g, '');
+
+console.log('Solo números:', this.detalle.CODIGO_REFERENCIA);
     this.detalle2.CODIGO_CONVENIO=CODconvenioConst;
     this.detalle2.CODIGO_CONVENIO_DET=CODconvenioDetConst;
     this.detalle2.NOMBRE_CONVENIO=NombreConvenio;

@@ -193,11 +193,11 @@
       <ion-col>
         <ion-item *ngIf="mostrarCamposManuales && !mostrarDocumento">
           <ion-label position="stacked">REFERENCIA</ion-label>
-          <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="number" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
+          <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
         </ion-item>
         <ion-item *ngIf="mostrarCamposManuales && mostrarDocumento">
           <ion-label position="stacked">NUMERO</ion-label>
-          <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="number" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
+          <ion-input label="" [(ngModel)]="detalle.CODIGO_REFERENCIA" name="codigoBarras" type="text" (keyup.enter)="onEnterKey3($event)" [disabled]="recaudado"></ion-input>
         </ion-item>
         
       </ion-col>

@@ -22,7 +22,7 @@ export class RecaudoService {
   // private myAppUrl = TypeUrlPruebas.PRUEBAS + TypePuerto.PRUEBAS;
 
 //#PRODUCCION
-  private myAppUrl = TypeUrlProduccion.PROD_PRIVADO + TypePuertoPunto.PROD_PRIVADO_CARTAGO_MOVIL;
+  private myAppUrl = TypeUrlProduccion.PROD_PRIVADO + TypePuerto.PROD_PRIVADO;
 
 //#PRODUCCION HTTPS
   // private myAppUrl = TypeUrlProduccion.PROD_PRIVADO_HTTPS + TypePuerto.PROD_PRIVADO_HTTPS;
